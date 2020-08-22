@@ -8,6 +8,7 @@ include_directories(apps/include/samples)
 include_directories(apps/include/samples/voronoi)
 include_directories(apps/include/samples/mandelbrot)
 include_directories(apps/include/samples/chart3d)
+include_directories(apps/include/samples/draw_primitives)
 include_directories(include)
 include_directories(include/uimg)
 include_directories(include/uimg/painters)
@@ -39,7 +40,7 @@ add_executable(mandelbrot
         apps/include/samples/mandelbrot/test_mandelbrot.h
         apps/include/samples/mandelbrot/mandelbrot.h
         apps/include/samples/test_painter_base.h
-        apps/draw_primitives.cpp
+        apps/mandelbrot.cpp
         include/uimg/painters/base.h
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
