@@ -52,6 +52,26 @@ Sample output:
 
 ![Primitives](images/primitives.png?raw=true) 
 
+# Building from console
+
+1) Create new build folder
+
+	mkdir _build
+	cd _build
+
+2) Prepare makefile
+
+	cmake .. 
+
+3) make sample applications
+
+	make
+
+4) to run just built example - voronoi - just enter:
+
+	./voronoi
+	
+	
 # See also
 For more advanced plots/charts see:
 
