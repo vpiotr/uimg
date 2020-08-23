@@ -27,6 +27,20 @@ protected:
                 color.blue = std::min(255, 50+(int)math_utils::iabs(200.0*y/2520));
                 return color;
             }
+
+            // returns function value
+            virtual double getFunValue(double x, double y) {
+                static const double degreesToRadiansFactor = math_utils::pi_const_d() / 180;
+                double r = sqrt(x * x + y * y) * degreesToRadiansFactor;
+                double result;
+                if (r == 0.0)
+                    result = 1.0;
+                else
+                    result = sin(r) / r;
+
+                return result;
+            }
+
         };
 
         chart_z_fxy_3d_c chart1(getImage().getSize(), getPainter());

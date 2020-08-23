@@ -2,6 +2,7 @@
 #define __UIMG_CUBIC_SPL_UTIL_H__
 
 #include <vector>
+#include "uimg/base/structs.h"
 
 class cubic_spline_utils {
 public:

@@ -1,7 +1,7 @@
 #ifndef __UIMG_SAMPLES_VORONOI_H__
 #define __UIMG_SAMPLES_VORONOI_H__
 
-#include "uimg/painters/rgb_image.h"
+#include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_base.h"
 #include <climits>
 

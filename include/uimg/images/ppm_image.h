@@ -5,13 +5,13 @@
 #include <fstream>
 #include <string>
 
-#include "uimg/painters/base.h"
-#include "uimg/painters/rgb_image.h"
+#include "uimg/base/structs.h"
+#include "uimg/images/pixel_image.h"
 
 // class which writes RGB image as PPM file (Netpbm / P6)
-class PpmWriter : public PixelImageWriter {
+class PpmImageWriter : public PixelImageWriter {
 public:
-    PpmWriter(std::basic_ostream<char> &output) : output_(output) {}
+    PpmImageWriter(std::basic_ostream<char> &output) : output_(output) {}
 
     virtual void writeImage(PixelImageBase &image) {
         writeHeader(image);
@@ -51,9 +51,9 @@ private:
     std::basic_ostream<char> &output_;
 };
 
-class PpmWriterForRgbImage : public PpmWriter {
+class PpmWriterForRgbImage : public PpmImageWriter {
 public:
-    PpmWriterForRgbImage(std::basic_ostream<char> &output) : PpmWriter(output) {}
+    PpmWriterForRgbImage(std::basic_ostream<char> &output) : PpmImageWriter(output) {}
 
     virtual void writeImage(PixelImageBase &image) {
         writeHeader(image);

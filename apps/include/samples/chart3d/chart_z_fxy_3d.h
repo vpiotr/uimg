@@ -7,7 +7,7 @@
 #include <utility>
 #include <climits>
 
-#include "uimg/painters/rgb_image.h"
+#include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_pixels.h"
 #include "uimg/utils/math_utils.h"
 
@@ -178,17 +178,8 @@ protected:
     }
 
     // returns function value
-    virtual double getFunValue(double x, double y) {
-        static const double degreesToRadiansFactor = math_utils::pi_const_d() / 180;
-        double r = sqrt(x * x + y * y) * degreesToRadiansFactor;
-        double result;
-        if (r == 0.0)
-            result = 1.0;
-        else
-            result = sin(r) / r;
+    virtual double getFunValue(double x, double y) = 0;
 
-        return result;
-    }
 private:
     PixelPainter &pixelPainter_;
     Point canvasSize_;

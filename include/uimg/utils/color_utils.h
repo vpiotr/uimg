@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+#include "uimg/base/structs.h"
+
 class color_utils {
 public:
 

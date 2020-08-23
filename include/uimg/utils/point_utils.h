@@ -6,10 +6,10 @@
 #define UIMG_MIN_POINT_UTILS_H
 
 #include <cmath>
+#include "uimg/base/structs.h"
 
-template<typename Point>
-class point_utils_base {
-    point_utils_base() {}
+class point_utils {
+    point_utils() {}
 
 public:
     static Point &multiply(Point &p, int a) {

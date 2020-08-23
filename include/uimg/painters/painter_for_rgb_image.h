@@ -5,7 +5,7 @@
 
 #include "uimg/painters/painter_base.h"
 #include "uimg/painters/painter_for_pixels.h"
-#include "uimg/painters/rgb_image.h"
+#include "uimg/images/rgb_image.h"
 
 // pixel painter using standard PixelImageBase as a target
 class PixelPainterForImageBase : public PixelPainter {

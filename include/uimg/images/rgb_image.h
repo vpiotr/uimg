@@ -3,9 +3,11 @@
 
 #include <vector>
 
-#include "uimg/painters/base.h"
+#include "uimg/base/structs.h"
+#include "uimg/images/pixel_image.h"
 
-// RGB image container, each pixel is represented as three bytes (red, green, blue), from top left to bottom right, (0,0) = top, left
+// RGB in-memory image container.
+// Each pixel is represented as three bytes (red, green, blue), from top left to bottom right, (0,0) = top, left
 class RgbImage : public PixelImageBase {
 public:
     RgbImage(unsigned int width, unsigned int height) : data_(3 * width * height), width_(width), height_(height) {

@@ -60,7 +60,6 @@ protected:
         divCnt = std::max(splineDx, splineDy);
         divCnt = 300;
         bsplinePainter.draw(points, divCnt, {255, 55, 100});
-
     }
 
 };

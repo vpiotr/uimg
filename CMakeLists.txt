@@ -21,18 +21,17 @@ add_executable(voronoi
         apps/include/samples/voronoi/voronoi.h
         apps/include/samples/test_painter_base.h
         apps/voronoi.cpp
-        include/uimg/painters/base.h
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
-        include/uimg/painters/ppm_image.h
-        include/uimg/painters/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/images/rgb_image.h
         include/uimg/utils/algorithm.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/cubic_spline_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h)
+        include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)
 
 add_executable(mandelbrot
         LICENSE
@@ -41,18 +40,17 @@ add_executable(mandelbrot
         apps/include/samples/mandelbrot/mandelbrot.h
         apps/include/samples/test_painter_base.h
         apps/mandelbrot.cpp
-        include/uimg/painters/base.h
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
-        include/uimg/painters/ppm_image.h
-        include/uimg/painters/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/images/rgb_image.h
         include/uimg/utils/algorithm.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/cubic_spline_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h)
+        include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)
 
 add_executable(chart3d
         LICENSE
@@ -61,18 +59,17 @@ add_executable(chart3d
         apps/include/samples/chart3d/chart_z_fxy_3d.h
         apps/include/samples/test_painter_base.h
         apps/chart3d.cpp
-        include/uimg/painters/base.h
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
-        include/uimg/painters/ppm_image.h
-        include/uimg/painters/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/images/rgb_image.h
         include/uimg/utils/algorithm.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/cubic_spline_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h)
+        include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)
         
 add_executable(draw_primitives
         LICENSE
@@ -80,15 +77,14 @@ add_executable(draw_primitives
         apps/include/samples/draw_primitives/test_draw_primitives.h
         apps/include/samples/test_painter_base.h
         apps/draw_primitives.cpp
-        include/uimg/painters/base.h
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
-        include/uimg/painters/ppm_image.h
-        include/uimg/painters/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/images/rgb_image.h
         include/uimg/utils/algorithm.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/cubic_spline_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h)        
+        include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)

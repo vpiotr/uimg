@@ -1,9 +1,10 @@
 #ifndef __UIMG_SAMPLES_VORONOI_H__
 #define __UIMG_SAMPLES_VORONOI_H__
 
-#include "uimg/painters/rgb_image.h"
-#include "uimg/painters/painter_base.h"
 #include <climits>
+#include <vector>
+#include "uimg/base/structs.h"
+#include "uimg/pixels/pixel_painter.h"
 
 class Mandelbrot {
 public:

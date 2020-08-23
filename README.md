@@ -71,6 +71,21 @@ Sample output:
 
         ./voronoi
 
+# API
+Currently there is no single include file which can be used to use the library.
+So you need to include individual header files in order to use specific features.
+
+Source directories:
+
+* base: data structures 
+* utils: internal utility functions for various purposes 
+* pixels: pixel-level API 
+* images: API for images 
+    * PixelImage: image abstraction 
+    * RgbImage: in-memory image container 
+    * PPM image writer & loader
+* painters: API for drawing graphic primitives (lines, circles, etc.)     
+ 
 # See also
 For more advanced plots/charts see:
 

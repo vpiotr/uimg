@@ -4,10 +4,10 @@
 #include <cassert>
 #include <algorithm>
 
-#include "uimg/painters/base.h"
+#include "uimg/base/structs.h"
+#include "uimg/pixels/pixel_painter.h"
 #include "uimg/utils/math_utils.h"
 #include "uimg/utils/cubic_spline_utils.h"
-#include "uimg/painters/painter_base.h"
 
 typedef std::vector<unsigned int> LineDashPattern;
 

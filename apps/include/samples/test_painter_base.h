@@ -5,9 +5,10 @@
 #include <memory>
 #include <ostream>
 
-#include "uimg/painters/base.h"
+#include "uimg/base/structs.h"
+#include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_rgb_image.h"
-#include "uimg/painters/ppm_image.h"
+#include "uimg/images/ppm_image.h"
 
 struct test_args {
     const std::string testName;

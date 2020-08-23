@@ -5,11 +5,12 @@
 #include <cmath>
 #include <algorithm>
 
-#include "uimg/painters/base.h"
-#include "uimg/painters/painter_base.h"
+#include "uimg/pixels/pixel_painter.h"
+#include "uimg/pixels/pixel_source.h"
+#include "uimg/pixels/pixel_copier.h"
 
 // copier using pixel by pixel operations
-class ImageCopierByPixels : public ImageCopier {
+class ImageCopierByPixels : public PixelCopier {
 public:
     ImageCopierByPixels(PixelPainter &painter) : pixelPainter_(&painter) {}
 
@@ -52,7 +53,7 @@ private:
 
 // Bilinear resampling copier
 // based on "EECE\CS 253 Image Processing. Resizing Images", Richard Alan Peters II (2011)
-class BilinearSamplingCopier : public ImageCopier {
+class BilinearSamplingCopier : public PixelCopier {
 public:
     virtual void copyFrom(const PixelSource &src, const Point &targetPos) {
         Rect fullRect;
