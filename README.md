@@ -6,7 +6,7 @@ Portable, does not depend on OS or any third-party libraries.
 
 Library provided two levels of abstraction:
 * pixel canvas 
-* draving primitives: lines, rectangles, circles, ellipses, b-splines, triangles, flood filling
+* drawing primitives: lines, rectangles, circles, ellipses, b-splines, triangles, flood filling
 
 Output: currently only PPM files (batch generation).
 
