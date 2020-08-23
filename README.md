@@ -56,22 +56,21 @@ Sample output:
 
 1) Create new build folder
 
-	mkdir _build
-	cd _build
+        mkdir _build
+        cd _build
 
 2) Prepare makefile
 
-	cmake .. 
+        cmake .. 
 
 3) make sample applications
 
-	make
+        make
 
 4) to run just built example - voronoi - just enter:
 
-	./voronoi
-	
-	
+        ./voronoi
+
 # See also
 For more advanced plots/charts see:
 
