@@ -16,33 +16,41 @@ Output: currently only PPM files (batch generation).
 
 Pixel map depicting Voronoi diagram.
 
-See apps/voronoi.cpp
+See [apps/voronoi.cpp](apps/voronoi.cpp)
 
-Sample output: ![Voronoi diagram](https://github.com/vpiotr/uimg/images/voronoi.png)
+Sample output: 
+
+![Voronoi diagram](images/voronoi.png?raw=true)
 
 2) Mandelbrot
 
 Pixel map image for selected window.
 
-See apps/mandelbrot.cpp
+See [apps/mandelbrot.cpp](apps/mandelbrot.cpp)
 
-Sample output: ![Mandelbrot](https://github.com/vpiotr/uimg/images/mandelbrot.png)
+Sample output: 
+
+![Mandelbrot](images/mandelbrot.png?raw=true)
 
 3) 3D Chart
 
 Very basic 3D chart using colorful lines.
 
-See apps/chart3d.cpp
+See [apps/chart3d.cpp](apps/chart3d.cpp)
 
-Sample output: ![3d chart](https://github.com/vpiotr/uimg/images/chart3d.png)
+Sample output:
+ 
+![3d chart](images/chart3d.png?raw=true)
 
 4) Primitives
 
 Demonstration of included primitive shape support.
 
-See apps/draw_primitives.cpp
+See [apps/draw_primitives.cpp](apps/draw_primitives.cpp)
 
-Sample output: ![Primitives](https://github.com/vpiotr/uimg/images/primitives.png) 
+Sample output: 
+
+![Primitives](images/primitives.png?raw=true) 
 
 # See also
 For more advanced plots/charts see:
