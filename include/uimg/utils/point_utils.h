@@ -5,6 +5,8 @@
 #ifndef UIMG_MIN_POINT_UTILS_H
 #define UIMG_MIN_POINT_UTILS_H
 
+#include <cmath>
+
 template<typename Point>
 class point_utils_base {
     point_utils_base() {}
