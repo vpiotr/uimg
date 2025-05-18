@@ -1,0 +1,118 @@
+# Build directory
+/build/
+/bin/
+/out/
+/cmake-build-*/
+
+# Generated files
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+*.exe
+*.out
+*.app
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# IDE specific files
+## Visual Studio
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+
+## Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+## JetBrains IDEs (CLion, etc.)
+.idea/
+cmake-build-*/
+*.iws
+*.iml
+*.ipr
+*.iws
+out/
+
+## Eclipse
+.metadata/
+.settings/
+.classpath
+.project
+*.launch
+*.pydevproject
+
+## Code::Blocks
+*.cbp
+*.layout
+*.depend
+
+# Output images
+*.ppm
+*.png
+*.jpg
+*.jpeg
+*.bmp
+
+# Backup files
+*~
+*.bak
+*.swp
+*.tmp
+*.temp
+
+# OS specific files
+## MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+## Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Project specific
+# Keep the fonts and images directories in git
+fonts/*.bdf
+!images/*.png
+
+# Other
+/backup/

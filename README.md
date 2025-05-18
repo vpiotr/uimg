@@ -52,6 +52,16 @@ Sample output:
 
 ![Primitives](images/primitives.png?raw=true) 
 
+5) Text Demo
+
+Demonstration of BDF font rendering capabilities.
+
+See [apps/text_demo.cpp](apps/text_demo.cpp)
+
+Sample output:
+
+![Text Demo](images/text_demo_output.png?raw=true)
+
 # Building from console
 
 1) Create new build folder
@@ -84,11 +94,65 @@ Source directories:
     * PixelImage: image abstraction 
     * RgbImage: in-memory image container 
     * PPM image writer & loader
-* painters: API for drawing graphic primitives (lines, circles, etc.)     
- 
-# See also
-For more advanced plots/charts see:
+* painters: API for drawing graphic primitives (lines, circles, etc.)
+* fonts: BDF font support
+    * `uimg::BdfFont`: font representation class for BDF fonts
+    * `uimg::BdfGlyph`: representation of individual glyphs with bitmap data
+    * `uimg::FontUtils`: utilities for font loading and management
+    * `uimg::TextPainterForBdfFont`: specialized painter for rendering BDF fonts
+* text: Text rendering
+    * `uimg::TextSource`: interface for text content sources
+    * `uimg::TextPainter`: abstract interface for text rendering
+    * Text positioning and alignment utilities
+    * Multi-color text rendering support
 
+# Text rendering, font support
+
+The library provides a comprehensive text rendering system using BDF fonts. Text rendering is implemented through the `uimg::TextSource` interface and the `uimg::TextPainter` abstract class. The concrete implementation `uimg::TextPainterForBdfFont` handles rendering for BDF fonts.
+
+## Features
+- Loading and rendering BDF fonts
+- Multi-color text rendering
+- Precise text positioning
+- Support for text alignment
+- Basic text formatting
+
+## Text Demo Application
+
+The `text_demo` application demonstrates the text rendering capabilities:
+- Renders text with different colors
+- Shows various formatting options
+- Displays proper text positioning and alignment
+- Renders sample informational text
+
+To run the text demo:
+
+```
+./text_demo -font <path/to/font.bdf> -out <output_file.ppm>
+```
+
+Example:
+```
+./text_demo -font ../fonts/courR12.bdf -out text_output.ppm
+```
+
+## BDF Font Format
+The library uses the BDF (Bitmap Distribution Format) font format:
+* Format description:
+  * https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format
+  * https://partners.adobe.com/public/developer/en/font/5005.BDF_Spec.pdf
+* X11 font description
+  * http://www.linuxfromscratch.org/blfs/view/svn/x/x7font.html
+
+Fonts can be downloaded from:
+* http://ftp.x.org/pub/individual/font/
+  * example: font-adobe-75dpi-1.0.0.tar.gz / courR12.bdf
+
+Sample fonts are included in the `fonts` directory.
+
+# See also
+
+For more advanced plots/charts see:
 * https://github.com/thclark/cpplot
 * https://github.com/jkriege2/JKQtPlotter/
 
