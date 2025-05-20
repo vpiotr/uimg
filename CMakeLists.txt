@@ -10,6 +10,7 @@ include_directories(apps/include/samples/mandelbrot)
 include_directories(apps/include/samples/chart3d)
 include_directories(apps/include/samples/draw_primitives)
 include_directories(apps/include/samples/text_demo)
+include_directories(apps/include/samples/filter_demo)
 include_directories(include)
 include_directories(include/uimg)
 include_directories(include/uimg/painters)
@@ -90,6 +91,18 @@ add_executable(draw_primitives
         include/uimg/utils/math_utils.h
         include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)
 
+add_executable(filter_demo
+        LICENSE
+        README.md
+        apps/include/samples/filter_demo/test_filter_demo.h
+        apps/include/samples/test_painter_base.h
+        apps/filter_demo.cpp
+        include/uimg/painters/copier_for_pixels.h
+        include/uimg/painters/painter_base.h
+        include/uimg/painters/painter_for_pixels.h
+        include/uimg/filters/filter_base.h
+        include/uimg/filters/filter_for_pixels.h)
+        
 add_executable(text_demo
         LICENSE
         README.md

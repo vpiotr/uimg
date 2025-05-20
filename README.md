@@ -42,17 +42,7 @@ Sample output:
  
 ![3d chart](images/chart3d.png?raw=true)
 
-4) Primitives
-
-Demonstration of included primitive shape support.
-
-See [apps/draw_primitives.cpp](apps/draw_primitives.cpp)
-
-Sample output: 
-
-![Primitives](images/primitives.png?raw=true) 
-
-5) Text Demo
+4) Text Demo
 
 Demonstration of BDF font rendering capabilities.
 
@@ -61,6 +51,26 @@ See [apps/text_demo.cpp](apps/text_demo.cpp)
 Sample output:
 
 ![Text Demo](images/text_demo_output.png?raw=true)
+
+5) Filter Demo
+
+Demonstration of various pixel filters including transformations, transparency, zoom, and gradients.
+
+See [apps/filter_demo.cpp](apps/filter_demo.cpp)
+
+Sample output:
+
+![Filter Demo](images/filter_demo_output.png?raw=true)
+
+6) Primitives
+
+Demonstration of included primitive shape support.
+
+See [apps/draw_primitives.cpp](apps/draw_primitives.cpp)
+
+Sample output: 
+
+![Primitives](images/primitives.png?raw=true) 
 
 # Building from console
 
@@ -105,6 +115,57 @@ Source directories:
     * `uimg::TextPainter`: abstract interface for text rendering
     * Text positioning and alignment utilities
     * Multi-color text rendering support
+* filters: Pixel filter transformations
+    * `PixelFilter`: base class for all filters
+    * Transformation filters: rotation, flipping, offset, zoom
+    * Visual effect filters: transparency, alpha blending
+    * Gradient filters: linear gradients
+
+# Pixel filters
+
+The library provides a rich set of pixel filter transformations through the `PixelFilter` class hierarchy. These filters can be chained together to create complex transformations and visual effects.
+
+## Filter types
+
+### Transformation filters
+- **DiscreteRotationFilter**: Rotate pixels by discrete angles (-180°, -90°, 0°, 90°, 180°)
+- **HorizontalFlipFilter**: Mirror pixels horizontally around a center point
+- **VerticalFlipFilter**: Mirror pixels vertically around a center point
+- **OffsetFilter**: Move pixels by a specified offset
+- **ClipFilter**: Limit drawing operations to a specified rectangular region
+
+### Visual effect filters
+- **TransparencyFilter**: Make specific colors transparent
+- **MaskDiffFilter**: Apply pixels only where mask differs from specified color
+- **MaskEqFilter**: Apply pixels only where mask equals specified color
+- **AlphaFilter**: Blend pixels with existing image using alpha transparency
+
+### Zoom and scaling filters
+- **PixelSpreadFilter**: Scale pixels with defined center point and zoom factor
+- **PixelZoomFilter**: Scale pixels with expansion, filling gaps between pixels
+
+### Gradient filters
+- **GradientFilter2C**: Apply a linear gradient between two colors
+
+## Using filters
+
+Filters can be easily combined by chaining. Each filter is initialized with the target painter and its specific parameters:
+
+```cpp
+// Create a base painter
+PixelPainterForRgbImage basePainter(image);
+
+// Apply a horizontal flip filter
+HorizontalFlipFilter flipFilter(basePainter, Point(width / 2, 0));
+
+// Add transparency
+TransparencyFilter transFilter(flipFilter, RgbColor(255, 0, 255));
+
+// Use the filter chain
+transFilter.putPixel(x, y, color);
+```
+
+The filter demo application showcases all available filters and their combinations.
 
 # Text rendering, font support
 

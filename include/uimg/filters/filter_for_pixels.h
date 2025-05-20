@@ -3,9 +3,31 @@
 
 #include <algorithm>
 
-#include "uImg/painters/filter_base.h"
-#include "uImg/painters/base.h"
-#include "uImg/painters/math_utils.h"
+#include "uimg/filters/filter_base.h"
+#include "uimg/painters/painter_base.h"
+#include "uimg/utils/math_utils.h"
+
+// Utility class for flip operations
+class FlipUtils {
+public:
+    // Calculates flip position based on offset and flip mode
+    static int flipPos(unsigned int value, unsigned int offset, bool evenFlip) {
+        int result;
+        if (evenFlip) {
+            if (value <= offset) {
+                int dx = offset - value;
+                result = offset + dx - 2;
+            } else {
+                int dx = value - offset - 1;
+                result = offset - dx - 2;
+            }
+        } else {
+            int dx = offset - value;
+            result = offset + dx;
+        }
+        return result;
+    }
+};
 
 // just copy pixels to/from target
 class CopyingFilter : public PixelFilter {
@@ -76,7 +98,7 @@ private:
 // horizontal flip filter
 class HorizontalFlipFilter : public PixelFilter {
 public:
-    HorizontalFlipFilter(PixelPainter &target, const Point &offset) : PixelFilter(target), offset_(offset) {}
+    HorizontalFlipFilter(PixelPainter &target, const Point &offset, bool evenFlip) : PixelFilter(target), offset_(offset), evenFlip_(evenFlip) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
         recalculatePos(x, y);
@@ -88,19 +110,25 @@ public:
         getTarget().getPixel(x, y, output);
     }
 
+    Point getPixelPos(unsigned int x, unsigned int y) {
+        recalculatePos(x, y);
+        return Point(x, y);
+    }
+
 protected:
     void recalculatePos(unsigned int &x, unsigned int &y) {
-        int dx = offset_.x - x;
-        x = offset_.x + dx;
+        x = FlipUtils::flipPos(x, offset_.x, evenFlip_);
     }
+
 private:
     Point offset_;
+    bool evenFlip_;
 };
 
 // vertical flip filter
 class VerticalFlipFilter : public PixelFilter {
 public:
-    VerticalFlipFilter(PixelPainter &target, const Point &offset) : PixelFilter(target), offset_(offset) {}
+    VerticalFlipFilter(PixelPainter &target, const Point &offset, bool evenFlip) : PixelFilter(target), offset_(offset), evenFlip_(evenFlip) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
         recalculatePos(x, y);
@@ -114,11 +142,11 @@ public:
 
 protected:
     void recalculatePos(unsigned int &x, unsigned int &y) {
-        int dy = offset_.y - y;
-        y = offset_.y + dy;
+        y = FlipUtils::flipPos(y, offset_.y, evenFlip_);
     }
 private:
     Point offset_;
+    bool evenFlip_;
 };
 
 // transparency filter
@@ -253,7 +281,7 @@ private:
 // clip operations so they are not performed if position is not available
 class ClipFilter : public PixelFilter {
 public:
-    ClipFilter(PixelPainter &target, const Rect &clipWindow) : PixelFilter(target), clipWindow_(clipWindow) {}
+    ClipFilter(PixelPainter &target, const RectInclusive &clipWindow) : PixelFilter(target), clipWindow_(clipWindow) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
         if (checkPos(x, y))
@@ -278,7 +306,7 @@ protected:
     }
 
 private:
-    Rect clipWindow_;
+    RectInclusive clipWindow_;
 };
 
 // pixel spread filter
@@ -300,8 +328,8 @@ protected:
     void recalculatePos(unsigned int &x, unsigned int &y) {
         int dx = static_cast<int>(x) - offset_.x;
         int dy = static_cast<int>(y) - offset_.y;
-        x = static_cast<unsigned int>(offset_.x + zoom_.x * dx);
-        y = static_cast<unsigned int>(offset_.y + zoom_.y * dy);
+        x = static_cast<unsigned int>(offset_.x + dx / zoom_.x);
+        y = static_cast<unsigned int>(offset_.y + dy / zoom_.y);
     }
 private:
     Point offset_;

@@ -48,26 +48,33 @@ struct PointF {
     }
 };
 
-struct Rect {
+struct RectInclusive;
+
+/*
+    * Rectangle structure
+    * x1, y1 - top left corner
+    * x2, y2 - bottom right corner, exclusive
+*/
+struct RectExclusive {
     int x1, y1, x2, y2;
 
     Point topLeft() const { return Point(x1, y1); }
 
     Point bottomRight() const { return Point(x2, y2); }
 
-    Rect &topLeft(const Point &newValue) {
+    RectExclusive &topLeft(const Point &newValue) {
         x1 = newValue.x;
         y1 = newValue.y;
         return *this;
     }
 
-    Rect &bottomRight(const Point &newValue) {
+    RectExclusive &bottomRight(const Point &newValue) {
         x2 = newValue.x;
         y2 = newValue.y;
         return *this;
     }
 
-    Rect &size(const Point &newValue) {
+    RectExclusive &size(const Point &newValue) {
         x2 = x1 + newValue.x - 1;
         y2 = y1 + newValue.y - 1;
         return *this;
@@ -84,10 +91,71 @@ struct Rect {
 
     int height() const { return std::abs(y2 - y1); }
 
-    static Rect make_rect(int x1, int y1, int x2, int y2) {
+    static RectExclusive make_rect(int x1, int y1, int x2, int y2) {
         return {x1, y1, x2, y2};
     }
+
+    // Convert to RectInclusive
+    RectInclusive toInclusive() const;
+
+    // Create from RectInclusive
+    static RectExclusive fromInclusive(const RectInclusive &rect);
 };
+
+typedef RectExclusive Rect;
+
+/*
+    * Rectangle structure
+    * x1, y1 - top left corner
+    * x2, y2 - bottom right corner, inclusive
+*/
+struct RectInclusive {
+    int x1, y1, x2, y2;
+
+    Point topLeft() const { return Point(x1, y1); }
+
+    Point bottomRight() const { return Point(x2, y2); }
+
+    RectInclusive &topLeft(const Point &newValue) {
+        x1 = newValue.x;
+        y1 = newValue.y;
+        return *this;
+    }
+
+    RectInclusive &bottomRight(const Point &newValue) {
+        x2 = newValue.x;
+        y2 = newValue.y;
+        return *this;
+    }
+
+    RectInclusive &size(const Point &newValue) {
+        x2 = x1 + newValue.x - 1;
+        y2 = y1 + newValue.y - 1;
+        return *this;
+    }
+
+    Point size() {
+        Point result;
+        result.x = width();
+        result.y = height();
+        return result;
+    }
+
+    int width() const { return std::abs(x2 - x1) + 1; }
+
+    int height() const { return std::abs(y2 - y1) + 1; }
+
+    static RectInclusive make_rect(int x1, int y1, int x2, int y2) {
+        return {x1, y1, x2, y2};
+    }
+
+    // Convert to RectExclusive
+    RectExclusive toExclusive() const;
+
+    // Create from RectExclusive
+    static RectInclusive fromExclusive(const RectExclusive &rect);
+};
+
 
 // pixel color specification for RGB image
 struct RgbColor {
@@ -138,5 +206,36 @@ struct RgbaColor {
     }
 };
 
+// Implement the conversion functions between RectExclusive and RectInclusive
+
+// RectExclusive to RectInclusive conversion
+RectInclusive RectExclusive::toInclusive() const {
+    RectInclusive rect;
+    rect.x1 = x1;
+    rect.y1 = y1;
+    rect.x2 = x2 - 1; // Convert exclusive to inclusive (subtract 1)
+    rect.y2 = y2 - 1; // Convert exclusive to inclusive (subtract 1)
+    return rect;
+}
+
+// RectInclusive to RectExclusive conversion
+RectExclusive RectInclusive::toExclusive() const {
+    RectExclusive rect;
+    rect.x1 = x1;
+    rect.y1 = y1;
+    rect.x2 = x2 + 1; // Convert inclusive to exclusive (add 1)
+    rect.y2 = y2 + 1; // Convert inclusive to exclusive (add 1)
+    return rect;
+}
+
+// Create RectExclusive from RectInclusive
+RectExclusive RectExclusive::fromInclusive(const RectInclusive& rect) {
+    return rect.toExclusive();
+}
+
+// Create RectInclusive from RectExclusive
+RectInclusive RectInclusive::fromExclusive(const RectExclusive& rect) {
+    return rect.toInclusive();
+}
 
 #endif //UIMG_STRUCTS_H
