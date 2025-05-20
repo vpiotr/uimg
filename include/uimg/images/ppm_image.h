@@ -232,7 +232,7 @@ private:
 
 // optimized version of PPM image loader for RgbImage target
 class PpmImageLoaderForRgbImage : public PpmImageLoader {
-    typedef PpmImageLoader inherited;
+    using inherited = PpmImageLoader;
 protected:
     virtual PixelImageBase *newImage(const PixelImageMetaInfo &meta) {
         return new RgbImage(meta.getSize().x, meta.getSize().y);

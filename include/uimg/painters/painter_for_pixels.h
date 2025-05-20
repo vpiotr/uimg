@@ -9,7 +9,7 @@
 #include "uimg/utils/math_utils.h"
 #include "uimg/utils/cubic_spline_utils.h"
 
-typedef std::vector<unsigned int> LineDashPattern;
+using LineDashPattern = std::vector<unsigned int>;
 
 class LinePainterForPixels : public LinePainter {
 public:
@@ -28,7 +28,7 @@ public:
             return;
         }
 
-        typedef float real;
+        using real = float;
         real deltax = static_cast<real>(x2) - static_cast<real>(x1);
         real deltay = static_cast<real>(y2) - static_cast<real>(y1);
         real error = 0.0;
@@ -106,7 +106,7 @@ public:
             return;
         }
 
-        typedef float real;
+        using real = float;
         real deltax = static_cast<real>(x2) - static_cast<real>(x1);
         real deltay = static_cast<real>(y2) - static_cast<real>(y1);
         real error = 0.0;
@@ -735,7 +735,7 @@ public:
     // algorithm from: http://forum.devmaster.net/t/advanced-rasterization/6145
     // requires points to be sorted counter-clockwise order
     virtual void drawFull(const Point &p1, const Point &p2, const Point &p3, const RgbColor &color) {
-        typedef int pixpos;
+        using pixpos = int;
         pixpos x1 = p1.x;
         pixpos x2 = p2.x;
         pixpos x3 = p3.x;

@@ -126,7 +126,7 @@ protected:
 };
 
 class ScalingCopierBase : public BilinearSamplingCopier {
-    typedef BilinearSamplingCopier inherited;
+    using inherited = BilinearSamplingCopier;
 public:
     ScalingCopierBase() : initialized_(false) {}
 
@@ -221,7 +221,7 @@ private:
 };
 
 class RotationCopierBase : public BilinearSamplingCopier {
-    typedef BilinearSamplingCopier inherited;
+    using inherited = BilinearSamplingCopier;
 public:
     RotationCopierBase(double angle, const Point &srcOffset) : initialized_(false), angle_(angle), ratioX_(1.0),
                                                                ratioY_(1.0), srcOffset_(srcOffset) {}

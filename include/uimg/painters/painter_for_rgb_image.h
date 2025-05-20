@@ -59,7 +59,7 @@ private:
 };
 
 class LinePainterForRgbImage : public LinePainterForPixels {
-    typedef LinePainterForPixels inherited;
+    using inherited = LinePainterForPixels;
 public:
     LinePainterForRgbImage(RgbImage &image) : LinePainterForPixels(pixelPainter_), image_(image),
                                               pixelPainter_(image) {}
