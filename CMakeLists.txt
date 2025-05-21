@@ -11,7 +11,6 @@ include_directories(apps/include/samples/chart3d)
 include_directories(apps/include/samples/draw_primitives)
 include_directories(apps/include/samples/text_demo)
 include_directories(apps/include/samples/filter_demo)
-include_directories(apps/include/samples/line_chart_demo) # Added for line_chart_demo
 include_directories(include)
 include_directories(include/uimg)
 include_directories(include/uimg/painters)
@@ -104,28 +103,6 @@ add_executable(filter_demo
         include/uimg/filters/filter_base.h
         include/uimg/filters/filter_for_pixels.h)
 
-add_executable(line_chart_demo
-        LICENSE
-        README.md
-        apps/line_chart_demo.cpp
-        apps/samples/line_chart_demo/test_line_chart_demo.cpp
-        apps/include/samples/line_chart_demo/test_line_chart_demo.h
-        apps/include/samples/test_painter_base.h
-        include/uimg/base/structs.h
-        include/uimg/images/rgb_image.h
-        include/uimg/images/ppm_image.h
-        include/uimg/pixels/pixel_painter.h
-        include/uimg/painters/painter_base.h
-        include/uimg/painters/painter_for_pixels.h
-        include/uimg/painters/painter_for_rgb_image.h
-        include/uimg/fonts/bdf_font.h
-        include/uimg/fonts/painter_for_bdf_font.h
-        include/uimg/text/text_painter.h
-        include/uimg/text/text_base.h
-        include/uimg/utils/color_utils.h
-        include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h)
-
 add_executable(enhanced_chart_demo
         LICENSE
         README.md
@@ -133,7 +110,6 @@ add_executable(enhanced_chart_demo
         include/uimg/charts/chart.h
         include/uimg/charts/chart_styles.h
         include/uimg/charts/chart_renderer.h
-        apps/include/samples/line_chart_demo/test_line_chart_demo.h
         apps/include/samples/test_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
