@@ -8,15 +8,15 @@
 
 using namespace uimg::charts;
 
-struct enhanced_chart_demo_args {
+struct line_chart_demo_args {
     std::string fontPath;
-    std::string outFileName = "enhanced_chart_demo_output.ppm";
+    std::string outFileName = "2d_line_chart_demo_output.ppm";
     float lineThickness = 2.0f;
     int numCharts = 2;         // Number of charts to display
     bool useDarkTheme = false; // Use dark theme for charts
     
-    static enhanced_chart_demo_args parse(int argc, const char* argv[]) {
-        enhanced_chart_demo_args args;
+    static line_chart_demo_args parse(int argc, const char* argv[]) {
+        line_chart_demo_args args;
         for (int i = 1; i < argc; ++i) {
             std::string arg = argv[i];
             if (arg == "-font" && i + 1 < argc) {
@@ -49,23 +49,23 @@ struct enhanced_chart_demo_args {
 int main(int argc, char *argv[]) {
     // Print usage information
     if (argc < 3) {
-        std::cout << "Usage: enhanced_chart_demo -font <path/to/font.bdf> [options]" << std::endl;
+        std::cout << "Usage: 2d_line_chart_demo -font <path/to/font.bdf> [options]" << std::endl;
         std::cout << "Options:" << std::endl;
         std::cout << "  -font <path>       : Path to the BDF font file (required)" << std::endl;
-        std::cout << "  -out <file.ppm>    : Output file path (default: enhanced_chart_demo_output.ppm)" << std::endl; 
+        std::cout << "  -out <file.ppm>    : Output file path (default: 2d_line_chart_demo_output.ppm)" << std::endl; 
         std::cout << "  -thickness <value> : Line thickness (default: 2.0)" << std::endl;
         std::cout << "  -charts <num>      : Number of charts to display (1-4, default: 2)" << std::endl;
         std::cout << "  -dark              : Use dark theme for charts" << std::endl;
-        std::cout << "Example: enhanced_chart_demo -font ../fonts/courR12.bdf -charts 4 -dark" << std::endl;
+        std::cout << "Example: 2d_line_chart_demo -font ../fonts/courR12.bdf -charts 4 -dark" << std::endl;
         return 1;
     }
 
     // Parse command line arguments
-    auto args = enhanced_chart_demo_args::parse(argc, const_cast<const char**>(argv));
+    auto args = line_chart_demo_args::parse(argc, const_cast<const char**>(argv));
 
     if (args.fontPath.empty()) {
         std::cerr << "Error: Font path is mandatory." << std::endl;
-        std::cout << "Usage: enhanced_chart_demo -font <path/to/font.bdf> [options]" << std::endl;
+        std::cout << "Usage: 2d_line_chart_demo -font <path/to/font.bdf> [options]" << std::endl;
         return 1;
     }
 
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
         // Render all charts and save to file
         renderer.renderToFile(args.outFileName);
         
-        std::cout << "Enhanced chart demo image created: " << args.outFileName << std::endl;
+        std::cout << "2D Line chart demo image created: " << args.outFileName << std::endl;
         std::cout << "Number of charts: " << args.numCharts << std::endl;
         std::cout << "Line thickness: " << args.lineThickness << std::endl;
         std::cout << "Theme: " << (args.useDarkTheme ? "Dark" : "Light") << std::endl;

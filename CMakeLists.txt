@@ -103,10 +103,10 @@ add_executable(filter_demo
         include/uimg/filters/filter_base.h
         include/uimg/filters/filter_for_pixels.h)
 
-add_executable(enhanced_chart_demo
+add_executable(2d_line_chart_demo
         LICENSE
         README.md
-        apps/enhanced_chart_demo.cpp
+        apps/2d_line_chart_demo.cpp
         include/uimg/charts/chart.h
         include/uimg/charts/chart_styles.h
         include/uimg/charts/chart_renderer.h
