@@ -25,8 +25,9 @@ public:
      * @param width Width of the output image.
      * @param height Height of the output image.
      * @param fontPath Path to the BDF font file.
+     * @param lineThickness The thickness of the lines in the chart (default: 1).
      */
-    LineChartDemo(int width, int height, const std::string& fontPath);
+    LineChartDemo(int width, int height, const std::string& fontPath, float lineThickness = 1.0f);
 
     /**
      * @brief Generates the complete chart image with two sub-charts and saves it.
@@ -99,6 +100,7 @@ private:
     // Image and drawing utilities
     RgbImage image_;
     PixelPainterForRgbImage pixelPainter_; // For general pixel operations if needed by text painter
+    float lineThickness_; // Thickness of lines in the chart
     LinePainterForRgbImage linePainter_;   // For drawing lines (axes, series)
     RectPainterForRgbImage rectPainter_;   // For drawing rectangles (legend color boxes)
     

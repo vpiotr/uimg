@@ -4,8 +4,26 @@
 #include <fstream>  // For std::ofstream
 #include "uimg/images/ppm_image.h" // For PpmWriterForRgbImage
 
+// Custom class for drawing thick lines on RgbImage
+class ThickLinePainterForRgbImage {
+public:
+    ThickLinePainterForRgbImage(RgbImage &image, float thickness) 
+        : image_(image), 
+          pixelPainter_(image), 
+          thickLinePainter_(pixelPainter_, thickness) {}
+    
+    void drawLine(int x1, int y1, int x2, int y2, const RgbColor &color) {
+        thickLinePainter_.drawLine(x1, y1, x2, y2, color);
+    }
+    
+private:
+    RgbImage &image_;
+    PixelPainterForRgbImage pixelPainter_;
+    ThickLinePainterForPixels thickLinePainter_;
+};
+
 // Constructor
-LineChartDemo::LineChartDemo(int width, int height, const std::string& fontPath)
+LineChartDemo::LineChartDemo(int width, int height, const std::string& fontPath, float lineThickness)
     : image_(width, height),
       pixelPainter_(image_),
       linePainter_(image_),
@@ -17,7 +35,8 @@ LineChartDemo::LineChartDemo(int width, int height, const std::string& fontPath)
       textColor_{0, 0, 0},             // Default black text
       gridColor_{200, 200, 200},       // Default light gray grid
       imageWidth_(width),
-      imageHeight_(height) {
+      imageHeight_(height),
+      lineThickness_(lineThickness) {
     
     // Load the font from file
     std::ifstream fontFile(fontPath, std::ios::binary);
@@ -206,15 +225,33 @@ void LineChartDemo::drawSeries(const Rect& plotArea, const std::vector<SeriesDat
     for (const auto& series : seriesSet) {
         if (series.points.size() < 2) continue;
 
-        for (size_t i = 0; i < series.points.size() - 1; ++i) {
-            PointF p1_world = series.points[i];
-            PointF p2_world = series.points[i+1];
+        // Choose between regular line painter and thick line painter based on lineThickness_
+        if (lineThickness_ <= 1.0f) {
+            // Use regular line painter for normal thickness
+            for (size_t i = 0; i < series.points.size() - 1; ++i) {
+                PointF p1_world = series.points[i];
+                PointF p2_world = series.points[i+1];
 
-            PointF p1_screen = worldToScreen(p1_world.x, p1_world.y, plotArea, xMin, xMax, yMin, yMax);
-            PointF p2_screen = worldToScreen(p2_world.x, p2_world.y, plotArea, xMin, xMax, yMin, yMax);
+                PointF p1_screen = worldToScreen(p1_world.x, p1_world.y, plotArea, xMin, xMax, yMin, yMax);
+                PointF p2_screen = worldToScreen(p2_world.x, p2_world.y, plotArea, xMin, xMax, yMin, yMax);
 
-            linePainter_.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
-                                  static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), series.color);
+                linePainter_.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
+                                      static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), series.color);
+            }
+        } else {
+            // Use thick line painter for thicker lines
+            ThickLinePainterForRgbImage thickLinePainter(image_, lineThickness_);
+            
+            for (size_t i = 0; i < series.points.size() - 1; ++i) {
+                PointF p1_world = series.points[i];
+                PointF p2_world = series.points[i+1];
+
+                PointF p1_screen = worldToScreen(p1_world.x, p1_world.y, plotArea, xMin, xMax, yMin, yMax);
+                PointF p2_screen = worldToScreen(p2_world.x, p2_world.y, plotArea, xMin, xMax, yMin, yMax);
+
+                thickLinePainter.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
+                                         static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), series.color);
+            }
         }
     }
 }
