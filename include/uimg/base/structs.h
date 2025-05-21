@@ -5,6 +5,8 @@
 #ifndef UIMG_STRUCTS_H
 #define UIMG_STRUCTS_H
 
+#include <cmath> // For std::abs
+
 // pixel position
 struct Point {
     int x, y;
@@ -209,7 +211,7 @@ struct RgbaColor {
 // Implement the conversion functions between RectExclusive and RectInclusive
 
 // RectExclusive to RectInclusive conversion
-RectInclusive RectExclusive::toInclusive() const {
+inline RectInclusive RectExclusive::toInclusive() const {
     RectInclusive rect;
     rect.x1 = x1;
     rect.y1 = y1;
@@ -219,7 +221,7 @@ RectInclusive RectExclusive::toInclusive() const {
 }
 
 // RectInclusive to RectExclusive conversion
-RectExclusive RectInclusive::toExclusive() const {
+inline RectExclusive RectInclusive::toExclusive() const {
     RectExclusive rect;
     rect.x1 = x1;
     rect.y1 = y1;
@@ -229,12 +231,12 @@ RectExclusive RectInclusive::toExclusive() const {
 }
 
 // Create RectExclusive from RectInclusive
-RectExclusive RectExclusive::fromInclusive(const RectInclusive& rect) {
+inline RectExclusive RectExclusive::fromInclusive(const RectInclusive& rect) {
     return rect.toExclusive();
 }
 
 // Create RectInclusive from RectExclusive
-RectInclusive RectInclusive::fromExclusive(const RectExclusive& rect) {
+inline RectInclusive RectInclusive::fromExclusive(const RectExclusive& rect) {
     return rect.toInclusive();
 }
 

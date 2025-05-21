@@ -2,6 +2,7 @@
 #define _UIMG_RGB_IMAGE_H__
 
 #include <vector>
+#include <cstddef> // For size_t
 
 #include "uimg/base/structs.h"
 #include "uimg/images/pixel_image.h"
