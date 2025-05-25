@@ -49,13 +49,30 @@ Sample output:
 
 4) 3D Chart
 
-Very basic 3D chart using colorful lines. Supports optional anti-aliasing for smoother line rendering.
+Customizable 3D surface charts with support for multiple functions and layouts. Features include:
+- Optional anti-aliasing for smoother line rendering
+- Multiple charts on a single image
+- Customizable chart position, size, and appearance
+- Several built-in function types (Sinc, Gaussian, Ripple, Saddle)
 
 See [apps/chart3d.cpp](apps/chart3d.cpp)
 
 Usage:
 ```
-./build/chart3d -out output.ppm -aa       # With anti-aliasing
+# Single chart with anti-aliasing
+./build/chart3d -out output.ppm -aa
+
+# Two charts with anti-aliasing
+./build/chart3d -out output.ppm -aa -charts 2
+
+# Four charts in grid layout
+./build/chart3d -out output.ppm -aa -charts 4
+
+# Four charts without titles
+./build/chart3d -out output.ppm -aa -charts 4 -notitle
+
+# Legacy mode (for backward compatibility)
+./build/chart3d -out output.ppm -aa -legacy
 ```
 
 Sample output (anti-aliased):

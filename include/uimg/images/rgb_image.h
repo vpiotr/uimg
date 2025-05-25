@@ -40,6 +40,21 @@ public:
         }
         return r;
     }
+    
+    // For direct x,y coordinate access
+    RgbColor getPixel(int x, int y) const {
+        return getPixel(Point(x, y));
+    }
+    
+    // Alias for width() for consistency with other libraries
+    unsigned int getWidth() const {
+        return width();
+    }
+    
+    // Alias for height() for consistency with other libraries
+    unsigned int getHeight() const {
+        return height();
+    }
 
     virtual void setPixel(const Point &pos, const RgbColor &color) {
         if (pos.x < static_cast<int>(width_) && pos.y < static_cast<int>(height_)) {

@@ -165,6 +165,10 @@ struct RgbColor {
     unsigned char green;
     unsigned char blue;
 
+    static RgbColor make_rgb(int r, int g, int b) {
+        return {(unsigned char)r, (unsigned char)g, (unsigned char)b};
+    }
+
     bool operator!=(const RgbColor &rhs) const {
         return (red != rhs.red) ||
                (green != rhs.green) ||

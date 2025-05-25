@@ -65,13 +65,19 @@ add_executable(chart3d
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
+        include/uimg/painters/rect_painter.h
+        include/uimg/painters/antialiased_painter_for_pixels.h
         include/uimg/images/ppm_image.h
         include/uimg/images/rgb_image.h
         include/uimg/utils/algorithm.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/cubic_spline_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)
+        include/uimg/utils/point_utils.h
+        include/uimg/pixels/pixel_painter.h
+        include/uimg/pixels/pixel_source.h
+        include/uimg/base/structs.h
+        include/uimg/images/pixel_image.h)
         
 add_executable(draw_primitives
         LICENSE
@@ -145,3 +151,5 @@ add_executable(text_demo
         include/uimg/utils/color_utils.h
         include/uimg/utils/math_utils.h
         include/uimg/utils/point_utils.h)
+
+
