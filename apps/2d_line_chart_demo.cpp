@@ -14,6 +14,7 @@ struct line_chart_demo_args {
     float lineThickness = 2.0f;
     int numCharts = 2;         // Number of charts to display
     bool useDarkTheme = false; // Use dark theme for charts
+    bool useAntiAliasing = false; // Use anti-aliased line rendering
     
     static line_chart_demo_args parse(int argc, const char* argv[]) {
         line_chart_demo_args args;
@@ -40,6 +41,8 @@ struct line_chart_demo_args {
                 }
             } else if (arg == "-dark") {
                 args.useDarkTheme = true;
+            } else if (arg == "-aa" || arg == "-antialiasing") {
+                args.useAntiAliasing = true;
             }
         }
         return args;
@@ -56,6 +59,8 @@ int main(int argc, char *argv[]) {
         std::cout << "  -thickness <value> : Line thickness (default: 2.0)" << std::endl;
         std::cout << "  -charts <num>      : Number of charts to display (1-4, default: 2)" << std::endl;
         std::cout << "  -dark              : Use dark theme for charts" << std::endl;
+        std::cout << "  -aa, -antialiasing : Enable anti-aliased line rendering" << std::endl;
+        std::cout << "  -aa, -antialiasing : Enable anti-aliasing for line rendering" << std::endl;
         std::cout << "Example: 2d_line_chart_demo -font ../fonts/courR12.bdf -charts 4 -dark" << std::endl;
         return 1;
     }
@@ -71,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     try {
         // Create renderer with 800x600 canvas
-        ChartRenderer renderer(800, 600, args.fontPath);
+        ChartRenderer renderer(800, 600, args.fontPath, args.useAntiAliasing);
         
         // Choose style based on theme option
         ChartStyle chartStyle = args.useDarkTheme ? 
@@ -154,7 +159,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Number of charts: " << args.numCharts << std::endl;
         std::cout << "Line thickness: " << args.lineThickness << std::endl;
         std::cout << "Theme: " << (args.useDarkTheme ? "Dark" : "Light") << std::endl;
-        
+        std::cout << "Anti-aliasing: " << (args.useAntiAliasing ? "Enabled" : "Disabled") << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "An error occurred: " << e.what() << std::endl;
         return 1;

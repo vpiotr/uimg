@@ -4,6 +4,7 @@
 #include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_rgb_image.h"
 #include "uimg/painters/painter_for_pixels.h"
+#include "uimg/painters/antialiased_painter_for_pixels.h"
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "uimg/images/ppm_image.h"
@@ -35,6 +36,26 @@ private:
     RgbImage& image_;
     PixelPainterForRgbImage pixelPainter_;
     ThickLinePainterForPixels thickLinePainter_;
+};
+
+/**
+ * Helper class for drawing anti-aliased thick lines
+ */
+class AntiAliasedThickLinePainter {
+public:
+    AntiAliasedThickLinePainter(RgbImage& image, float thickness) 
+        : image_(image), 
+          pixelPainter_(image), 
+          antiAliasedThickLinePainter_(pixelPainter_, thickness) {}
+    
+    void drawLine(int x1, int y1, int x2, int y2, const RgbColor& color) {
+        antiAliasedThickLinePainter_.drawLine(x1, y1, x2, y2, color);
+    }
+    
+private:
+    RgbImage& image_;
+    PixelPainterForRgbImage pixelPainter_;
+    AntiAliasedThickLinePainterForPixels antiAliasedThickLinePainter_;
 };
 
 /**
@@ -76,8 +97,9 @@ public:
      * @param width Width of the output image
      * @param height Height of the output image
      * @param fontPath Path to the BDF font file
+     * @param useAntiAliasing Enable anti-aliased line rendering
      */
-    ChartRenderer(int width, int height, const std::string& fontPath) 
+    ChartRenderer(int width, int height, const std::string& fontPath, bool useAntiAliasing = false) 
         : image_(width, height),
           pixelPainter_(image_),
           linePainter_(image_),
@@ -85,7 +107,8 @@ public:
           font_(),
           textPainter_(pixelPainter_, Point(width, height)),
           imageWidth_(width),
-          imageHeight_(height) {
+          imageHeight_(height),
+          useAntiAliasing_(useAntiAliasing) {
         
         // Load the font
         std::ifstream fontFile(fontPath, std::ios::binary);
@@ -337,32 +360,67 @@ private:
             
             // Use appropriate line painter based on thickness
             if (lineThickness <= 1.0f) {
-                // Standard line painter for thin lines
-                for (size_t i = 0; i < points.size() - 1; ++i) {
-                    const auto& p1 = points[i];
-                    const auto& p2 = points[i+1];
+                if (useAntiAliasing_) {
+                    // Anti-aliased line painter for thin lines
+                    AntiAliasedLinePainterForPixels antiAliasedPainter(pixelPainter_);
                     
-                    PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
-                    PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
-                    
-                    linePainter_.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
-                                        static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), 
-                                        series.getStyle().color);
+                    for (size_t i = 0; i < points.size() - 1; ++i) {
+                        const auto& p1 = points[i];
+                        const auto& p2 = points[i+1];
+                        
+                        PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
+                        PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
+                        
+                        antiAliasedPainter.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
+                                                    static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), 
+                                                    series.getStyle().color);
+                    }
+                } else {
+                    // Standard line painter for thin lines
+                    for (size_t i = 0; i < points.size() - 1; ++i) {
+                        const auto& p1 = points[i];
+                        const auto& p2 = points[i+1];
+                        
+                        PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
+                        PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
+                        
+                        linePainter_.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
+                                            static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), 
+                                            series.getStyle().color);
+                    }
                 }
             } else {
-                // Thick line painter for thicker lines
-                ThickLinePainter thickPainter(image_, lineThickness);
-                
-                for (size_t i = 0; i < points.size() - 1; ++i) {
-                    const auto& p1 = points[i];
-                    const auto& p2 = points[i+1];
+                // Choose between standard or anti-aliased thick line painter
+                if (useAntiAliasing_) {
+                    // Anti-aliased thick line painter
+                    AntiAliasedThickLinePainter thickPainter(image_, lineThickness);
                     
-                    PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
-                    PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
+                    for (size_t i = 0; i < points.size() - 1; ++i) {
+                        const auto& p1 = points[i];
+                        const auto& p2 = points[i+1];
+                        
+                        PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
+                        PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
+                        
+                        thickPainter.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
+                                            static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y),
+                                            series.getStyle().color);
+                    }
+                } else {
+                    // Standard thick line painter
+                    ThickLinePainter thickPainter(image_, lineThickness);
                     
-                    thickPainter.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
-                                        static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y),
-                                        series.getStyle().color);
+                    for (size_t i = 0; i < points.size() - 1; ++i) {
+                        const auto& p1 = points[i];
+                        const auto& p2 = points[i+1];
+                        
+                        PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
+                        PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
+                        
+                        thickPainter.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
+                                            static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y),
+                                            series.getStyle().color);
+                    }
                 }
             }
         }
@@ -435,6 +493,7 @@ private:
     
     int imageWidth_;
     int imageHeight_;
+    bool useAntiAliasing_;
     
     std::vector<Chart> charts_;
     std::vector<ChartLayout> layouts_;

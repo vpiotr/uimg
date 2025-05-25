@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 #include <ostream>
+#include <iostream> // For std::cout
+#include <cstdlib> // For exit
 
 #include "uimg/base/structs.h"
 #include "uimg/images/rgb_image.h"
@@ -13,8 +15,10 @@
 struct test_args {
     const std::string testName;
     const std::string outFileName;
+    bool useAntiAliasing;
 
-    test_args(std::string testName, std::string outFileName) : testName(testName), outFileName(outFileName) {}
+    test_args(std::string testName, std::string outFileName, bool useAntiAliasing = false) 
+        : testName(testName), outFileName(outFileName), useAntiAliasing(useAntiAliasing) {}
 };
 
 class test_painter_base {
@@ -38,12 +42,24 @@ public:
 
         std::string testName(defaultTestName);
         std::string specOutFileName;
+        bool useAntiAliasing = false;
 
         for (int i = 1; i < argc; ++i) {
             if ((strcmp(argv[i], "-run") == 0) && (i + 1 < argc)) {
                 testName = std::string(argv[i + 1]);
             } else if ((strcmp(argv[i], "-out") == 0) && (i + 1 < argc)) {
                 specOutFileName = std::string(argv[i + 1]);
+            } else if ((strcmp(argv[i], "-aa") == 0) || (strcmp(argv[i], "-antialiasing") == 0)) {
+                useAntiAliasing = true;
+            } else if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "--help") == 0)) {
+                // Display help information
+                std::cout << "Usage: " << argv[0] << " [options]" << std::endl;
+                std::cout << "Options:" << std::endl;
+                std::cout << "  -run <test>         : Run specific test" << std::endl;
+                std::cout << "  -out <file>         : Set output file name" << std::endl;
+                std::cout << "  -aa, -antialiasing  : Enable anti-aliased line rendering" << std::endl;
+                std::cout << "  -h, -help, --help   : Display this help information" << std::endl;
+                exit(0);
             }
         }
 
@@ -52,7 +68,7 @@ public:
             outFileName = specOutFileName;
         }
 
-        return {testName, outFileName};
+        return {testName, outFileName, useAntiAliasing};
     }
 
 protected:

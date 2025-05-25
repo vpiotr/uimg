@@ -9,6 +9,7 @@
 #include "uimg/charts/chart_styles.h"
 
 #include <vector>
+#include <functional>
 #include <string>
 #include <memory>
 
