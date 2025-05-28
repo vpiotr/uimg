@@ -50,10 +50,11 @@ Sample output:
 4) 3D Chart
 
 Customizable 3D surface charts with support for multiple functions and layouts. Features include:
+- Support for 1-4 charts displayed simultaneously on a single image
 - Optional anti-aliasing for smoother line rendering
-- Multiple charts on a single image
-- Customizable chart position, size, and appearance
+- Automatic layout management for multiple charts
 - Several built-in function types (Sinc, Gaussian, Ripple, Saddle)
+- Backward compatibility with single-chart mode
 
 See [apps/chart3d.cpp](apps/chart3d.cpp)
 
@@ -67,17 +68,11 @@ Usage:
 
 # Four charts in grid layout
 ./build/chart3d -out output.ppm -aa -charts 4
-
-# Four charts without titles
-./build/chart3d -out output.ppm -aa -charts 4 -notitle
-
-# Legacy mode (for backward compatibility)
-./build/chart3d -out output.ppm -aa -legacy
 ```
 
-Sample output (anti-aliased):
+Sample output (dual charts with anti-aliasing):
  
-![3d chart](images/chart3d.png?raw=true)
+![3D dual chart](images/chart3d_dual_aa.png?raw=true)
 
 5) Text Demo
 
