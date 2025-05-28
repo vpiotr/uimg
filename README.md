@@ -12,7 +12,22 @@ Output: currently only PPM files (batch generation).
 
 # Samples
 
-1) Voronoi
+1) 2D Line Chart
+
+Line chart with customizable options including anti-aliasing for smoother line rendering.
+
+See [apps/2d_line_chart_demo.cpp](apps/2d_line_chart_demo.cpp)
+
+Usage:
+```
+./build/2d_line_chart_demo -font fonts/courR12.bdf -charts 2 -out output.ppm -aa
+```
+
+Sample output (anti-aliased): 
+
+![2D Line Chart](images/2d_line_chart_aa.png?raw=true)
+
+2) Voronoi
 
 Pixel map depicting Voronoi diagram.
 
@@ -22,7 +37,7 @@ Sample output:
 
 ![Voronoi diagram](images/voronoi.png?raw=true)
 
-2) Mandelbrot
+3) Mandelbrot
 
 Pixel map image for selected window.
 
@@ -32,17 +47,34 @@ Sample output:
 
 ![Mandelbrot](images/mandelbrot.png?raw=true)
 
-3) 3D Chart
+4) 3D Chart
 
-Very basic 3D chart using colorful lines.
+Customizable 3D surface charts with support for multiple functions and layouts. Features include:
+- Support for 1-4 charts displayed simultaneously on a single image
+- Optional anti-aliasing for smoother line rendering
+- Automatic layout management for multiple charts
+- Several built-in function types (Sinc, Gaussian, Ripple, Saddle)
+- Backward compatibility with single-chart mode
 
 See [apps/chart3d.cpp](apps/chart3d.cpp)
 
-Sample output:
- 
-![3d chart](images/chart3d.png?raw=true)
+Usage:
+```
+# Single chart with anti-aliasing
+./build/chart3d -out output.ppm -aa
 
-4) Text Demo
+# Two charts with anti-aliasing
+./build/chart3d -out output.ppm -aa -charts 2
+
+# Four charts in grid layout
+./build/chart3d -out output.ppm -aa -charts 4
+```
+
+Sample output (dual charts with anti-aliasing):
+ 
+![3D dual chart](images/chart3d_dual_aa.png?raw=true)
+
+5) Text Demo
 
 Demonstration of BDF font rendering capabilities.
 
@@ -52,7 +84,7 @@ Sample output:
 
 ![Text Demo](images/text_demo_output.png?raw=true)
 
-5) Filter Demo
+6) Filter Demo
 
 Demonstration of various pixel filters including transformations, transparency, zoom, and gradients.
 
@@ -62,7 +94,7 @@ Sample output:
 
 ![Filter Demo](images/filter_demo_output.png?raw=true)
 
-6) Primitives
+7) Primitives
 
 Demonstration of included primitive shape support.
 

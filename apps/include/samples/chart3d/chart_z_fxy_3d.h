@@ -6,14 +6,17 @@
 #include <vector>
 #include <utility>
 #include <climits>
+#include <memory>
 
 #include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_pixels.h"
+#include "uimg/painters/antialiased_painter_for_pixels.h"
 #include "uimg/utils/math_utils.h"
 
 class chart_z_fxy_3d {
 public:
-    chart_z_fxy_3d(const Point &canvasSize, PixelPainter &pixelPainter) : canvasSize_(canvasSize), pixelPainter_(pixelPainter) {}
+    chart_z_fxy_3d(const Point &canvasSize, PixelPainter &pixelPainter, bool useAntiAliasing = false) 
+        : canvasSize_(canvasSize), pixelPainter_(pixelPainter), useAntiAliasing_(useAntiAliasing) {}
 
     virtual Point getChartSize() {
         return { static_cast<int>(round(0.8 * canvasSize_.x)), static_cast<int>(round(0.8 * canvasSize_.y)) };
@@ -53,7 +56,16 @@ public:
 
     void paint() {
         PixelPainter *pixelPainter = &pixelPainter_;
-        LinePainterForPixels lnPainter(*pixelPainter);
+        std::unique_ptr<LinePainterForPixels> lnPainter;
+        
+        // Create appropriate line painter based on anti-aliasing setting
+        if (useAntiAliasing_) {
+            lnPainter.reset(new AntiAliasedLinePainterForPixels(*pixelPainter));
+            std::cerr << "Using anti-aliased line painter" << std::endl;
+        } else {
+            lnPainter.reset(new LinePainterForPixels(*pixelPainter));
+            std::cerr << "Using standard line painter" << std::endl;
+        }
         RgbColor color;
 
         // screen size
@@ -120,10 +132,13 @@ public:
 
             for (int m = -midSampleSpaceX; m <= midSampleSpaceX; m += sampleStepX) {
                 x = sampleToInputShiftX + (m + midSampleSpaceX) * sampleToInputRatioX;
+                
+                // Calculate z value based on x,y function
                 z = resultScale * getFunValue(x, y);
 
-                xe = round(xe0 + m + sampleScaleForX * q);
-                ye = round(ye0 + sampleScaleForY * q + z);
+                // Calculate screen coordinates with proper rounding
+                xe = std::round(xe0 + m + sampleScaleForX * q);
+                ye = std::round(ye0 + sampleScaleForY * q + z);
 
                 if (m <= -midSampleSpaceX) {
                     f1 = 0;
@@ -160,8 +175,10 @@ public:
 
                     if (f1 * f2 == 1) {
                         color = getPlotColor(x, y, z);
+
+                        // For non-anti-aliased version, just draw as before
                         pixelPainter->putPixel(x1, maxY - y1, color);
-                        lnPainter.drawLine(x1, maxY - y1, x2, maxY - y2, color);
+                        lnPainter->drawLine(x1, maxY - y1, x2, maxY - y2, color);
                     }
 
                     x1 = x2; 
@@ -183,6 +200,7 @@ protected:
 private:
     PixelPainter &pixelPainter_;
     Point canvasSize_;
+    bool useAntiAliasing_;
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define _UIMG_RGB_IMAGE_H__
 
 #include <vector>
+#include <cstddef> // For size_t
 
 #include "uimg/base/structs.h"
 #include "uimg/images/pixel_image.h"
@@ -38,6 +39,21 @@ public:
             r.red = r.blue = r.green = 0;
         }
         return r;
+    }
+    
+    // For direct x,y coordinate access
+    RgbColor getPixel(int x, int y) const {
+        return getPixel(Point(x, y));
+    }
+    
+    // Alias for width() for consistency with other libraries
+    unsigned int getWidth() const {
+        return width();
+    }
+    
+    // Alias for height() for consistency with other libraries
+    unsigned int getHeight() const {
+        return height();
     }
 
     virtual void setPixel(const Point &pos, const RgbColor &color) {

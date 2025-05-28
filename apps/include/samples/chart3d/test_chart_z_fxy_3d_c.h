@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 #include "samples/test_painter_base.h"
 #include "samples/chart3d/chart_z_fxy_3d.h"
@@ -12,13 +13,17 @@
 class test_chart_z_fxy_3d_c : public test_painter_base {
 public:
     test_chart_z_fxy_3d_c(const std::string outFileName) : test_painter_base(outFileName) {}
+    
+    bool useAntiAliasing() const { return useAntiAliasing_; }
+    void setUseAntiAliasing(bool value) { useAntiAliasing_ = value; }
 
 protected:
     virtual void paint() {
 
         class chart_z_fxy_3d_c: public chart_z_fxy_3d {
         public:
-            chart_z_fxy_3d_c(const Point &canvasSize, PixelPainter &painter): chart_z_fxy_3d(canvasSize, painter) {}
+            chart_z_fxy_3d_c(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing): 
+                chart_z_fxy_3d(canvasSize, painter, useAntiAliasing) {}
         protected:
             virtual RgbColor getPlotColor(double x, double y, double z) {
                 RgbColor color;
@@ -43,8 +48,15 @@ protected:
 
         };
 
-        chart_z_fxy_3d_c chart1(getImage().getSize(), getPainter());
+        chart_z_fxy_3d_c chart1(getImage().getSize(), getPainter(), useAntiAliasing_);
         chart1.paint();
+        
+        // Print status message about anti-aliasing
+        if (useAntiAliasing_) {
+            std::cout << "Rendering chart with anti-aliasing enabled." << std::endl;
+        } else {
+            std::cout << "Rendering chart with anti-aliasing disabled." << std::endl;
+        }
     }
 
     virtual Point getImageSize() {
@@ -55,6 +67,8 @@ protected:
         return{ 10, 100 };
     }
 
+private:
+    bool useAntiAliasing_ = false;
 };
 
 #endif

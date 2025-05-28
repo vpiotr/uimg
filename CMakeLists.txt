@@ -65,13 +65,19 @@ add_executable(chart3d
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
+        include/uimg/painters/rect_painter.h
+        include/uimg/painters/antialiased_painter_for_pixels.h
         include/uimg/images/ppm_image.h
         include/uimg/images/rgb_image.h
         include/uimg/utils/algorithm.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/cubic_spline_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h include/uimg/pixels/pixel_painter.h include/uimg/pixels/pixel_source.h include/uimg/base/structs.h include/uimg/images/pixel_image.h)
+        include/uimg/utils/point_utils.h
+        include/uimg/pixels/pixel_painter.h
+        include/uimg/pixels/pixel_source.h
+        include/uimg/base/structs.h
+        include/uimg/images/pixel_image.h)
         
 add_executable(draw_primitives
         LICENSE
@@ -102,29 +108,48 @@ add_executable(filter_demo
         include/uimg/painters/painter_for_pixels.h
         include/uimg/filters/filter_base.h
         include/uimg/filters/filter_for_pixels.h)
-        
-add_executable(text_demo
+
+add_executable(2d_line_chart_demo
         LICENSE
         README.md
-        apps/include/samples/text_demo/test_text_demo.h
+        apps/2d_line_chart_demo.cpp
+        include/uimg/charts/chart.h
+        include/uimg/charts/chart_styles.h
+        include/uimg/charts/chart_renderer.h
         apps/include/samples/test_painter_base.h
-        apps/text_demo.cpp
-        include/uimg/painters/copier_for_pixels.h
+        include/uimg/base/structs.h
+        include/uimg/images/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/pixels/pixel_painter.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
         include/uimg/painters/painter_for_rgb_image.h
         include/uimg/fonts/bdf_font.h
-        include/uimg/fonts/font_utils.h
         include/uimg/fonts/painter_for_bdf_font.h
-        include/uimg/text/text_base.h
         include/uimg/text/text_painter.h
-        include/uimg/images/ppm_image.h
-        include/uimg/images/rgb_image.h
-        include/uimg/utils/algorithm.h
+        include/uimg/text/text_base.h
         include/uimg/utils/color_utils.h
         include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h 
-        include/uimg/pixels/pixel_painter.h 
-        include/uimg/pixels/pixel_source.h 
-        include/uimg/base/structs.h 
-        include/uimg/images/pixel_image.h)
+        include/uimg/utils/point_utils.h)
+
+add_executable(text_demo
+        LICENSE
+        README.md
+        apps/text_demo.cpp
+        apps/include/samples/text_demo/test_text_demo.h
+        apps/include/samples/test_painter_base.h
+        include/uimg/base/structs.h
+        include/uimg/images/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/pixels/pixel_painter.h
+        include/uimg/painters/painter_base.h
+        include/uimg/painters/painter_for_pixels.h
+        include/uimg/painters/painter_for_rgb_image.h
+        include/uimg/fonts/bdf_font.h
+        include/uimg/fonts/painter_for_bdf_font.h
+        include/uimg/text/text_painter.h
+        include/uimg/utils/color_utils.h
+        include/uimg/utils/math_utils.h
+        include/uimg/utils/point_utils.h)
+
+
