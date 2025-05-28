@@ -18,9 +18,11 @@ struct test_args {
     bool useAntiAliasing;
     int numCharts;
     std::string layout;
+    bool drawBorders;
+    bool traceEnabled;
 
-    test_args(std::string testName, std::string outFileName, bool useAntiAliasing = false, int numCharts = 1, std::string layout = "auto") 
-        : testName(testName), outFileName(outFileName), useAntiAliasing(useAntiAliasing), numCharts(numCharts), layout(layout) {}
+    test_args(std::string testName, std::string outFileName, bool useAntiAliasing = false, int numCharts = 1, std::string layout = "auto", bool drawBorders = false, bool traceEnabled = false) 
+        : testName(testName), outFileName(outFileName), useAntiAliasing(useAntiAliasing), numCharts(numCharts), layout(layout), drawBorders(drawBorders), traceEnabled(traceEnabled) {}
 };
 
 class test_painter_base {
@@ -47,6 +49,8 @@ public:
         bool useAntiAliasing = false;
         int numCharts = 1;
         std::string layout = "auto";
+        bool drawBorders = false;
+        bool trace_enabled = false;
 
         for (int i = 1; i < argc; ++i) {
             if ((strcmp(argv[i], "-run") == 0) && (i + 1 < argc)) {
@@ -65,6 +69,11 @@ public:
                 }
             } else if ((strcmp(argv[i], "-layout") == 0) && (i + 1 < argc)) {
                 layout = std::string(argv[i + 1]);
+            } else if ((strcmp(argv[i], "-borders") == 0)) {
+                drawBorders = true;
+            } else if ((strcmp(argv[i], "-trace") == 0)) {
+                trace_enabled = true;
+                std::cerr << "[chart3d] Tracing enabled via -trace" << std::endl;
             } else if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "--help") == 0)) {
                 // Display help information
                 std::cout << "Usage: " << argv[0] << " [options]" << std::endl;
@@ -74,6 +83,7 @@ public:
                 std::cout << "  -aa, -antialiasing  : Enable anti-aliased line rendering" << std::endl;
                 std::cout << "  -charts <num>       : Number of charts to display (1-4, default: 1)" << std::endl;
                 std::cout << "  -layout <type>      : Layout type (auto, grid, default: auto)" << std::endl;
+                std::cout << "  -borders            : Enable chart borders (default: disabled)" << std::endl;
                 std::cout << "  -h, -help, --help   : Display this help information" << std::endl;
                 exit(0);
             }
@@ -84,7 +94,7 @@ public:
             outFileName = specOutFileName;
         }
 
-        return {testName, outFileName, useAntiAliasing, numCharts, layout};
+        return {testName, outFileName, useAntiAliasing, numCharts, layout, drawBorders, trace_enabled};
     }
 
 protected:

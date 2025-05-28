@@ -1,6 +1,7 @@
 #include <iostream>
 #include "samples/test_painter_base.h"
 #include "samples/chart3d/test_chart_z_fxy_3d_c.h"
+#include "samples/chart3d/chart_z_fxy_3d.h"
 #include "samples/chart3d/chart3d_renderer.h"
 
 int main(int argc, const char *argv[]) {
@@ -10,18 +11,23 @@ int main(int argc, const char *argv[]) {
     std::cerr << "Anti-aliasing: " << (testInfo.useAntiAliasing ? "Enabled" : "Disabled") << std::endl;
     std::cerr << "Number of charts: " << testInfo.numCharts << std::endl;
     std::cerr << "Layout: " << testInfo.layout << std::endl;
+    std::cerr << "Borders: " << (testInfo.drawBorders ? "Enabled" : "Disabled") << std::endl;
+
+    Chart3DTracer::getInstance()->setEnabled(testInfo.traceEnabled);
+    std::cerr << "main - Tracing: " << (testInfo.traceEnabled ? "Enabled" : "Disabled") << std::endl;
 
     if (testInfo.numCharts == 1) {
         // Single chart - use original implementation
         test_chart_z_fxy_3d_c test(testInfo.outFileName);
         test.setUseAntiAliasing(testInfo.useAntiAliasing);
+        test.setDrawBorders(testInfo.drawBorders);
         test.run();
     } else {
         // Multi-chart implementation
         class multi_chart_3d_test : public test_painter_base {
         public:
-            multi_chart_3d_test(const std::string &fname, int numCharts, bool useAntiAliasing) 
-                : test_painter_base(fname), numCharts_(numCharts), useAntiAliasing_(useAntiAliasing) {}
+            multi_chart_3d_test(const std::string &fname, int numCharts, bool useAntiAliasing, bool drawBorders) 
+                : test_painter_base(fname), numCharts_(numCharts), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders) {}
 
         protected:
             virtual Point getImageSize() override {
@@ -35,19 +41,21 @@ int main(int argc, const char *argv[]) {
             }
 
             virtual void paint() override {
-                Chart3DRenderer renderer(getImage(), getPainter(), useAntiAliasing_);
+                Chart3DRenderer renderer(getImage(), getPainter(), useAntiAliasing_, drawBorders_);
                 renderer.renderCharts(numCharts_);
                 
                 std::cout << "Rendered " << numCharts_ << " 3D charts with anti-aliasing " 
-                          << (useAntiAliasing_ ? "enabled" : "disabled") << std::endl;
+                          << (useAntiAliasing_ ? "enabled" : "disabled") 
+                          << " and borders " << (drawBorders_ ? "enabled" : "disabled") << std::endl;
             }
 
         private:
             int numCharts_;
             bool useAntiAliasing_;
+            bool drawBorders_;
         };
 
-        multi_chart_3d_test test(testInfo.outFileName, testInfo.numCharts, testInfo.useAntiAliasing);
+        multi_chart_3d_test test(testInfo.outFileName, testInfo.numCharts, testInfo.useAntiAliasing, testInfo.drawBorders);
         test.run();
     }
 

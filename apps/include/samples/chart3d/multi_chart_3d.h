@@ -10,8 +10,8 @@
  */
 class chart_z_fxy_3d_with_title : public chart_z_fxy_3d {
 public:
-    chart_z_fxy_3d_with_title(const Point &canvasSize, PixelPainter &pixelPainter, bool useAntiAliasing, const std::string& title) 
-        : chart_z_fxy_3d(canvasSize, pixelPainter, useAntiAliasing), title_(title) {}
+    chart_z_fxy_3d_with_title(const Point &canvasSize, PixelPainter &pixelPainter, bool useAntiAliasing, const std::string& title, bool drawBorders = false) 
+        : chart_z_fxy_3d(canvasSize, pixelPainter, useAntiAliasing, drawBorders), title_(title) {}
     
     const std::string& getTitle() const { return title_; }
 
@@ -24,8 +24,8 @@ protected:
  */
 class chart_z_fxy_3d_sinc : public chart_z_fxy_3d_with_title {
 public:
-    chart_z_fxy_3d_sinc(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing): 
-        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Sinc Function: sin(r)/r") {}
+    chart_z_fxy_3d_sinc(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing, bool drawBorders = false): 
+        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Sinc Function: sin(r)/r", drawBorders) {}
 
 protected:
     virtual RgbColor getPlotColor(double x, double y, double z) override {
@@ -46,8 +46,8 @@ protected:
  */
 class chart_z_fxy_3d_gaussian : public chart_z_fxy_3d_with_title {
 public:
-    chart_z_fxy_3d_gaussian(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing): 
-        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Gaussian Function: e^(-r²)") {}
+    chart_z_fxy_3d_gaussian(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing, bool drawBorders = false): 
+        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Gaussian Function: e^(-r²)", drawBorders) {}
 
 protected:
     virtual RgbColor getPlotColor(double x, double y, double z) override {
@@ -70,8 +70,8 @@ protected:
  */
 class chart_z_fxy_3d_ripple : public chart_z_fxy_3d_with_title {
 public:
-    chart_z_fxy_3d_ripple(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing): 
-        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Ripple Function: cos(r)·e^(-0.2r)") {}
+    chart_z_fxy_3d_ripple(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing, bool drawBorders = false): 
+        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Ripple Function: cos(r)·e^(-0.2r)", drawBorders) {}
 
 protected:
     virtual RgbColor getPlotColor(double x, double y, double z) override {
@@ -94,8 +94,8 @@ protected:
  */
 class chart_z_fxy_3d_saddle : public chart_z_fxy_3d_with_title {
 public:
-    chart_z_fxy_3d_saddle(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing): 
-        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Saddle Function: x² - y²") {}
+    chart_z_fxy_3d_saddle(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing, bool drawBorders = false): 
+        chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Saddle Function: x² - y²", drawBorders) {}
 
 protected:
     virtual RgbColor getPlotColor(double x, double y, double z) override {

@@ -16,14 +16,21 @@ public:
     
     bool useAntiAliasing() const { return useAntiAliasing_; }
     void setUseAntiAliasing(bool value) { useAntiAliasing_ = value; }
+    
+    bool drawBorders() const { return drawBorders_; }
+    void setDrawBorders(bool value) { drawBorders_ = value; }
+
+    void setTraceEnabled(bool value) {
+       Chart3DTracer::getInstance()->setEnabled(value); 
+    }
 
 protected:
     virtual void paint() {
 
         class chart_z_fxy_3d_c: public chart_z_fxy_3d {
         public:
-            chart_z_fxy_3d_c(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing): 
-                chart_z_fxy_3d(canvasSize, painter, useAntiAliasing) {}
+            chart_z_fxy_3d_c(const Point &canvasSize, PixelPainter &painter, bool useAntiAliasing, bool drawBorders = false): 
+                chart_z_fxy_3d(canvasSize, painter, useAntiAliasing, drawBorders) {}
         protected:
             virtual RgbColor getPlotColor(double x, double y, double z) {
                 RgbColor color;
@@ -48,14 +55,20 @@ protected:
 
         };
 
-        chart_z_fxy_3d_c chart1(getImage().getSize(), getPainter(), useAntiAliasing_);
+        chart_z_fxy_3d_c chart1(getImage().getSize(), getPainter(), useAntiAliasing_, drawBorders_);
         chart1.paint();
         
-        // Print status message about anti-aliasing
+        // Print status message about anti-aliasing and borders
         if (useAntiAliasing_) {
             std::cout << "Rendering chart with anti-aliasing enabled." << std::endl;
         } else {
             std::cout << "Rendering chart with anti-aliasing disabled." << std::endl;
+        }
+        
+        if (drawBorders_) {
+            std::cout << "Rendering chart with borders enabled." << std::endl;
+        } else {
+            std::cout << "Rendering chart with borders disabled." << std::endl;
         }
     }
 
@@ -69,6 +82,7 @@ protected:
 
 private:
     bool useAntiAliasing_ = false;
+    bool drawBorders_ = false;
 };
 
 #endif

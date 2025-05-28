@@ -5,6 +5,7 @@
 #include "chart3d_layout.h"
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
+#include "chart_z_fxy_3d.h"
 #include <memory>
 #include <vector>
 
@@ -13,8 +14,8 @@
  */
 class Chart3DRenderer {
 public:
-    Chart3DRenderer(RgbImage& image, PixelPainter& painter, bool useAntiAliasing = false) 
-        : image_(image), painter_(painter), useAntiAliasing_(useAntiAliasing),
+    Chart3DRenderer(RgbImage& image, PixelPainter& painter, bool useAntiAliasing = false, bool drawBorders = false) 
+        : image_(image), painter_(painter), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders),
           layoutManager_(image.getSize().x, image.getSize().y) {}
     
     /**
@@ -47,16 +48,16 @@ private:
         std::unique_ptr<chart_z_fxy_3d_with_title> chart;
         switch(chartType) {
             case 0:
-                chart = std::make_unique<chart_z_fxy_3d_sinc>(chartSize, offsetPainter, useAntiAliasing_);
+                chart = std::make_unique<chart_z_fxy_3d_sinc>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
                 break;
             case 1:
-                chart = std::make_unique<chart_z_fxy_3d_gaussian>(chartSize, offsetPainter, useAntiAliasing_);
+                chart = std::make_unique<chart_z_fxy_3d_gaussian>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
                 break;
             case 2:
-                chart = std::make_unique<chart_z_fxy_3d_ripple>(chartSize, offsetPainter, useAntiAliasing_);
+                chart = std::make_unique<chart_z_fxy_3d_ripple>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
                 break;
             case 3:
-                chart = std::make_unique<chart_z_fxy_3d_saddle>(chartSize, offsetPainter, useAntiAliasing_);
+                chart = std::make_unique<chart_z_fxy_3d_saddle>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
                 break;
         }
         
@@ -90,6 +91,7 @@ private:
     RgbImage& image_;
     PixelPainter& painter_;
     bool useAntiAliasing_;
+    bool drawBorders_;
     Chart3DLayoutManager layoutManager_;
 };
 

@@ -14,6 +14,16 @@ cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 1 -aa -out bui
 echo "Created: build/chart3d_single_aa.ppm"
 echo ""
 
+echo "Generating single chart with borders..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 1 -borders -out build/chart3d_single_borders.ppm
+echo "Created: build/chart3d_single_borders.ppm"
+echo ""
+
+echo "Generating single chart with borders and anti-aliasing..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 1 -borders -aa -out build/chart3d_single_borders_aa.ppm
+echo "Created: build/chart3d_single_borders_aa.ppm"
+echo ""
+
 # Dual chart examples
 echo "Generating dual charts (sinc + gaussian)..."
 cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 2 -out build/chart3d_dual.ppm
@@ -25,10 +35,30 @@ cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 2 -aa -out bui
 echo "Created: build/chart3d_dual_aa.ppm"
 echo ""
 
+echo "Generating dual charts with borders..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 2 -borders -out build/chart3d_dual_borders.ppm
+echo "Created: build/chart3d_dual_borders.ppm"
+echo ""
+
+echo "Generating dual charts with borders and anti-aliasing..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 2 -borders -aa -out build/chart3d_dual_borders_aa.ppm
+echo "Created: build/chart3d_dual_borders_aa.ppm"
+echo ""
+
 # Triple chart example
 echo "Generating triple charts (sinc + gaussian + ripple)..."
 cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 3 -out build/chart3d_triple.ppm
 echo "Created: build/chart3d_triple.ppm"
+echo ""
+
+echo "Generating triple charts with borders..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 3 -borders -out build/chart3d_triple_borders.ppm
+echo "Created: build/chart3d_triple_borders.ppm"
+echo ""
+
+echo "Generating triple charts with borders and anti-aliasing..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 3 -borders -aa -out build/chart3d_triple_borders_aa.ppm
+echo "Created: build/chart3d_triple_borders_aa.ppm"
 echo ""
 
 # Quad chart examples
@@ -42,6 +72,16 @@ cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 4 -aa -out bui
 echo "Created: build/chart3d_quad_aa.ppm"
 echo ""
 
+echo "Generating quad charts with borders..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 4 -borders -out build/chart3d_quad_borders.ppm
+echo "Created: build/chart3d_quad_borders.ppm"
+echo ""
+
+echo "Generating quad charts with borders and anti-aliasing..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/chart3d -charts 4 -borders -aa -out build/chart3d_quad_borders_aa.ppm
+echo "Created: build/chart3d_quad_borders_aa.ppm"
+echo ""
+
 echo "=== All multi-chart examples generated successfully! ==="
 echo ""
 echo "Usage examples:"
@@ -50,6 +90,8 @@ echo "  Dual charts:   ./build/chart3d -charts 2 -out output.ppm"
 echo "  Triple charts: ./build/chart3d -charts 3 -out output.ppm"
 echo "  Quad charts:   ./build/chart3d -charts 4 -out output.ppm"
 echo "  With AA:       ./build/chart3d -charts 4 -aa -out output.ppm"
+echo "  With borders:  ./build/chart3d -charts 2 -borders -out output.ppm"
+echo "  Combined:      ./build/chart3d -charts 4 -borders -aa -out output.ppm"
 echo ""
 echo "Available functions: sinc, gaussian, ripple, saddle"
 echo "Chart layouts are automatically determined based on number of charts."
