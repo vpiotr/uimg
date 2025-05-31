@@ -6,6 +6,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "chart_z_fxy_3d.h"
+#include "samples/logger.h"
 #include <memory>
 #include <vector>
 
@@ -26,6 +27,11 @@ public:
         // Limit to supported range
         numCharts = std::max(1, std::min(4, numCharts));
         
+        auto logger = DemoLogger::getInstance();
+        logger->debug("=== Multi-Chart 3D Renderer Debug Information ===");
+        logger->debug("Total image size: %dx%d", image_.getSize().x, image_.getSize().y);
+        logger->debug("Number of charts to render: %d", numCharts);
+        
         // Calculate layout
         auto rects = layoutManager_.calculateLayout(numCharts);
         
@@ -34,6 +40,9 @@ public:
             Point chartSize = rects[i].getSize();
             Point chartOffset = rects[i].getTopLeft();
             
+            logger->debug("Chart %d layout: size=%dx%d, offset=(%d,%d)", 
+                         i, chartSize.x, chartSize.y, chartOffset.x, chartOffset.y);
+            
             // Create chart with adjusted size and offset
             renderSingleChart(i % 4, chartSize, chartOffset);
         }
@@ -41,6 +50,11 @@ public:
 
 private:
     void renderSingleChart(int chartType, Point chartSize, Point offset) {
+        auto logger = DemoLogger::getInstance();
+        logger->debug("--- Rendering single chart %d ---", chartType);
+        logger->debug("Chart type: %d, Canvas size: %dx%d, Offset: (%d,%d)", 
+                     chartType, chartSize.x, chartSize.y, offset.x, offset.y);
+        
         // Create an offset painter
         OffsetPixelPainter offsetPainter(painter_, offset);
         
@@ -49,21 +63,26 @@ private:
         switch(chartType) {
             case 0:
                 chart = std::make_unique<chart_z_fxy_3d_sinc>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                logger->debug("Created Sinc function chart");
                 break;
             case 1:
                 chart = std::make_unique<chart_z_fxy_3d_gaussian>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                logger->debug("Created Gaussian function chart");
                 break;
             case 2:
                 chart = std::make_unique<chart_z_fxy_3d_ripple>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                logger->debug("Created Ripple function chart");
                 break;
             case 3:
                 chart = std::make_unique<chart_z_fxy_3d_saddle>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                logger->debug("Created Saddle function chart");
                 break;
         }
         
         // Paint the chart
         if (chart) {
             chart->paint();
+            logger->debug("Chart %d painted successfully", chartType);
         }
     }
     

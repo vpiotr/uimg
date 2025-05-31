@@ -16,6 +16,7 @@
 #include "uimg/painters/antialiased_painter_for_pixels.h"
 #include "uimg/utils/math_utils.h"
 #include "samples/chart3d/chart3d_tracer.h"
+#include "samples/logger.h"
 
 class chart_z_fxy_3d {
 public:
@@ -122,6 +123,32 @@ public:
         int screenOffsetY = screenOffset.y;
         int screenSizeX = chartSize.x;
         int screenSizeY = chartSize.y;
+
+        // Debug logging for chart dimensions and ranges
+        auto logger = DemoLogger::getInstance();
+        logger->debug("=== Chart 3D Debug Information ===");
+        logger->debug("Image size: %dx%d", canvasSize_.x, canvasSize_.y);
+        logger->debug("Canvas size: %dx%d", canvasSize.x, canvasSize.y);
+        logger->debug("Chart size (actually used pixel range): %dx%d", screenSizeX, screenSizeY);
+        logger->debug("Screen offset: (%d, %d)", screenOffsetX, screenOffsetY);
+        logger->debug("Chart pixel range: x=[%d, %d], y=[%d, %d]", 
+                     screenOffsetX, screenOffsetX + screenSizeX - 1,
+                     screenOffsetY, screenOffsetY + screenSizeY - 1);
+        
+        if (drawBorders_) {
+            const int borderMargin = 15;
+            int borderLeft = borderMargin;
+            int borderRight = canvasSize_.x - borderMargin - 1;
+            int borderTop = borderMargin;
+            int borderBottom = canvasSize_.y - borderMargin - 1;
+            logger->debug("Border pixel range: x=[%d, %d], y=[%d, %d]", 
+                         borderLeft, borderRight, borderTop, borderBottom);
+        } else {
+            logger->debug("Border pixel range: none (borders disabled)");
+        }
+        
+        logger->debug("Window pixel range (entire canvas): x=[0, %d], y=[0, %d]", 
+                     canvasSize_.x - 1, canvasSize_.y - 1);
 
         // sample space
         std::pair<double, double> inputRangeX = getInputRangeX();
