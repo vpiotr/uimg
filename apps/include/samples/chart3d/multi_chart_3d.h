@@ -39,6 +39,10 @@ protected:
     virtual double getFunValue(double x, double y) override {
         return chart3d_functions::sinc(x, y);
     }
+
+    virtual double getCenterZ() const override {
+        return 1.0;  // Sinc function value at origin: sin(0)/0 = 1.0
+    }
 };
 
 /**
@@ -63,6 +67,10 @@ protected:
     virtual double getFunValue(double x, double y) override {
         return chart3d_functions::gaussian(x, y);
     }
+
+    virtual double getCenterZ() const override {
+        return 1.0;  // Gaussian function value at origin: e^(-0²) = 1.0
+    }
 };
 
 /**
@@ -86,6 +94,10 @@ protected:
 
     virtual double getFunValue(double x, double y) override {
         return chart3d_functions::ripple(x, y);
+    }
+
+    virtual double getCenterZ() const override {
+        return 1.0;  // Ripple function value at origin: cos(0)·e^(-0.2·0) = 1.0
     }
 };
 
@@ -117,6 +129,10 @@ protected:
 
     virtual double getFunValue(double x, double y) override {
         return chart3d_functions::saddle(x, y);
+    }
+
+    virtual double getCenterZ() const override {
+        return 0.0;  // Saddle function value at origin: 0² - 0² = 0.0
     }
 };
 

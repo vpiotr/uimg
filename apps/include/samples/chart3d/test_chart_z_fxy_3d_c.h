@@ -55,6 +55,10 @@ protected:
                 return result;
             }
 
+            virtual double getCenterZ() const override {
+                return 1.0;  // Sinc function value at origin: sin(0)/0 = 1.0
+            }
+
         };
 
         // Create pixel tracing filter for the single chart

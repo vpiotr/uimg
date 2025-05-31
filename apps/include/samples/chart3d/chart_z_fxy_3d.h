@@ -31,37 +31,31 @@ public:
             int availableWidth = canvasSize_.x - borderAndMargin;
             int availableHeight = canvasSize_.y - borderAndMargin;
             
-            // Calculate adaptive scaling factors based on available space
-            // Very conservative scaling to prevent any overflow
+            // Adaptive scaling based on aspect ratio to handle very wide or tall charts
+            double aspectRatio = static_cast<double>(availableWidth) / availableHeight;
             double widthFactor, heightFactor;
-            if (availableWidth <= 500) {  // Small canvases (like in 2x2 grid or 3-chart layout)
-                widthFactor = 0.55;   // Even more conservative
-                heightFactor = 0.6;   // More conservative for height too
-            } else if (availableWidth <= 600) {  // Medium canvases
-                widthFactor = 0.6;
-                heightFactor = 0.65;
-            } else {  // Large canvases
+            
+            if (aspectRatio > 2.5) {
+                // Very wide layout (like triple chart top): be more conservative
+                widthFactor = 0.50;
+                heightFactor = 0.55;  // Further reduced to prevent any Y overflow
+            } else if (aspectRatio < 0.8) {
+                // Very tall layout: be more conservative on height
+                widthFactor = 0.70;
+                heightFactor = 0.40;  // Further reduced to prevent any Y overflow
+            } else {
+                // Normal aspect ratio: use better scaling to fill space
                 widthFactor = 0.65;
-                heightFactor = 0.7;
+                heightFactor = 0.55;  // Further reduced to prevent any Y overflow
             }
             
             return { static_cast<int>(round(widthFactor * availableWidth)), 
                      static_cast<int>(round(heightFactor * availableHeight)) };
         } else {
-            // No borders mode - need conservative sizing too for multi-chart layouts
-            // Adaptive sizing based on canvas size - very conservative to account for 
-            // extra pixels drawn by the 3D rendering algorithm
-            double widthFactor, heightFactor;
-            if (canvasSize_.x <= 500) {  // Small canvases
-                widthFactor = 0.6;   // Very conservative to prevent overflow
-                heightFactor = 0.65;
-            } else if (canvasSize_.x <= 600) {  // Medium canvases (including single chart 512x512)
-                widthFactor = 0.65;  // Very conservative for medium sizes
-                heightFactor = 0.7;
-            } else {  // Larger canvases
-                widthFactor = 0.7;
-                heightFactor = 0.75;
-            }
+            // No borders mode - use the allocated canvas size directly but with conservative scaling
+            // This accounts for the 3D rendering algorithm drawing a few extra pixels beyond the calculated size
+            double widthFactor = 0.70;   // Slightly more conservative than before
+            double heightFactor = 0.70;  // Reduced to prevent Y overflow in multi-chart layouts
             
             return { static_cast<int>(round(widthFactor * canvasSize_.x)), 
                      static_cast<int>(round(heightFactor * canvasSize_.y)) };
@@ -116,6 +110,10 @@ public:
 
     virtual double getResultScale() {
         return 80.0;
+    }
+
+    virtual double getCenterZ() const {
+        return 0.0;  // Default center Z value for chart centering
     }
 
     virtual bool shouldDrawBorders() const {
@@ -236,8 +234,51 @@ public:
         double sampleScaleForX = sampleScale * cos(skewAngle * degreesToRadiansFactor);
         double sampleScaleForY = sampleScale * sin(skewAngle * degreesToRadiansFactor);
 
-        double xe0 = midSampleSpaceX + sampleScaleForX * midSampleSpaceY + screenOffsetX;
-        double ye0 = sampleScaleForY * midSampleSpaceY + screenOffsetY;
+        // Debug logging
+        auto logger = DemoLogger::getInstance();
+        
+        // Calculate the center of the available space for proper chart centering
+        double availableCenterX = (availableLeft + availableRight) / 2.0;
+        double availableCenterY = (availableTop + availableBottom) / 2.0;
+        
+        // Original centering calculation (for reference)
+        double xe0_old = midSampleSpaceX + sampleScaleForX * midSampleSpaceY + screenOffsetX;
+        double ye0_old = sampleScaleForY * midSampleSpaceY + screenOffsetY;
+        
+        // New centering calculation: position the middle of the chart (input x=0, y=0) 
+        // at the center of the available space
+        // 
+        // The coordinate transformation is: xe = xe0 + m + sampleScaleForX * q
+        // When input x=0, y=0, we have m=0, q=0 (middle of sample space)
+        // We want xe = availableCenterX when m=0, q=0
+        // So: availableCenterX = xe0 + 0 + sampleScaleForX * 0 = xe0
+        // Therefore: xe0 = availableCenterX
+        //
+        // For Y coordinates, the final pixel coordinate is: maxY - ye
+        // When input x=0, y=0, we have q=0 and z=getCenterZ()*resultScale  
+        // We want maxY - ye = availableCenterY when q=0 and z=z_center
+        // ye = ye0 + sampleScaleForY * 0 + z_center = ye0 + z_center
+        // So: maxY - (ye0 + z_center) = availableCenterY
+        // Therefore: ye0 = maxY - availableCenterY - z_center
+        //
+        // However, empirical testing shows the 3D rendering algorithm creates a systematic
+        // Y-offset of approximately 8-10 pixels. Compensate for this to achieve better visual centering.
+        const double empiricalYOffset = 10.0;  // Compensation for 3D rendering Y-bias
+        double z_center = resultScale * getCenterZ();  // Use user-provided center Z value
+        double xe0 = availableCenterX;
+        double ye0 = maxY - availableCenterY - z_center + empiricalYOffset;  // Add offset compensation
+        
+        logger->debug("=== Chart Centering Debug ===");
+        logger->debug("Available space: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Available space center: (%.1f, %.1f)", availableCenterX, availableCenterY);
+        logger->debug("Sample space: %dx%d (mid: %d,%d)", sampleSpaceX, sampleSpaceY, midSampleSpaceX, midSampleSpaceY);
+        logger->debug("Center Z value: %.2f (scaled: %.2f)", getCenterZ(), z_center);
+        logger->debug("maxY: %d", maxY);
+        logger->debug("Chart origin: xe0=%.1f, ye0=%.1f", xe0, ye0);
+        logger->debug("Expected pixel center: (%.1f, %.1f)", xe0, maxY - (ye0 + z_center));
+        logger->debug("Y coordinate analysis: ye0=%.1f, z_center=%.1f, final_ye=%.1f", ye0, z_center, ye0 + z_center);
+        logger->debug("Sample space Y range: q=[%d,%d], actual Y input range: [%.3f,%.3f]", 
+                     -midSampleSpaceY, midSampleSpaceY, sampleToInputShiftY, sampleToInputShiftY + 2*midSampleSpaceY*sampleToInputRatioY);
 
         // Draw border if enabled (using base painter to bypass tracing)
         if (shouldDrawBorders()) {
@@ -292,6 +333,25 @@ public:
                 xe = round(xe0 + m + sampleScaleForX * q);
                 ye = round(ye0 + sampleScaleForY * q + z);
                 tracer->trace("  m=%d, x=%f, z=%f, xe=%f, ye=%f", m, x, z, xe, ye);
+
+                // Debug: Check point closest to center (m and q closest to 0)
+                if (abs(m) <= 3 && abs(q) <= 5) {
+                    auto logger = DemoLogger::getInstance();
+                    logger->debug("NEAR CENTER: m=%d,q=%d input(%.3f,%.3f) -> z=%.3f -> screen(%.1f,%.1f) -> final_pixel(%.1f,%.1f)", 
+                                 m, q, x, y, z/resultScale, xe, ye, xe, maxY - ye);
+                }
+                
+                // Special debug for exact mathematical center
+                if (m == 0 && q == 0) {
+                    auto logger = DemoLogger::getInstance();
+                    logger->debug("=== EXACT MATHEMATICAL CENTER ===");
+                    logger->debug("Input coordinates: x=%.6f, y=%.6f", x, y);
+                    logger->debug("Function value: z=%.6f (scaled: %.2f)", z/resultScale, z);
+                    logger->debug("Screen coordinates: xe=%.2f, ye=%.2f", xe, ye);
+                    logger->debug("Final pixel: (%.1f, %.1f)", xe, maxY - ye);
+                    logger->debug("Expected center: (%.1f, %.1f)", availableCenterX, availableCenterY);
+                    logger->debug("Center offset: X=%.1f, Y=%.1f", xe - availableCenterX, (maxY - ye) - availableCenterY);
+                }
 
                 if (m <= -midSampleSpaceX) {
                     f1 = 0;
