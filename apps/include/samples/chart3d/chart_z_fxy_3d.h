@@ -263,7 +263,8 @@ public:
         //
         // However, empirical testing shows the 3D rendering algorithm creates a systematic
         // Y-offset of approximately 8-10 pixels. Compensate for this to achieve better visual centering.
-        const double empiricalYOffset = 10.0;  // Compensation for 3D rendering Y-bias
+        // Use different offset values for bordered vs non-bordered charts due to different space constraints.
+        const double empiricalYOffset = drawBorders_ ? 5.0 : 10.0;  // Less offset for bordered charts
         double z_center = resultScale * getCenterZ();  // Use user-provided center Z value
         double xe0 = availableCenterX;
         double ye0 = maxY - availableCenterY - z_center + empiricalYOffset;  // Add offset compensation
