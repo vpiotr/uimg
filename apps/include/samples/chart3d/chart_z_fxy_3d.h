@@ -30,24 +30,64 @@ public:
             const int borderAndMargin = 30; // 15 for margin on each side
             int availableWidth = canvasSize_.x - borderAndMargin;
             int availableHeight = canvasSize_.y - borderAndMargin;
-            // Restore normal chart size
-            return { static_cast<int>(round(0.8 * availableWidth)), 
-                     static_cast<int>(round(0.8 * availableHeight)) };
+            
+            // Calculate adaptive scaling factors based on available space
+            // Very conservative scaling to prevent any overflow
+            double widthFactor, heightFactor;
+            if (availableWidth <= 500) {  // Small canvases (like in 2x2 grid or 3-chart layout)
+                widthFactor = 0.55;   // Even more conservative
+                heightFactor = 0.6;   // More conservative for height too
+            } else if (availableWidth <= 600) {  // Medium canvases
+                widthFactor = 0.6;
+                heightFactor = 0.65;
+            } else {  // Large canvases
+                widthFactor = 0.65;
+                heightFactor = 0.7;
+            }
+            
+            return { static_cast<int>(round(widthFactor * availableWidth)), 
+                     static_cast<int>(round(heightFactor * availableHeight)) };
         } else {
-            // Normal chart size when borders are disabled
-            return { static_cast<int>(round(0.8 * canvasSize_.x)), 
-                     static_cast<int>(round(0.8 * canvasSize_.y)) };
+            // No borders mode - need conservative sizing too for multi-chart layouts
+            // Adaptive sizing based on canvas size - very conservative to account for 
+            // extra pixels drawn by the 3D rendering algorithm
+            double widthFactor, heightFactor;
+            if (canvasSize_.x <= 500) {  // Small canvases
+                widthFactor = 0.6;   // Very conservative to prevent overflow
+                heightFactor = 0.65;
+            } else if (canvasSize_.x <= 600) {  // Medium canvases (including single chart 512x512)
+                widthFactor = 0.65;  // Very conservative for medium sizes
+                heightFactor = 0.7;
+            } else {  // Larger canvases
+                widthFactor = 0.7;
+                heightFactor = 0.75;
+            }
+            
+            return { static_cast<int>(round(widthFactor * canvasSize_.x)), 
+                     static_cast<int>(round(heightFactor * canvasSize_.y)) };
         }
     }
 
     virtual Point getScreenOffset() {
+        Point chartSize = getChartSize();
+        
+        // Calculate offset to center the chart within the canvas
+        int offsetX = (canvasSize_.x - chartSize.x) / 2;
+        int offsetY = (canvasSize_.y - chartSize.y) / 2;
+        
         if (drawBorders_) {
-            // When borders are enabled, add extra offset for border and margin
-            return{ 25, 115 }; // 15 margin + 10 original offset, 15 margin + 100 original offset
+            // When borders are enabled, ensure minimum margin for border
+            const int minMargin = 15;
+            offsetX = std::max(offsetX, minMargin);
+            offsetY = std::max(offsetY, minMargin);
         } else {
-            // Normal offset when borders are disabled
-            return{ 10, 100 };
+            // Ensure minimum offset even without borders
+            const int minOffset = 10;
+            offsetX = std::max(offsetX, minOffset);
+            offsetY = std::max(offsetY, minOffset);
         }
+        
+        return { offsetX, offsetY };
     }
 
     virtual Point getCanvasSize() {
@@ -141,16 +181,7 @@ public:
         int screenSizeX = chartSize.x;
         int screenSizeY = chartSize.y;
 
-        // Debug logging for chart dimensions and ranges
-        auto logger = DemoLogger::getInstance();
-        logger->debug("=== Chart 3D Debug Information ===");
-        logger->debug("Image size: %dx%d", canvasSize_.x, canvasSize_.y);
-        logger->debug("Canvas size: %dx%d", canvasSize.x, canvasSize.y);
-        logger->debug("Chart size (actually used pixel range): %dx%d", screenSizeX, screenSizeY);
-        logger->debug("Screen offset: (%d, %d)", screenOffsetX, screenOffsetY);
-        logger->debug("Estimated chart pixel range: x=[%d, %d], y=[%d, %d]", 
-                     screenOffsetX, screenOffsetX + screenSizeX - 1,
-                     screenOffsetY, screenOffsetY + screenSizeY - 1);
+
         
         // Calculate available space for chart drawing (declare at method scope)
         int availableLeft, availableRight, availableTop, availableBottom;
@@ -166,23 +197,14 @@ public:
             int borderRight = canvasSize_.x - borderMargin - 1;
             int borderTop = borderMargin;
             int borderBottom = canvasSize_.y - borderMargin - 1;
-            logger->debug("Border pixel range: x=[%d, %d], y=[%d, %d]", 
-                         borderLeft, borderRight, borderTop, borderBottom);
         } else {
             const int windowMargin = 5; // Margin from window edge when no borders
             availableLeft = windowMargin;
             availableRight = canvasSize_.x - windowMargin - 1;
             availableTop = windowMargin;
             availableBottom = canvasSize_.y - windowMargin - 1;
-            logger->debug("Border pixel range: none (borders disabled)");
         }
-        
-        logger->debug("Available chart space: x=[%d, %d], y=[%d, %d]  [%dx%d pixels]", 
-                     availableLeft, availableRight, availableTop, availableBottom,
-                     availableRight - availableLeft + 1, availableBottom - availableTop + 1);
-        
-        logger->debug("Window pixel range (entire canvas): x=[0, %d], y=[0, %d]", 
-                     canvasSize_.x - 1, canvasSize_.y - 1);
+
 
         // sample space
         std::pair<double, double> inputRangeX = getInputRangeX();
@@ -361,23 +383,18 @@ protected:
      * @param availableBottom Bottom boundary of available space
      */
     virtual void validatePixelRange(int availableLeft, int availableRight, int availableTop, int availableBottom) {
-        auto logger = DemoLogger::getInstance();
-        
         // After chart drawing is complete, validate pixel usage against available space
         PixelTracingFilter* tracingFilter = dynamic_cast<PixelTracingFilter*>(&pixelPainter_);
         if (tracingFilter != nullptr && tracingFilter->hasPixels()) {
             unsigned int usedMinX, usedMinY, usedMaxX, usedMaxY;
             if (tracingFilter->getPixelRange(usedMinX, usedMinY, usedMaxX, usedMaxY)) {
-                logger->debug("Actual used pixel range: x=[%d, %d], y=[%d, %d]  [%dx%d pixels]", 
-                             usedMinX, usedMaxX, usedMinY, usedMaxY,
-                             usedMaxX - usedMinX + 1, usedMaxY - usedMinY + 1);
-                
                 // Check if pixels were drawn outside available space
                 bool outOfBounds = false;
                 if (usedMinX < availableLeft || usedMaxX > availableRight || 
                     usedMinY < availableTop || usedMaxY > availableBottom) {
                     outOfBounds = true;
                     
+                    auto logger = DemoLogger::getInstance();
                     logger->warn("CHART BOUNDARY VIOLATION: Chart pixels drawn outside available space!");
                     if (usedMinX < availableLeft) {
                         logger->warn("  Left overflow: chart used x=%d, available starts at x=%d (-%d pixels)", 
@@ -395,8 +412,6 @@ protected:
                         logger->warn("  Bottom overflow: chart used y=%d, available ends at y=%d (+%d pixels)", 
                                    usedMaxY, availableBottom, usedMaxY - availableBottom);
                     }
-                } else {
-                    logger->debug("Chart drawing within bounds: all pixels drawn within available space");
                 }
             }
         }
