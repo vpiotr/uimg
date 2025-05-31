@@ -10,6 +10,7 @@
 #include "samples/test_painter_base.h"
 #include "samples/chart3d/chart_z_fxy_3d.h"
 #include "samples/logger.h"
+#include "uimg/filters/pixel_tracing_filter.h"
 
 class test_chart_z_fxy_3d_c : public test_painter_base {
 public:
@@ -56,7 +57,10 @@ protected:
 
         };
 
-        chart_z_fxy_3d_c chart1(getImage().getSize(), getPainter(), useAntiAliasing_, drawBorders_);
+        // Create pixel tracing filter for the single chart
+        PixelTracingFilter tracingFilter(getPainter(), "Sinc Chart (Single)");
+        
+        chart_z_fxy_3d_c chart1(getImage().getSize(), tracingFilter, useAntiAliasing_, drawBorders_);
         
         auto logger = DemoLogger::getInstance();
         logger->debug("=== Single Chart 3D Test Debug Information ===");
@@ -64,6 +68,9 @@ protected:
         logger->debug("Test screen offset: (%d, %d)", getScreenOffset().x, getScreenOffset().y);
         
         chart1.paint();
+        
+        // Log pixel range after chart drawing is complete
+        tracingFilter.logPixelRange();
         
         // Print status message about anti-aliasing and borders
         if (useAntiAliasing_) {

@@ -14,6 +14,7 @@
 #include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_pixels.h"
 #include "uimg/painters/antialiased_painter_for_pixels.h"
+#include "uimg/filters/pixel_tracing_filter.h"
 #include "uimg/utils/math_utils.h"
 #include "samples/chart3d/chart3d_tracer.h"
 #include "samples/logger.h"
@@ -29,6 +30,7 @@ public:
             const int borderAndMargin = 30; // 15 for margin on each side
             int availableWidth = canvasSize_.x - borderAndMargin;
             int availableHeight = canvasSize_.y - borderAndMargin;
+            // Restore normal chart size
             return { static_cast<int>(round(0.8 * availableWidth)), 
                      static_cast<int>(round(0.8 * availableHeight)) };
         } else {
@@ -92,6 +94,21 @@ public:
         return Chart3DTracer::getInstance()->isEnabled();
     }
 
+    /**
+     * @brief Get the base painter for operations that should bypass tracing (like borders)
+     * @return Reference to the base painter
+     */
+    PixelPainter& getBasePainter() const {
+        // Check if the current painter is a PixelTracingFilter
+        PixelTracingFilter* tracingFilter = dynamic_cast<PixelTracingFilter*>(&pixelPainter_);
+        if (tracingFilter != nullptr) {
+            // Return the base painter to bypass tracing
+            return tracingFilter->getBasePainter();
+        }
+        // If not a tracing filter, return the painter itself
+        return pixelPainter_;
+    }
+
     void paint() {
         PixelPainter *pixelPainter = &pixelPainter_;
         std::unique_ptr<LinePainterForPixels> lnPainter;
@@ -131,12 +148,20 @@ public:
         logger->debug("Canvas size: %dx%d", canvasSize.x, canvasSize.y);
         logger->debug("Chart size (actually used pixel range): %dx%d", screenSizeX, screenSizeY);
         logger->debug("Screen offset: (%d, %d)", screenOffsetX, screenOffsetY);
-        logger->debug("Chart pixel range: x=[%d, %d], y=[%d, %d]", 
+        logger->debug("Estimated chart pixel range: x=[%d, %d], y=[%d, %d]", 
                      screenOffsetX, screenOffsetX + screenSizeX - 1,
                      screenOffsetY, screenOffsetY + screenSizeY - 1);
         
+        // Calculate available space for chart drawing (declare at method scope)
+        int availableLeft, availableRight, availableTop, availableBottom;
         if (drawBorders_) {
             const int borderMargin = 15;
+            const int chartMargin = 10; // Additional margin inside borders for chart
+            availableLeft = borderMargin + chartMargin;
+            availableRight = canvasSize_.x - borderMargin - chartMargin - 1;
+            availableTop = borderMargin + chartMargin;
+            availableBottom = canvasSize_.y - borderMargin - chartMargin - 1;
+            
             int borderLeft = borderMargin;
             int borderRight = canvasSize_.x - borderMargin - 1;
             int borderTop = borderMargin;
@@ -144,8 +169,17 @@ public:
             logger->debug("Border pixel range: x=[%d, %d], y=[%d, %d]", 
                          borderLeft, borderRight, borderTop, borderBottom);
         } else {
+            const int windowMargin = 5; // Margin from window edge when no borders
+            availableLeft = windowMargin;
+            availableRight = canvasSize_.x - windowMargin - 1;
+            availableTop = windowMargin;
+            availableBottom = canvasSize_.y - windowMargin - 1;
             logger->debug("Border pixel range: none (borders disabled)");
         }
+        
+        logger->debug("Available chart space: x=[%d, %d], y=[%d, %d]  [%dx%d pixels]", 
+                     availableLeft, availableRight, availableTop, availableBottom,
+                     availableRight - availableLeft + 1, availableBottom - availableTop + 1);
         
         logger->debug("Window pixel range (entire canvas): x=[0, %d], y=[0, %d]", 
                      canvasSize_.x - 1, canvasSize_.y - 1);
@@ -183,9 +217,19 @@ public:
         double xe0 = midSampleSpaceX + sampleScaleForX * midSampleSpaceY + screenOffsetX;
         double ye0 = sampleScaleForY * midSampleSpaceY + screenOffsetY;
 
-        // Draw border if enabled
+        // Draw border if enabled (using base painter to bypass tracing)
         if (shouldDrawBorders()) {
-            drawChartBorder(lnPainter.get(), screenOffsetX, screenOffsetY, screenSizeX, screenSizeY, maxY);
+            PixelPainter& basePainter = getBasePainter();
+            std::unique_ptr<LinePainterForPixels> borderPainter;
+            
+            // Create line painter for borders using base painter (bypasses tracing)
+            if (useAntiAliasing_) {
+                borderPainter.reset(new AntiAliasedLinePainterForPixels(basePainter));
+            } else {
+                borderPainter.reset(new LinePainterForPixels(basePainter));
+            }
+            
+            drawChartBorder(borderPainter.get(), screenOffsetX, screenOffsetY, screenSizeX, screenSizeY, maxY);
         }
 
         // working variables
@@ -276,6 +320,8 @@ public:
             tracer->trace(" Finished inner loop for q=%d", q);
         }
         tracer->trace("Finished outer loop in paint()");
+        
+        validatePixelRange(availableLeft, availableRight, availableTop, availableBottom);
     }
 
 protected:
@@ -305,6 +351,55 @@ protected:
         linePainter->drawLine(right, top, right, bottom, borderColor);   // right edge  
         linePainter->drawLine(right, bottom, left, bottom, borderColor); // bottom edge
         linePainter->drawLine(left, bottom, left, top, borderColor);     // left edge
+    }
+
+    /**
+     * @brief Validate that chart pixels were drawn within the available space
+     * @param availableLeft Left boundary of available space
+     * @param availableRight Right boundary of available space  
+     * @param availableTop Top boundary of available space
+     * @param availableBottom Bottom boundary of available space
+     */
+    virtual void validatePixelRange(int availableLeft, int availableRight, int availableTop, int availableBottom) {
+        auto logger = DemoLogger::getInstance();
+        
+        // After chart drawing is complete, validate pixel usage against available space
+        PixelTracingFilter* tracingFilter = dynamic_cast<PixelTracingFilter*>(&pixelPainter_);
+        if (tracingFilter != nullptr && tracingFilter->hasPixels()) {
+            unsigned int usedMinX, usedMinY, usedMaxX, usedMaxY;
+            if (tracingFilter->getPixelRange(usedMinX, usedMinY, usedMaxX, usedMaxY)) {
+                logger->debug("Actual used pixel range: x=[%d, %d], y=[%d, %d]  [%dx%d pixels]", 
+                             usedMinX, usedMaxX, usedMinY, usedMaxY,
+                             usedMaxX - usedMinX + 1, usedMaxY - usedMinY + 1);
+                
+                // Check if pixels were drawn outside available space
+                bool outOfBounds = false;
+                if (usedMinX < availableLeft || usedMaxX > availableRight || 
+                    usedMinY < availableTop || usedMaxY > availableBottom) {
+                    outOfBounds = true;
+                    
+                    logger->warn("CHART BOUNDARY VIOLATION: Chart pixels drawn outside available space!");
+                    if (usedMinX < availableLeft) {
+                        logger->warn("  Left overflow: chart used x=%d, available starts at x=%d (-%d pixels)", 
+                                   usedMinX, availableLeft, availableLeft - usedMinX);
+                    }
+                    if (usedMaxX > availableRight) {
+                        logger->warn("  Right overflow: chart used x=%d, available ends at x=%d (+%d pixels)", 
+                                   usedMaxX, availableRight, usedMaxX - availableRight);
+                    }
+                    if (usedMinY < availableTop) {
+                        logger->warn("  Top overflow: chart used y=%d, available starts at y=%d (-%d pixels)", 
+                                   usedMinY, availableTop, availableTop - usedMinY);
+                    }
+                    if (usedMaxY > availableBottom) {
+                        logger->warn("  Bottom overflow: chart used y=%d, available ends at y=%d (+%d pixels)", 
+                                   usedMaxY, availableBottom, usedMaxY - availableBottom);
+                    }
+                } else {
+                    logger->debug("Chart drawing within bounds: all pixels drawn within available space");
+                }
+            }
+        }
     }
 
 private:

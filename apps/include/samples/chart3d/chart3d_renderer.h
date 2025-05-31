@@ -7,6 +7,7 @@
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "chart_z_fxy_3d.h"
 #include "samples/logger.h"
+#include "uimg/filters/pixel_tracing_filter.h"
 #include <memory>
 #include <vector>
 
@@ -58,23 +59,36 @@ private:
         // Create an offset painter
         OffsetPixelPainter offsetPainter(painter_, offset);
         
-        // Create the appropriate chart type
+        // Create chart type name for tracing
+        std::string chartTypeName;
+        switch(chartType) {
+            case 0: chartTypeName = "Sinc Chart"; break;
+            case 1: chartTypeName = "Gaussian Chart"; break;
+            case 2: chartTypeName = "Ripple Chart"; break;
+            case 3: chartTypeName = "Saddle Chart"; break;
+            default: chartTypeName = "Unknown Chart"; break;
+        }
+        
+        // Create pixel tracing filter for this chart
+        PixelTracingFilter tracingFilter(offsetPainter, chartTypeName);
+        
+        // Create the appropriate chart type using the tracing filter
         std::unique_ptr<chart_z_fxy_3d_with_title> chart;
         switch(chartType) {
             case 0:
-                chart = std::make_unique<chart_z_fxy_3d_sinc>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                chart = std::make_unique<chart_z_fxy_3d_sinc>(chartSize, tracingFilter, useAntiAliasing_, drawBorders_);
                 logger->debug("Created Sinc function chart");
                 break;
             case 1:
-                chart = std::make_unique<chart_z_fxy_3d_gaussian>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                chart = std::make_unique<chart_z_fxy_3d_gaussian>(chartSize, tracingFilter, useAntiAliasing_, drawBorders_);
                 logger->debug("Created Gaussian function chart");
                 break;
             case 2:
-                chart = std::make_unique<chart_z_fxy_3d_ripple>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                chart = std::make_unique<chart_z_fxy_3d_ripple>(chartSize, tracingFilter, useAntiAliasing_, drawBorders_);
                 logger->debug("Created Ripple function chart");
                 break;
             case 3:
-                chart = std::make_unique<chart_z_fxy_3d_saddle>(chartSize, offsetPainter, useAntiAliasing_, drawBorders_);
+                chart = std::make_unique<chart_z_fxy_3d_saddle>(chartSize, tracingFilter, useAntiAliasing_, drawBorders_);
                 logger->debug("Created Saddle function chart");
                 break;
         }
@@ -83,6 +97,9 @@ private:
         if (chart) {
             chart->paint();
             logger->debug("Chart %d painted successfully", chartType);
+            
+            // Log pixel range after chart drawing is complete
+            tracingFilter.logPixelRange();
         }
     }
     
