@@ -18,6 +18,8 @@
 #include "uimg/utils/math_utils.h"
 #include "samples/chart3d/chart3d_tracer.h"
 #include "samples/logger.h"
+#include "uimg/painters/painter_utils.h"
+
 
 class chart_z_fxy_3d {
 public:
@@ -100,6 +102,19 @@ public:
         return std::pair<double, double>( -2520.0, 2520.0 );
     }
 
+    virtual RectInclusive getAllowedDrawingArea() {
+        Point chartSize = getChartSize();
+        Point screenOffset = getScreenOffset();
+        
+        // Calculate the allowed drawing area based on chart size and screen offset
+        return RectInclusive::make_rect(screenOffset.x, screenOffset.y, 
+                                        screenOffset.x + chartSize.x - 1, 
+                                        screenOffset.y + chartSize.y - 1);
+    }
+
+    virtual RgbColor getBackgroundColor() const {
+        return {255, 255, 255}; // Default to white background
+    }
     virtual double getSkewAngle() {
         return 75.0;
     }
@@ -128,6 +143,12 @@ public:
         return {128, 128, 128}; // Default to gray borders
     }
 
+    virtual RgbColor getAllowedBorderColor() const {
+        // return debug color for allowed drawing area
+        return {0, 0, 255}; // Default to blue for allowed area
+    }
+
+
     bool isTraceEnabled() const {
         return Chart3DTracer::getInstance()->isEnabled();
     }
@@ -149,16 +170,13 @@ public:
 
     void paint() {
         PixelPainter *pixelPainter = &pixelPainter_;
-        std::unique_ptr<LinePainterForPixels> lnPainter;
+        RectInclusive allowedArea = getAllowedDrawingArea();
+        std::unique_ptr<LinePainter> lnPainter;
+
+        drawAllowedArea(allowedArea, getAllowedBorderColor(), pixelPainter);
         
-        // Create appropriate line painter based on anti-aliasing setting
-        if (useAntiAliasing_) {
-            lnPainter.reset(new AntiAliasedLinePainterForPixels(*pixelPainter));
-            std::cerr << "Using anti-aliased line painter" << std::endl;
-        } else {
-            lnPainter.reset(new LinePainterForPixels(*pixelPainter));
-            std::cerr << "Using standard line painter" << std::endl;
-        }
+        lnPainter = createLinePainter(pixelPainter, allowedArea);
+
         if (isTraceEnabled()) {
             std::cerr << "Tracing is enabled" << std::endl;
         } else {
@@ -479,6 +497,72 @@ protected:
     }
 
 private:
+    /**
+     * @brief Draw the allowed drawing area rectangle (for debugging or visualization)
+     */
+    void drawAllowedArea(const RectInclusive& area, const RgbColor& color, PixelPainter* painter) {
+        if (!painter) return;
+        // Draw rectangle for allowed area
+        int left = area.x1;
+        int right = area.x2;
+        int top = area.y1;
+        int bottom = area.y2;
+        LinePainterForPixels linePainter(*painter);
+        linePainter.drawLine(left, top, right, top, color);       // top edge
+        linePainter.drawLine(right, top, right, bottom, color);   // right edge
+        linePainter.drawLine(right, bottom, left, bottom, color); // bottom edge
+        linePainter.drawLine(left, bottom, left, top, color);     // left edge
+    }
+
+    /**
+     * @brief Ownership wrapper for LineClippingPainter to manage memory safely
+     */
+    class LineClippingPainterOwner : public LinePainter {
+    public:
+        LineClippingPainterOwner(std::unique_ptr<LinePainter> basePainter, const RectInclusive& clippingWindow)
+            : basePainter_(std::move(basePainter)), clippingPainter_(*basePainter_, clippingWindow) {}
+        
+        virtual ~LineClippingPainterOwner() {}
+        
+        virtual void drawLine(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RgbColor& color) override {
+            clippingPainter_.drawLine(x1, y1, x2, y2, color);
+        }
+        
+    private:
+        std::unique_ptr<LinePainter> basePainter_; // Owns the base painter
+        LineClippingPainter clippingPainter_;     // Uses the existing LineClippingPainter
+    };
+
+    /**
+     * @brief Create and configure line painter based on anti-aliasing setting
+     * @param pixelPainter The pixel painter to use as base
+     * @param allowedArea The clipping area for the line painter
+     * @return Configured line painter with clipping functionality
+     */
+    std::unique_ptr<LinePainter> createLinePainter(PixelPainter* pixelPainter, const RectInclusive& allowedArea) {
+        std::unique_ptr<LinePainter> lnActualPainter;
+        
+        // Create appropriate line painter based on anti-aliasing setting
+        if (useAntiAliasing_) {
+            lnActualPainter.reset(
+                    new AntiAliasedLinePainterForPixels(*pixelPainter)
+            );
+            std::cerr << "Using anti-aliased line painter with clipping" << std::endl;
+        } else {
+            lnActualPainter.reset(
+                    new LinePainterForPixels(*pixelPainter)
+            );
+            std::cerr << "Using standard line painter with clipping" << std::endl;
+        }
+
+        // Wrap with clipping functionality using the existing LineClippingPainter
+        std::unique_ptr<LinePainter> clippingPainter(
+            new LineClippingPainterOwner(std::move(lnActualPainter), allowedArea)
+        );
+        
+        return clippingPainter;
+    }
+
     PixelPainter &pixelPainter_;
     Point canvasSize_;
     bool useAntiAliasing_;
