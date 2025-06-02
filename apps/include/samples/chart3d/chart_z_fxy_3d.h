@@ -28,39 +28,45 @@ public:
 
     virtual Point getChartSize() {
         if (drawBorders_) {
-            // When borders are enabled, reserve space for border and margin
-            const int borderAndMargin = 30; // 15 for margin on each side
+            // When borders are enabled, reserve minimal space for border and margin
+            // Use percentage-based margin instead of fixed pixels for better adaptability
+            const double borderMarginPercent = 0.04; // 4% margin for borders
+            int borderAndMargin = std::max(static_cast<int>(std::min(canvasSize_.x, canvasSize_.y) * borderMarginPercent), 16);
             int availableWidth = canvasSize_.x - borderAndMargin;
             int availableHeight = canvasSize_.y - borderAndMargin;
             
-            // Adaptive scaling based on aspect ratio to handle very wide or tall charts
+            // Use adaptive scaling factors based on aspect ratio
+            // More generic approach that scales with available space
             double aspectRatio = static_cast<double>(availableWidth) / availableHeight;
             double widthFactor, heightFactor;
             
+            // Define scaling factors based on layout characteristics
+            const double conservativeFactor = 0.70;
+            const double normalFactor = 0.80;
+            const double aggressiveFactor = 0.85;
+            
             if (aspectRatio > 2.5) {
-                // Very wide layout (like triple chart top): be more conservative
-                widthFactor = 0.50;
-                heightFactor = 0.55;  // Further reduced to prevent any Y overflow
+                // Very wide layout: be more conservative with width
+                widthFactor = conservativeFactor;
+                heightFactor = normalFactor;
             } else if (aspectRatio < 0.8) {
-                // Very tall layout: be more conservative on height
-                widthFactor = 0.70;
-                heightFactor = 0.40;  // Further reduced to prevent any Y overflow
+                // Very tall layout: optimize for height usage
+                widthFactor = aggressiveFactor;
+                heightFactor = 0.65; // More conservative on height for tall layouts
             } else {
-                // Normal aspect ratio: use better scaling to fill space
-                widthFactor = 0.65;
-                heightFactor = 0.55;  // Further reduced to prevent any Y overflow
+                // Normal aspect ratio: use most of the available space
+                widthFactor = aggressiveFactor;
+                heightFactor = conservativeFactor + 0.05; // Slightly more aggressive
             }
             
             return { static_cast<int>(round(widthFactor * availableWidth)), 
                      static_cast<int>(round(heightFactor * availableHeight)) };
         } else {
-            // No borders mode - use the allocated canvas size directly but with conservative scaling
-            // This accounts for the 3D rendering algorithm drawing a few extra pixels beyond the calculated size
-            double widthFactor = 0.70;   // Slightly more conservative than before
-            double heightFactor = 0.70;  // Reduced to prevent Y overflow in multi-chart layouts
+            // No borders mode - use more of the canvas with adaptive scaling
+            const double noBordersFactor = 0.85; // Consistent factor for no-borders mode
             
-            return { static_cast<int>(round(widthFactor * canvasSize_.x)), 
-                     static_cast<int>(round(heightFactor * canvasSize_.y)) };
+            return { static_cast<int>(round(noBordersFactor * canvasSize_.x)), 
+                     static_cast<int>(round(noBordersFactor * canvasSize_.y)) };
         }
     }
 
@@ -73,12 +79,15 @@ public:
         
         if (drawBorders_) {
             // When borders are enabled, ensure minimum margin for border
-            const int minMargin = 15;
+            // Use percentage-based minimum to be more adaptive
+            const double minMarginPercent = 0.02; // 2% of canvas size minimum
+            int minMargin = std::max(static_cast<int>(std::min(canvasSize_.x, canvasSize_.y) * minMarginPercent), 8);
             offsetX = std::max(offsetX, minMargin);
             offsetY = std::max(offsetY, minMargin);
         } else {
-            // Ensure minimum offset even without borders
-            const int minOffset = 10;
+            // Reduced minimum offset for better space utilization
+            const double minOffsetPercent = 0.01; // 1% of canvas size minimum
+            int minOffset = std::max(static_cast<int>(std::min(canvasSize_.x, canvasSize_.y) * minOffsetPercent), 4);
             offsetX = std::max(offsetX, minOffset);
             offsetY = std::max(offsetY, minOffset);
         }
@@ -199,27 +208,11 @@ public:
 
 
         
-        // Calculate available space for chart drawing (declare at method scope)
-        int availableLeft, availableRight, availableTop, availableBottom;
-        if (drawBorders_) {
-            const int borderMargin = 15;
-            const int chartMargin = 10; // Additional margin inside borders for chart
-            availableLeft = borderMargin + chartMargin;
-            availableRight = canvasSize_.x - borderMargin - chartMargin - 1;
-            availableTop = borderMargin + chartMargin;
-            availableBottom = canvasSize_.y - borderMargin - chartMargin - 1;
-            
-            int borderLeft = borderMargin;
-            int borderRight = canvasSize_.x - borderMargin - 1;
-            int borderTop = borderMargin;
-            int borderBottom = canvasSize_.y - borderMargin - 1;
-        } else {
-            const int windowMargin = 5; // Margin from window edge when no borders
-            availableLeft = windowMargin;
-            availableRight = canvasSize_.x - windowMargin - 1;
-            availableTop = windowMargin;
-            availableBottom = canvasSize_.y - windowMargin - 1;
-        }
+        // Use the getAllowedDrawingArea() result directly instead of calculating our own
+        int availableLeft = allowedArea.x1;
+        int availableRight = allowedArea.x2;
+        int availableTop = allowedArea.y1;
+        int availableBottom = allowedArea.y2;
 
 
         // sample space
@@ -227,8 +220,59 @@ public:
         std::pair<double, double> inputRangeY = getInputRangeY();
 
         Point stepSize = getScreenStepSize();
-        int sampleSpaceX = screenSizeX; 
-        int sampleSpaceY = screenSizeY; 
+        
+        // Adjust sample space to fit within allowed area boundaries
+        // Use allowed area dimensions instead of chart size to ensure we stay within bounds
+        int availableWidth = availableRight - availableLeft + 1;
+        int availableHeight = availableBottom - availableTop + 1;
+        
+        // Use an adaptive safety factor based on available space and 3D projection needs
+        // Smaller spaces need more conservative factors due to higher relative impact of projection
+        double baseSafetyFactor = 0.75; // Base conservative factor
+        
+        // Add extra safety margin for smaller charts (more sensitive to projection effects)
+        double sizeFactor = std::min(1.0, std::min(availableWidth, availableHeight) / 500.0);
+        double adaptiveSafetyFactor = baseSafetyFactor * (0.85 + 0.15 * sizeFactor);
+        
+        // Additional 3D projection margin to account for skew and depth effects
+        double skewAngleRad = getSkewAngle() * math_utils::pi_const_d() / 180.0;
+        double skewLength = getSkewLength();
+        double projectionMarginX = std::abs(skewLength * cos(skewAngleRad)) * availableHeight * 0.1;
+        double projectionMarginY = std::abs(skewLength * sin(skewAngleRad)) * availableWidth * 0.1;
+        
+        // Apply safety factor and subtract projection margins
+        int sampleSpaceX = static_cast<int>((availableWidth - projectionMarginX) * adaptiveSafetyFactor);
+        int sampleSpaceY = static_cast<int>((availableHeight - projectionMarginY) * adaptiveSafetyFactor);
+        
+        // Debug the adaptive safety factor calculation (reduced verbosity for production)
+        auto safetyLogger = DemoLogger::getInstance();
+        safetyLogger->debug("=== Adaptive Safety Factor ===");
+        safetyLogger->debug("Available: %dx%d, Safety: %.1f%%, Margins: %.1fx%.1f, Sample: %dx%d", 
+                           availableWidth, availableHeight, adaptiveSafetyFactor * 100, 
+                           projectionMarginX, projectionMarginY, sampleSpaceX, sampleSpaceY);
+        
+        // Ensure sample space is reasonable and aligned with step size
+        int sampleSpaceX_beforeAlign = sampleSpaceX;
+        int sampleSpaceY_beforeAlign = sampleSpaceY;
+        sampleSpaceX = (sampleSpaceX / stepSize.x) * stepSize.x; // Align to step size
+        sampleSpaceY = (sampleSpaceY / stepSize.y) * stepSize.y; // Align to step size
+        safetyLogger->debug("After step alignment (step %dx%d): %dx%d", stepSize.x, stepSize.y, sampleSpaceX, sampleSpaceY);
+        
+        // Ensure minimum size for reasonable detail, but make it adaptive to available space
+        // Use a percentage of available space rather than fixed values to be more generic
+        int minSampleSpaceX = std::max(static_cast<int>(availableWidth * 0.15), stepSize.x * 10); // At least 15% or 10 steps
+        int minSampleSpaceY = std::max(static_cast<int>(availableHeight * 0.12), stepSize.y * 8);  // At least 12% or 8 steps
+        
+        sampleSpaceX = std::max(sampleSpaceX, minSampleSpaceX);
+        sampleSpaceY = std::max(sampleSpaceY, minSampleSpaceY);
+        safetyLogger->debug("Final sample space: %dx%d (mins: %dx%d)", 
+                           sampleSpaceX, sampleSpaceY, minSampleSpaceX, minSampleSpaceY);
+        
+        if (sampleSpaceX != sampleSpaceX_beforeAlign || sampleSpaceY != sampleSpaceY_beforeAlign) {
+            safetyLogger->debug("Step size alignment changed sample space from %dx%d to %dx%d", 
+                               sampleSpaceX_beforeAlign, sampleSpaceY_beforeAlign, sampleSpaceX, sampleSpaceY);
+        }
+        
         int sampleStepX = stepSize.x;
         int sampleStepY = stepSize.y;
 
@@ -255,7 +299,14 @@ public:
         // Debug logging
         auto logger = DemoLogger::getInstance();
         
-        // Calculate the center of the available space for proper chart centering
+        logger->debug("=== Using getAllowedDrawingArea() for Chart Sizing ===");
+        logger->debug("Canvas size: %dx%d", canvasSize_.x, canvasSize_.y);
+        logger->debug("Chart size: %dx%d", chartSize.x, chartSize.y);
+        logger->debug("Screen offset: (%d, %d)", screenOffsetX, screenOffsetY);
+        logger->debug("Allowed drawing area: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Allowed area dimensions: %dx%d", availableRight - availableLeft + 1, availableBottom - availableTop + 1);
+        
+        // Calculate the center of the allowed drawing area for proper chart centering
         double availableCenterX = (availableLeft + availableRight) / 2.0;
         double availableCenterY = (availableTop + availableBottom) / 2.0;
         
@@ -279,13 +330,10 @@ public:
         // So: maxY - (ye0 + z_center) = availableCenterY
         // Therefore: ye0 = maxY - availableCenterY - z_center
         //
-        // However, empirical testing shows the 3D rendering algorithm creates a systematic
-        // Y-offset of approximately 8-10 pixels. Compensate for this to achieve better visual centering.
-        // Use different offset values for bordered vs non-bordered charts due to different space constraints.
-        const double empiricalYOffset = drawBorders_ ? 5.0 : 10.0;  // Less offset for bordered charts
+        // Direct centering using allowed area center without empirical offsets
         double z_center = resultScale * getCenterZ();  // Use user-provided center Z value
         double xe0 = availableCenterX;
-        double ye0 = maxY - availableCenterY - z_center + empiricalYOffset;  // Add offset compensation
+        double ye0 = maxY - availableCenterY - z_center;  // Direct centering without empirical offset
         
         logger->debug("=== Chart Centering Debug ===");
         logger->debug("Available space: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
@@ -295,7 +343,7 @@ public:
         logger->debug("maxY: %d", maxY);
         logger->debug("Chart origin: xe0=%.1f, ye0=%.1f", xe0, ye0);
         logger->debug("Expected pixel center: (%.1f, %.1f)", xe0, maxY - (ye0 + z_center));
-        logger->debug("Y coordinate analysis: ye0=%.1f, z_center=%.1f, final_ye=%.1f", ye0, z_center, ye0 + z_center);
+        logger->debug("Direct centering: using allowed area center without empirical offsets");
         logger->debug("Sample space Y range: q=[%d,%d], actual Y input range: [%.3f,%.3f]", 
                      -midSampleSpaceY, midSampleSpaceY, sampleToInputShiftY, sampleToInputShiftY + 2*midSampleSpaceY*sampleToInputRatioY);
 
@@ -351,6 +399,12 @@ public:
                 // Calculate screen coordinates with proper rounding
                 xe = round(xe0 + m + sampleScaleForX * q);
                 ye = round(ye0 + sampleScaleForY * q + z);
+                
+                // Clamp coordinates to stay within allowed boundaries
+                // This is a safety net to prevent any boundary violations
+                xe = std::max(static_cast<double>(availableLeft), std::min(static_cast<double>(availableRight), xe));
+                ye = std::max(static_cast<double>(availableTop), std::min(static_cast<double>(availableBottom), ye));
+                
                 tracer->trace("  m=%d, x=%f, z=%f, xe=%f, ye=%f", m, x, z, xe, ye);
 
                 // Debug: Check point closest to center (m and q closest to 0)
@@ -408,9 +462,21 @@ public:
                     if (f1 * f2 == 1) {
                         color = getPlotColor(x, y, z);
 
-                        // For non-anti-aliased version, just draw as before
-                        pixelPainter->putPixel(x1, maxY - y1, color);
-                        lnPainter->drawLine(x1, maxY - y1, x2, maxY - y2, color);
+                        // Ensure final pixel coordinates are within allowed bounds before drawing
+                        double finalX1 = x1;
+                        double finalY1 = maxY - y1;
+                        double finalX2 = x2;
+                        double finalY2 = maxY - y2;
+                        
+                        // Clamp final pixel coordinates to allowed area
+                        finalX1 = std::max(static_cast<double>(availableLeft), std::min(static_cast<double>(availableRight), finalX1));
+                        finalY1 = std::max(static_cast<double>(availableTop), std::min(static_cast<double>(availableBottom), finalY1));
+                        finalX2 = std::max(static_cast<double>(availableLeft), std::min(static_cast<double>(availableRight), finalX2));
+                        finalY2 = std::max(static_cast<double>(availableTop), std::min(static_cast<double>(availableBottom), finalY2));
+
+                        // Draw pixel and line only if they're within bounds
+                        pixelPainter->putPixel(finalX1, finalY1, color);
+                        lnPainter->drawLine(finalX1, finalY1, finalX2, finalY2, color);
                     }
 
                     x1 = x2; 
@@ -421,6 +487,14 @@ public:
             tracer->trace(" Finished inner loop for q=%d", q);
         }
         tracer->trace("Finished outer loop in paint()");
+        
+        // Log chart sizing effectiveness before validation
+        logger->debug("=== Chart Sizing Verification ===");
+        logger->debug("Final allowed area: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Allowed area size: %dx%d", availableRight - availableLeft + 1, availableBottom - availableTop + 1);
+        logger->debug("Canvas utilization: %.1f%% x %.1f%% y", 
+                     100.0 * (availableRight - availableLeft + 1) / canvasSize_.x,
+                     100.0 * (availableBottom - availableTop + 1) / canvasSize_.y);
         
         validatePixelRange(availableLeft, availableRight, availableTop, availableBottom);
     }
@@ -439,8 +513,9 @@ protected:
         
         RgbColor borderColor = getBorderColor();
         
-        // Calculate border coordinates around the entire chart area with a bit of margin
-        const int borderMargin = 15;
+        // Calculate border coordinates with adaptive margin based on canvas size
+        const double borderMarginPercent = 0.02; // 2% of canvas size for border margin
+        int borderMargin = std::max(static_cast<int>(std::min(canvasSize_.x, canvasSize_.y) * borderMarginPercent), 8);
         
         int left = borderMargin;
         int right = canvasSize_.x - borderMargin - 1;
@@ -462,18 +537,34 @@ protected:
      * @param availableBottom Bottom boundary of available space
      */
     virtual void validatePixelRange(int availableLeft, int availableRight, int availableTop, int availableBottom) {
+        auto logger = DemoLogger::getInstance();
+        
         // After chart drawing is complete, validate pixel usage against available space
         PixelTracingFilter* tracingFilter = dynamic_cast<PixelTracingFilter*>(&pixelPainter_);
         if (tracingFilter != nullptr && tracingFilter->hasPixels()) {
             unsigned int usedMinX, usedMinY, usedMaxX, usedMaxY;
             if (tracingFilter->getPixelRange(usedMinX, usedMinY, usedMaxX, usedMaxY)) {
+                logger->debug("=== Pixel Usage Analysis ===");
+                logger->debug("Chart actually used area: (%d,%d) to (%d,%d)", usedMinX, usedMinY, usedMaxX, usedMaxY);
+                logger->debug("Chart used dimensions: %dx%d", usedMaxX - usedMinX + 1, usedMaxY - usedMinY + 1);
+                logger->debug("Available area: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
+                
+                // Calculate utilization
+                int usedWidth = usedMaxX - usedMinX + 1;
+                int usedHeight = usedMaxY - usedMinY + 1;
+                int availableWidth = availableRight - availableLeft + 1;
+                int availableHeight = availableBottom - availableTop + 1;
+                
+                logger->debug("Space utilization: %.1f%% width, %.1f%% height", 
+                             100.0 * usedWidth / availableWidth, 
+                             100.0 * usedHeight / availableHeight);
+                
                 // Check if pixels were drawn outside available space
                 bool outOfBounds = false;
                 if (usedMinX < availableLeft || usedMaxX > availableRight || 
                     usedMinY < availableTop || usedMaxY > availableBottom) {
                     outOfBounds = true;
                     
-                    auto logger = DemoLogger::getInstance();
                     logger->warn("CHART BOUNDARY VIOLATION: Chart pixels drawn outside available space!");
                     if (usedMinX < availableLeft) {
                         logger->warn("  Left overflow: chart used x=%d, available starts at x=%d (-%d pixels)", 
@@ -491,8 +582,21 @@ protected:
                         logger->warn("  Bottom overflow: chart used y=%d, available ends at y=%d (+%d pixels)", 
                                    usedMaxY, availableBottom, usedMaxY - availableBottom);
                     }
+                } else {
+                    logger->debug("SUCCESS: All chart pixels drawn within allowed area!");
+                    
+                    // Show margins to help understand space usage
+                    int leftMargin = usedMinX - availableLeft;
+                    int rightMargin = availableRight - usedMaxX;
+                    int topMargin = usedMinY - availableTop;
+                    int bottomMargin = availableBottom - usedMaxY;
+                    
+                    logger->debug("Margins: left=%d, right=%d, top=%d, bottom=%d", 
+                                 leftMargin, rightMargin, topMargin, bottomMargin);
                 }
             }
+        } else {
+            logger->debug("No pixel tracing available for validation");
         }
     }
 
