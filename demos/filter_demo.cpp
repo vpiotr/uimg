@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include "samples/test_painter_base.h"
-#include "samples/filter_demo/test_filter_demo.h"
-// We don't need to include filter_demo_args.h as it's already in test_filter_demo.h
+#include "samples/demo_painter_base.h"
+#include "samples/filter_demo/filter_demo.h"
+#include "samples/filter_demo/filter_demo_args.h"
 
 int main(int argc, char *argv[]) {
     // Print usage information
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     auto args = uimg::filter_demo_args::parse(argc, const_cast<const char**>(argv));
     
     // Create and run the filter demo
-    uimg::TestFilterDemo demo(args.outFileName);
+    uimg::FilterDemo demo(args.outFileName);
     demo.run();
     
     std::cout << "Filter demo image created: " << args.outFileName << std::endl;

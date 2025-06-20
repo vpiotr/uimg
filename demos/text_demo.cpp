@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include "samples/test_painter_base.h"
-#include "samples/text_demo/test_text_demo.h"
-// text_demo_args.h is included in test_text_demo.h
+#include "samples/demo_painter_base.h"
+#include "samples/text_demo/text_demo.h"
+#include "samples/text_demo/text_demo_args.h"
 
 int main(int argc, char *argv[]) {
     // Print usage information
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     auto args = text_demo_args::parse(argc, const_cast<const char**>(argv));
     
     // Create and run the text demo
-    test_text_demo demo(args.outFileName, args.fontPath);
+    text_demo demo(args.outFileName, args.fontPath);
     demo.run();
     
     std::cout << "Text demo image created: " << args.outFileName << std::endl;

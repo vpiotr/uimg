@@ -44,9 +44,9 @@ include_directories(include/ulog)
 add_executable(voronoi
         LICENSE
         README.md
-        demos/include/samples/voronoi/test_voronoi.h
+        demos/include/samples/voronoi/voronoi_demo.h
         demos/include/samples/voronoi/voronoi.h
-        demos/include/samples/test_painter_base.h
+        demos/include/samples/demo_painter_base.h
         demos/voronoi.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
@@ -63,9 +63,9 @@ add_executable(voronoi
 add_executable(mandelbrot
         LICENSE
         README.md
-        demos/include/samples/mandelbrot/test_mandelbrot.h
+        demos/include/samples/mandelbrot/mandelbrot_demo.h
         demos/include/samples/mandelbrot/mandelbrot.h
-        demos/include/samples/test_painter_base.h
+        demos/include/samples/demo_painter_base.h
         demos/mandelbrot.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
@@ -107,8 +107,8 @@ add_executable(chart3d
 add_executable(draw_primitives
         LICENSE
         README.md
-        demos/include/samples/draw_primitives/test_draw_primitives.h
-        demos/include/samples/test_painter_base.h
+        demos/include/samples/draw_primitives/draw_primitives_demo.h
+        demos/include/samples/demo_painter_base.h
         demos/draw_primitives.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
