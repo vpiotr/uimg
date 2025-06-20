@@ -352,7 +352,7 @@ public:
                 newGlyph.setBbxSize(bbxSize);
                 newGlyph.setBbxOffset(bbxOffset);
                 auto shiftA = 8 * (sizeof(BdfGlyph::pixel_line_t) - UNSIGNED_CAST(size_t, (bbxSize.x + 7) / 8));
-                auto shiftB = UNSIGNED_CAST(unsigned int, bbxOffset.x);
+                int shiftB = bbxOffset.x;
                 long shiftC = (long)shiftA - (long)shiftB;
 
                 pixelShift = shiftC < 0 ? 0 : UNSIGNED_CAST(unsigned int, shiftC);
