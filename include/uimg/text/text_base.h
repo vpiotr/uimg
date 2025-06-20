@@ -15,6 +15,15 @@ namespace uimg {
 using text_char_code_t = uint32_t;
 
 /**
+ * @brief Text alignment options
+ */
+enum class TextAlignment {
+    LEFT,   ///< Align text to the left
+    CENTER, ///< Center align text
+    RIGHT   ///< Align text to the right
+};
+
+/**
  * @brief Abstract text source class for character iteration
  */
 class TextSource {

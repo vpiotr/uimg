@@ -12,6 +12,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/font_utils.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
+#include "uimg/fonts/painter_for_bdf_font_ex.h"
 #include "uimg/utils/cast.h"
 #include "samples/demo_painter_base.h"
 

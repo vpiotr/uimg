@@ -1,3 +1,6 @@
+#pragma once
+#include <string>
+
 // Helper class for text demo arguments
 struct text_demo_args {
     std::string fontPath;

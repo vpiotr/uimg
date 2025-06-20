@@ -55,6 +55,15 @@ run_demo() {
             "chart3d")
                 "./$demo_name" "chart3d.ppm"
                 ;;
+            "draw_primitives")
+                "./$demo_name" "primitives.ppm"
+                ;;
+            "voronoi")
+                "./$demo_name" "voronoi.ppm"
+                ;;
+            "mandelbrot")
+                "./$demo_name" "mandelbrot.ppm"
+                ;;
             *)
                 "./$demo_name"
                 ;;
