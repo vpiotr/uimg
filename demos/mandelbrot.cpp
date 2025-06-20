@@ -1,11 +1,11 @@
-#include "samples/test_painter_base.h"
-#include "samples/mandelbrot/test_mandelbrot.h"
+#include "samples/demo_painter_base.h"
+#include "samples/mandelbrot/mandelbrot_demo.h"
 
 int main(int argc, const char *argv[]) {
-    auto testInfo = test_painter_base::get_test_args(argc, argv, "mandelbrot");
+    auto demoInfo = demo_painter_base::get_demo_args(argc, argv, "mandelbrot");
 
-    test_mandelbrot test(testInfo.outFileName);
-    test.run();
+    mandelbrot_demo demo(demoInfo.outFileName);
+    demo.run();
 
     return 0;
 }

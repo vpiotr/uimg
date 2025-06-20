@@ -3,6 +3,7 @@
 
 #include "samples/test_painter_base.h"
 #include "samples/text_demo/test_text_demo.h"
+// text_demo_args.h is included in test_text_demo.h
 
 int main(int argc, char *argv[]) {
     // Print usage information

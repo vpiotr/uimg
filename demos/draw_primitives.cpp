@@ -1,11 +1,11 @@
-#include "samples/test_painter_base.h"
-#include "samples/draw_primitives//test_draw_primitives.h"
+#include "samples/demo_painter_base.h"
+#include "samples/draw_primitives/draw_primitives_demo.h"
 
 int main(int argc, const char *argv[]) {
-    auto testInfo = test_painter_base::get_test_args(argc, argv, "primitives");
+    auto demoInfo = demo_painter_base::get_demo_args(argc, argv, "primitives");
 
-    test_draw_primitives test(testInfo.outFileName);
-    test.run();
+    draw_primitives_demo demo(demoInfo.outFileName);
+    demo.run();
 
     return 0;
 }

@@ -279,8 +279,14 @@ public:
             int yi2 = yi * yi;
             int yc = r2 - yi2;
             for (int xi = -ir; xi <= ir; xi++)
-                if (xi * xi <= yc)
-                    pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y) + yi), color);
+                if (xi * xi <= yc) {
+                    auto px = static_cast<int>(x) + xi;
+                    auto py = static_cast<int>(y) + yi;
+                    if (px < 0 || py < 0)
+                        continue; // skip negative coordinates
+
+                    pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, px), UNSIGNED_CAST(unsigned int, py), color);
+                }
         }
     }
 

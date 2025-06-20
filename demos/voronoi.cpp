@@ -1,11 +1,11 @@
-#include "samples/test_painter_base.h"
-#include "samples/voronoi/test_voronoi.h"
+#include "samples/demo_painter_base.h"
+#include "samples/voronoi/voronoi_demo.h"
 
 int main(int argc, const char *argv[]) {
-    auto testInfo = test_painter_base::get_test_args(argc, argv, "voronoi");
+    auto demoInfo = demo_painter_base::get_demo_args(argc, argv, "voronoi");
 
-    test_voronoi test(testInfo.outFileName);
-    test.run();
+    voronoi_demo demo(demoInfo.outFileName);
+    demo.run();
 
     return 0;
 }

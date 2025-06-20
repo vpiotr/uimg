@@ -3,6 +3,7 @@
 
 #include "samples/test_painter_base.h"
 #include "samples/filter_demo/test_filter_demo.h"
+// We don't need to include filter_demo_args.h as it's already in test_filter_demo.h
 
 int main(int argc, char *argv[]) {
     // Print usage information
