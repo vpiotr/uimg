@@ -23,8 +23,8 @@ struct test_args {
     bool traceEnabled;
     dlog::LogLevel logLevel;
 
-    test_args(std::string testName, std::string outFileName, bool useAntiAliasing = false, int numCharts = 1, std::string layout = "auto", bool drawBorders = false, bool traceEnabled = false, dlog::LogLevel logLevel = dlog::LogLevel::INFO) 
-        : testName(testName), outFileName(outFileName), useAntiAliasing(useAntiAliasing), numCharts(numCharts), layout(layout), drawBorders(drawBorders), traceEnabled(traceEnabled), logLevel(logLevel) {}
+    test_args(std::string test_name, std::string out_file_name, bool use_anti_aliasing = false, int num_charts = 1, std::string chart_layout = "auto", bool draw_borders = false, bool trace_enabled = false, dlog::LogLevel log_level = dlog::LogLevel::INFO) 
+        : testName(test_name), outFileName(out_file_name), useAntiAliasing(use_anti_aliasing), numCharts(num_charts), layout(chart_layout), drawBorders(draw_borders), traceEnabled(trace_enabled), logLevel(log_level) {}
 };
 
 class test_painter_base {
@@ -125,7 +125,7 @@ protected:
 
     virtual void init() {
         Point size = getImageSize();
-        image_.reset(new RgbImage(size.x, size.y));
+        image_.reset(new RgbImage(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y)));
         painter_.reset(new PixelPainterForRgbImage(*image_));
     }
 

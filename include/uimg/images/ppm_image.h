@@ -21,15 +21,15 @@ public:
 protected:
     void writePixelMap(PixelImageBase &image) {
         RgbColor color;
-        char colorData[3];
+        unsigned char colorData[3];
 
-        for (int y = 0, eposy = image.height(); y < eposy; ++y) {
-            for (int x = 0, eposx = image.width(); x < eposx; ++x) {
+        for (int y = 0, eposy = static_cast<int>(image.height()); y < eposy; ++y) {
+            for (int x = 0, eposx = static_cast<int>(image.width()); x < eposx; ++x) {
                 color = image.getPixel(Point(x, y));
                 colorData[0] = color.red;
                 colorData[1] = color.green;
                 colorData[2] = color.blue;
-                output_.write(static_cast<char *>(colorData), sizeof(colorData));
+                output_.write(reinterpret_cast<char *>(colorData), sizeof(colorData));
             }
         }
     }
@@ -41,7 +41,7 @@ protected:
 
         size_t len = std::char_traits<char>::length(ppmhead);
 
-        output_.write(ppmhead, len);
+        output_.write(ppmhead, static_cast<std::streamsize>(len));
         return len;
     }
 
@@ -63,7 +63,7 @@ public:
 protected:
 
     void writePixelMap(RgbImage &image) {
-        getOutput().write(static_cast<char *>(image.data()), image.dataSize());
+        getOutput().write(static_cast<char *>(image.data()), static_cast<std::streamsize>(image.dataSize()));
     }
 };
 
@@ -135,7 +135,7 @@ public:
     }
 
 protected:
-    virtual PixelImageBase *newImage(const PixelImageMetaInfo &meta) { return nullptr; }
+    virtual PixelImageBase *newImage(const PixelImageMetaInfo &meta [[maybe_unused]]) { return nullptr; }
 
     virtual bool loadPixelDataNew(PixelImageBase &outputImage) {
         Point srcSize = outputImage.getSize();
@@ -166,9 +166,9 @@ protected:
                 }
 
                 if (x >= srcFragment.x1 && x <= srcFragment.x2 && y >= srcFragment.y1 && y <= srcFragment.y2) {
-                    color.red = colorBytes[0];
-                    color.green = colorBytes[1];
-                    color.blue = colorBytes[2];
+                    color.red = static_cast<unsigned char>(colorBytes[0]);
+                    color.green = static_cast<unsigned char>(colorBytes[1]);
+                    color.blue = static_cast<unsigned char>(colorBytes[2]);
 
                     xd = x - srcFragment.x1 + destOffset.x;
                     yd = x - srcFragment.y1 + destOffset.y;
@@ -209,7 +209,7 @@ protected:
 
             if (std::getline(input_, s)) {
                 if (strncmp(s.c_str(), "255", 3) == 0) {
-                    output.setSize(Point(u1, u2));
+                    output.setSize(Point(static_cast<int>(u1), static_cast<int>(u2)));
                     return true;
                 }
             }
@@ -220,7 +220,7 @@ protected:
     }
 
 
-    virtual void handleError(unsigned int errorCode) {
+    virtual void handleError(unsigned int errorCode [[maybe_unused]]) {
         // does nothing
     }
 
@@ -235,7 +235,7 @@ class PpmImageLoaderForRgbImage : public PpmImageLoader {
     using inherited = PpmImageLoader;
 protected:
     virtual PixelImageBase *newImage(const PixelImageMetaInfo &meta) {
-        return new RgbImage(meta.getSize().x, meta.getSize().y);
+        return new RgbImage(static_cast<unsigned int>(meta.getSize().x), static_cast<unsigned int>(meta.getSize().y));
     }
 
     virtual bool loadPixelDataNew(PixelImageBase &outputImage) {

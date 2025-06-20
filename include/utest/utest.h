@@ -268,7 +268,7 @@ namespace details {
   inline std::string to_string_for_str_assert(const char* s) { return std::string(s); }
   inline std::string to_string_for_str_assert(char* s) { return std::string(s); }
   inline std::string to_string_for_str_assert(const std::wstring& s) { return std::string(s.begin(), s.end()); }
-  inline std::string to_string_for_str_assert(const wchar_t* s) { return std::string(); } // Not implemented
+  inline std::string to_string_for_str_assert(const wchar_t* s [[maybe_unused]]) { return std::string(); } // Not implemented
   template<typename T>
   inline std::string to_string_for_str_assert(const T& s) { return convertToString(s); }
 

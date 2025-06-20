@@ -184,11 +184,11 @@ public:
     virtual ~BackgroundPainterForRgbImage() {}
 
     virtual void paint(const RgbColor &color) {
-        char colorBytes[3];
+        unsigned char colorBytes[3];
         colorBytes[0] = color.red;
         colorBytes[1] = color.green;
         colorBytes[2] = color.blue;
-        char *data = static_cast<char *>(image_->data());
+        unsigned char *data = static_cast<unsigned char *>(image_->data());
         size_t dataSize = image_->dataSize();
         unsigned int offset = 0;
         while (offset < dataSize) {

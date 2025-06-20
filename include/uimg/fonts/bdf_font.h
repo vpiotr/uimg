@@ -350,10 +350,10 @@ public:
                 Point bbxOffset = { i3, i4 };
                 newGlyph.setBbxSize(bbxSize);
                 newGlyph.setBbxOffset(bbxOffset);
-                pixelShift = 8 * (sizeof(BdfGlyph::pixel_line_t) - ((bbxSize.x + 7) / 8)) - bbxOffset.x;
+                pixelShift = static_cast<unsigned int>(8 * (sizeof(BdfGlyph::pixel_line_t) - static_cast<size_t>((bbxSize.x + 7) / 8))) - static_cast<unsigned int>(bbxOffset.x);
                 glyphLineNo = -1;
                 pixelLines.clear();
-                pixelLines.reserve(bbxSize.y);
+                pixelLines.reserve(static_cast<size_t>(bbxSize.y));
             }
             else if (strncmp(s.c_str(), "BITMAP", strlen("BITMAP")) == 0) {
                 glyphLineNo = 0;
