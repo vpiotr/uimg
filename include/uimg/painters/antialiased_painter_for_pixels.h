@@ -9,6 +9,7 @@
 #include "uimg/utils/math_utils.h"
 #include "uimg/painters/painter_for_pixels.h"
 #include "uimg/filters/filter_for_pixels.h"
+#include "uimg/utils/cast.h"
 
 // Anti-aliased line drawer using Wu's algorithm
 class AntiAliasedLinePainterForPixels : public LinePainterForPixels {
@@ -71,11 +72,11 @@ public:
         // Draw first endpoint
         if (steep) {
             // If the line is steep, x and y are swapped
-            plotPixel(static_cast<unsigned int>(ypxl1), static_cast<unsigned int>(xpxl1), color, rfpart_yend * xgap);
-            plotPixel(static_cast<unsigned int>(ypxl1 + 1), static_cast<unsigned int>(xpxl1), color, fpart_yend * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, ypxl1), UNSIGNED_CAST(unsigned int, xpxl1), color, rfpart_yend * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, ypxl1 + 1), UNSIGNED_CAST(unsigned int, xpxl1), color, fpart_yend * xgap);
         } else {
-            plotPixel(static_cast<unsigned int>(xpxl1), static_cast<unsigned int>(ypxl1), color, rfpart_yend * xgap);
-            plotPixel(static_cast<unsigned int>(xpxl1), static_cast<unsigned int>(ypxl1 + 1), color, fpart_yend * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, xpxl1), UNSIGNED_CAST(unsigned int, ypxl1), color, rfpart_yend * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, xpxl1), UNSIGNED_CAST(unsigned int, ypxl1 + 1), color, fpart_yend * xgap);
         }
 
         // Initialize the y-coordinate for the main loop
@@ -95,11 +96,11 @@ public:
         
         // Second endpoint
         if (steep) {
-            plotPixel(static_cast<unsigned int>(ypxl2), static_cast<unsigned int>(xpxl2), color, rfpart_yend2 * xgap);
-            plotPixel(static_cast<unsigned int>(ypxl2 + 1), static_cast<unsigned int>(xpxl2), color, fpart_yend2 * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, ypxl2), UNSIGNED_CAST(unsigned int, xpxl2), color, rfpart_yend2 * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, ypxl2 + 1), UNSIGNED_CAST(unsigned int, xpxl2), color, fpart_yend2 * xgap);
         } else {
-            plotPixel(static_cast<unsigned int>(xpxl2), static_cast<unsigned int>(ypxl2), color, rfpart_yend2 * xgap);
-            plotPixel(static_cast<unsigned int>(xpxl2), static_cast<unsigned int>(ypxl2 + 1), color, fpart_yend2 * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, xpxl2), UNSIGNED_CAST(unsigned int, ypxl2), color, rfpart_yend2 * xgap);
+            plotPixel(UNSIGNED_CAST(unsigned int, xpxl2), UNSIGNED_CAST(unsigned int, ypxl2 + 1), color, fpart_yend2 * xgap);
         }
 
         // Main loop for drawing the line
@@ -111,8 +112,8 @@ public:
                 float rfpart = 1.0f - fpart;
                 
                 // Draw two neighboring pixels with appropriate weights
-                plotPixel(static_cast<unsigned int>(y_base), static_cast<unsigned int>(x), color, rfpart);
-                plotPixel(static_cast<unsigned int>(y_base + 1), static_cast<unsigned int>(x), color, fpart);
+                plotPixel(UNSIGNED_CAST(unsigned int, y_base), UNSIGNED_CAST(unsigned int, x), color, rfpart);
+                plotPixel(UNSIGNED_CAST(unsigned int, y_base + 1), UNSIGNED_CAST(unsigned int, x), color, fpart);
                 
                 // Increment y-coordinate by gradient
                 intery += gradient;
@@ -125,8 +126,8 @@ public:
                 float rfpart = 1.0f - fpart;
                 
                 // Draw two neighboring pixels with appropriate weights
-                plotPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y_base), color, rfpart);
-                plotPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y_base + 1), color, fpart);
+                plotPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y_base), color, rfpart);
+                plotPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y_base + 1), color, fpart);
                 
                 // Increment y-coordinate by gradient
                 intery += gradient;
@@ -156,9 +157,9 @@ protected:
         
         // Blend the colors with enhanced contrast
         RgbColor blendedColor;
-        blendedColor.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red))));
-        blendedColor.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green))));
-        blendedColor.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue))));
+        blendedColor.red = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red))));
+        blendedColor.green = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green))));
+        blendedColor.blue = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue))));
         
         // Put the blended pixel
         pixelPainter_->putPixel(x, y, blendedColor);
@@ -198,7 +199,7 @@ public:
         int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
         float lineWidthD2f = lineWidth_ / 2.0f;
-        unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidthD2f));
+        unsigned int lineWidthD2 = UNSIGNED_CAST(unsigned, round(lineWidthD2f));
 
         int cnt = calcPointCount(x1, y1, x2, y2);
 
@@ -211,8 +212,8 @@ public:
         for (int i = 0; i < cnt; ++i) {
             // Draw anti-aliased circle at each point
             drawAntiAliasedCircle(
-                static_cast<unsigned int>(round(x)), 
-                static_cast<unsigned int>(round(y)),
+                UNSIGNED_CAST(unsigned int, round(x)), 
+                UNSIGNED_CAST(unsigned int, round(y)),
                 lineWidthD2, 
                 color
             );
@@ -269,16 +270,16 @@ protected:
                     continue;
                     
                 // Get existing color for blending
-                unsigned int px = static_cast<unsigned int>(static_cast<int>(x) + xi);
-                unsigned int py = static_cast<unsigned int>(static_cast<int>(y) + yi);
+                unsigned int px = UNSIGNED_CAST(unsigned int, static_cast<int>(x) + xi);
+                unsigned int py = UNSIGNED_CAST(unsigned int, static_cast<int>(y) + yi);
                 
                 RgbColor existingColor;
                 pixelPainter_.getPixel(px, py, existingColor);
                 
                 RgbColor blendedColor;
-                blendedColor.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red))));
-                blendedColor.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green))));
-                blendedColor.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue))));
+                blendedColor.red = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red))));
+                blendedColor.green = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green))));
+                blendedColor.blue = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue))));
                 
                 pixelPainter_.putPixel(px, py, blendedColor);
             }

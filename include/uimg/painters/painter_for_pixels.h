@@ -366,7 +366,7 @@ protected:
         int dx = static_cast<int>(x2) - static_cast<int>(x1);
         int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
-        unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidth_ / 2));
+        unsigned int lineWidthD2 = UNSIGNED_CAST(unsigned, round(lineWidth_ / 2));
 
         int cnt;
         if (pointCount_ > 0)
@@ -410,7 +410,7 @@ public:
         int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
         float lineWidthD2f = lineWidth_ / 2.0f;
-        unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidthD2f));
+        unsigned int lineWidthD2 = UNSIGNED_CAST(unsigned, round(lineWidthD2f));
 
         int cnt = calcPointCount(x1, y1, x2, y2);
 
@@ -429,8 +429,8 @@ public:
         unsigned int sx, sy;
 
         for (int i = 0, epos = cnt; i < epos; ++i) {
-            sx = static_cast<unsigned int>(round(x));
-            sy = static_cast<unsigned int>(round(y));
+            sx = UNSIGNED_CAST(unsigned int, round(x));
+            sy = UNSIGNED_CAST(unsigned int, round(y));
 
             if (dash) {
                 usedCirclePainter_.drawFull(sx, sy, lineWidthD2, color);
@@ -456,7 +456,7 @@ protected:
         int dx = static_cast<int>(x2) - static_cast<int>(x1);
         int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
-        unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidth_ / 2));
+        unsigned int lineWidthD2 = UNSIGNED_CAST(unsigned, round(lineWidth_ / 2));
 
         int cnt;
         if (pointCount_ > 0)
@@ -507,7 +507,7 @@ public:
                                                                                                              2)))) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
-        circlePainter_.drawFull(x, y, static_cast<unsigned int>(radius_), color);
+        circlePainter_.drawFull(x, y, UNSIGNED_CAST(unsigned int, radius_), color);
     }
 
     virtual void getPixel(unsigned int x, unsigned int y, RgbColor &output) {
@@ -537,7 +537,7 @@ public:
             long int yc = irxy2 - yi2 * irx2;
             for (int xi = -irx; xi <= irx; xi++)
                 if (iry2 * xi * xi <= yc)
-                    pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x) + xi), static_cast<unsigned int>(static_cast<int>(y) + yi), color);
+                    pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y) + yi), color);
         }
     }
 
@@ -550,10 +550,10 @@ public:
 
         /* first half */
         for (xi = 0, yi = static_cast<int>(ry), sigma = 2 * b2 + a2 * (1 - 2 * static_cast<int>(ry)); b2 * xi <= a2 * yi; xi++) {
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) - xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) - yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) - xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) - yi), color);
 
             if (sigma >= 0) {
                 sigma += fa2 * (1 - yi);
@@ -565,10 +565,10 @@ public:
 
         /* second half */
         for (xi = static_cast<int>(rx), yi = 0, sigma = 2 * a2 + b2 * (1 - 2 * static_cast<int>(rx)); a2 * yi <= b2 * xi; yi++) {
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) - xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) - yi), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x0) - xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y0) - yi), color);
 
             if (sigma >= 0) {
                 sigma += fb2 * (1 - xi);
@@ -610,9 +610,9 @@ public:
 
                 if (!pixelSaved) {
                     pixelSaved = true;
-                    pixelPainter_.putPixel(static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
+                    pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, p.x), UNSIGNED_CAST(unsigned int, p.y), color);
                 } else {
-                    usedLinePainter_.drawLine(static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
+                    usedLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, p1.x), UNSIGNED_CAST(unsigned int, p1.y), UNSIGNED_CAST(unsigned int, p.x), UNSIGNED_CAST(unsigned int, p.y), color);
                 }
 
                 p1 = p;
@@ -664,10 +664,10 @@ public:
 
                 if (!pixelSaved) {
                     pixelSaved = true;
-                    pixelPainter_.putPixel(static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
+                    pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, p.x), UNSIGNED_CAST(unsigned int, p.y), color);
                 } else {
                     if (dash) {
-                        usedLinePainter_.drawLine(static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
+                        usedLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, p1.x), UNSIGNED_CAST(unsigned int, p1.y), UNSIGNED_CAST(unsigned int, p.x), UNSIGNED_CAST(unsigned int, p.y), color);
                     }
                     dashDist += static_cast<float>(sqrt(math_utils::square(p.x - p1.x) + math_utils::square(p.y - p1.y)));
                     if (dashDist > static_cast<float>(patternDist)) {
@@ -715,8 +715,8 @@ public:
     virtual ~BackgroundPainterForPixelPainter() {}
 
     virtual void paint(const RgbColor &color) {
-        for (unsigned int y = 0, eposy = static_cast<unsigned int>(canvasSize_.y); y < eposy; ++y)
-            for (unsigned int x = 0, eposx = static_cast<unsigned int>(canvasSize_.x); x < eposx; ++x)
+        for (unsigned int y = 0, eposy = UNSIGNED_CAST(unsigned int, canvasSize_.y); y < eposy; ++y)
+            for (unsigned int x = 0, eposx = UNSIGNED_CAST(unsigned int, canvasSize_.x); x < eposx; ++x)
                 pixelPainter_->putPixel(x, y, color);
     }
 
@@ -772,7 +772,7 @@ public:
                 if (da12i >= 0 &&
                     da23i >= 0 &&
                     da31i >= 0) {
-                    pixelPainter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                    pixelPainter_->putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
                 }
 
                 da12i -= dy12;
@@ -788,9 +788,9 @@ public:
     }
 
     virtual void drawEmpty(const Point &p1, const Point &p2, const Point &p3, const RgbColor &color) {
-        usedLinePainter_.drawLine(static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), static_cast<unsigned int>(p2.x), static_cast<unsigned int>(p2.y), color);
-        usedLinePainter_.drawLine(static_cast<unsigned int>(p2.x), static_cast<unsigned int>(p2.y), static_cast<unsigned int>(p3.x), static_cast<unsigned int>(p3.y), color);
-        usedLinePainter_.drawLine(static_cast<unsigned int>(p3.x), static_cast<unsigned int>(p3.y), static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), color);
+        usedLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, p1.x), UNSIGNED_CAST(unsigned int, p1.y), UNSIGNED_CAST(unsigned int, p2.x), UNSIGNED_CAST(unsigned int, p2.y), color);
+        usedLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, p2.x), UNSIGNED_CAST(unsigned int, p2.y), UNSIGNED_CAST(unsigned int, p3.x), UNSIGNED_CAST(unsigned int, p3.y), color);
+        usedLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, p3.x), UNSIGNED_CAST(unsigned int, p3.y), UNSIGNED_CAST(unsigned int, p1.x), UNSIGNED_CAST(unsigned int, p1.y), color);
     }
 
 private:
@@ -819,7 +819,7 @@ public:
 
     virtual void fill(const Point &p, const RgbColor &color) {
         RgbColor initialColor;
-        pixelPainter_->getPixel(static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), initialColor);
+        pixelPainter_->getPixel(UNSIGNED_CAST(unsigned int, p.x), UNSIGNED_CAST(unsigned int, p.y), initialColor);
 
         fillFromPixel(p.x, p.y, color, initialColor);
     }
@@ -842,10 +842,10 @@ protected:
             s = pixels.back();
             pixels.pop_back();
 
-            pixelPainter_->getPixel(static_cast<unsigned int>(s.x), static_cast<unsigned int>(s.y), c);
+            pixelPainter_->getPixel(UNSIGNED_CAST(unsigned int, s.x), UNSIGNED_CAST(unsigned int, s.y), c);
 
             if (c == initialColor) {
-                pixelPainter_->putPixel(static_cast<unsigned int>(s.x), static_cast<unsigned int>(s.y), newColor);
+                pixelPainter_->putPixel(UNSIGNED_CAST(unsigned int, s.x), UNSIGNED_CAST(unsigned int, s.y), newColor);
 
                 if (((s.checkMask & CheckLeft) != 0) && (s.x >= 0)) {
                     s1.x = s.x - 1;

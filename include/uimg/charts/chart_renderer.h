@@ -8,6 +8,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "uimg/images/ppm_image.h"
+#include "uimg/utils/cast.h"
 
 #include <vector>
 #include <string>
@@ -29,7 +30,7 @@ public:
           thickLinePainter_(pixelPainter_, thickness) {}
     
     void drawLine(int x1, int y1, int x2, int y2, const RgbColor& color) {
-        thickLinePainter_.drawLine(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1), static_cast<unsigned int>(x2), static_cast<unsigned int>(y2), color);
+        thickLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, x1), UNSIGNED_CAST(unsigned int, y1), UNSIGNED_CAST(unsigned int, x2), UNSIGNED_CAST(unsigned int, y2), color);
     }
     
 private:
