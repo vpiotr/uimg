@@ -219,6 +219,20 @@ add_executable(basic_logging_demo
         demos/basic_logging_demo.cpp
         include/dlog/dlog.h)
 
+add_executable(cast_demo
+        LICENSE
+        README.md
+        demos/cast_demo.cpp
+        include/dlog/dlog.h
+        include/uimg/utils/cast.h)
+
+add_executable(cast_validation_disabled_demo
+        LICENSE
+        README.md
+        demos/cast_validation_disabled_demo.cpp
+        include/dlog/dlog.h
+        include/uimg/utils/cast.h)
+
 # Add tests for CTest integration
 add_test(NAME Chart3DComprehensiveTest 
          COMMAND test_chart3d)

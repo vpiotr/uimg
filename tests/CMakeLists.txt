@@ -18,6 +18,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/tests)
 set(TEST_SOURCES
     dlog/test_dlog_basic.cpp
     dlog/test_dlog_features.cpp
+    utils/test_unsigned_cast_basic.cpp
+    utils/test_unsigned_cast_failures.cpp
 )
 
 # Create test executables
