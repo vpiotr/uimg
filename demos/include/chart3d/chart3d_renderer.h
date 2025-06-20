@@ -8,6 +8,7 @@
 #include "chart_z_fxy_3d.h"
 #include "dlog/dlog.h"
 #include "uimg/filters/pixel_tracing_filter.h"
+#include "uimg/utils/cast.h"
 #include <memory>
 #include <vector>
 
@@ -112,11 +113,11 @@ private:
             : basePainter_(basePainter), offset_(offset) {}
         
         virtual void putPixel(unsigned int x, unsigned int y, const RgbColor& color) override {
-            basePainter_.putPixel(x + static_cast<unsigned int>(offset_.x), y + static_cast<unsigned int>(offset_.y), color);
+            basePainter_.putPixel(x + UNSIGNED_CAST(unsigned int, offset_.x), y + UNSIGNED_CAST(unsigned int, offset_.y), color);
         }
         
         virtual void getPixel(unsigned int x, unsigned int y, RgbColor& output) override {
-            basePainter_.getPixel(x + static_cast<unsigned int>(offset_.x), y + static_cast<unsigned int>(offset_.y), output);
+            basePainter_.getPixel(x + UNSIGNED_CAST(unsigned int, offset_.x), y + UNSIGNED_CAST(unsigned int, offset_.y), output);
         }
         
     private:

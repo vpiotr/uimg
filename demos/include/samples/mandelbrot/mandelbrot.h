@@ -5,6 +5,7 @@
 #include <vector>
 #include "uimg/base/structs.h"
 #include "uimg/pixels/pixel_painter.h"
+#include "uimg/utils/cast.h"
 
 class Mandelbrot {
 public:
@@ -35,7 +36,7 @@ private:
                     m = 0;
                 }
 
-                painter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), colors_[static_cast<size_t>(m)]);
+                painter_->putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), colors_[static_cast<size_t>(m)]);
             }
         }
     }
@@ -58,9 +59,9 @@ private:
 
         for (size_t i = 0; i < static_cast<size_t>(count); i++) {
             RgbColor c = {
-                    static_cast<unsigned char>(rand() % 200 + 50),
-                    static_cast<unsigned char>(rand() % 200 + 55),
-                    static_cast<unsigned char>(rand() % 200 + 50)
+                    UNSIGNED_CAST(unsigned char, rand() % 200 + 50),
+                    UNSIGNED_CAST(unsigned char, rand() % 200 + 55),
+                    UNSIGNED_CAST(unsigned char, rand() % 200 + 50)
             };
             colors_.push_back(c);
         }

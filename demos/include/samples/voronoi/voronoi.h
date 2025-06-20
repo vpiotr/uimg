@@ -3,6 +3,7 @@
 
 #include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_base.h"
+#include "uimg/utils/cast.h"
 #include <climits>
 
 // Voronoi diagram generator
@@ -40,7 +41,7 @@ private:
                 }
 
                 if (ind > -1) {
-                    painter_->putPixel(static_cast<unsigned int>(ww), static_cast<unsigned int>(hh), colors_[static_cast<size_t>(ind)]);
+                    painter_->putPixel(UNSIGNED_CAST(unsigned int, ww), UNSIGNED_CAST(unsigned int, hh), colors_[static_cast<size_t>(ind)]);
                 }
             }
         }
@@ -53,7 +54,7 @@ private:
             int x = point.x, y = point.y;
             for (int i = -1; i < 2; i++)
                 for (int j = -1; j < 2; j++) {
-                    painter_->putPixel(static_cast<unsigned int>(x + i), static_cast<unsigned int>(y + j), pixel);
+                    painter_->putPixel(UNSIGNED_CAST(unsigned int, x + i), UNSIGNED_CAST(unsigned int, y + j), pixel);
                 }
         }
     }
@@ -68,9 +69,9 @@ private:
     void CreateColors() {
         for (size_t i = 0; i < points_.size(); i++) {
             RgbColor c = {
-                    static_cast<unsigned char>(rand() % 200 + 50),
-                    static_cast<unsigned char>(rand() % 200 + 55),
-                    static_cast<unsigned char>(rand() % 200 + 50)
+                    UNSIGNED_CAST(unsigned char, rand() % 200 + 50),
+                    UNSIGNED_CAST(unsigned char, rand() % 200 + 55),
+                    UNSIGNED_CAST(unsigned char, rand() % 200 + 50)
             };
             colors_.push_back(c);
         }

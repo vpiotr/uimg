@@ -117,7 +117,7 @@ private:
             {
                 if (x >= x0 && x < x1 && y >= y0 && y < y1)
                 {
-                    painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{0, 200, 0});
+                    painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{0, 200, 0});
                 }
             }
         }
@@ -137,7 +137,7 @@ private:
                 {
                     if (x >= x0 && x < x1 && y >= y0 && y < y1)
                     {                                                // Bounds check
-                        painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{0, 0, 255}); // Blue
+                        painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{0, 0, 255}); // Blue
                     }
                 }
             }
@@ -151,7 +151,7 @@ private:
         {
             for (int x = x0 + 20; x < x0 + 80; ++x)
             {
-                painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{255, 0, 0}); // Red
+                painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{255, 0, 0}); // Red
             }
         }
     }
@@ -167,7 +167,7 @@ private:
                 int r = std::min(255, std::max(0, 255 - (x - x0) / 2));
                 int g = std::min(255, std::max(0, 100 + (y - y0 - heigth / 2) / 2));
                 int b = std::min(255, std::max(0, 100 + (x - x0) / 2));
-                painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b)});
+                painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{UNSIGNED_CAST(unsigned char, r), UNSIGNED_CAST(unsigned char, g), UNSIGNED_CAST(unsigned char, b)});
             }
         }
     }
@@ -179,7 +179,7 @@ private:
         {
             for (int x = x0; x < x0 + width; ++x)
             {
-                painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{240, 240, 240});
+                painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{240, 240, 240});
             }
         }
 
@@ -190,11 +190,11 @@ private:
             {
                 if (((x / 20) + (y / 20)) % 2 == 0)
                 {
-                    painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{220, 220, 220});
+                    painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{220, 220, 220});
                 }
                 else
                 {
-                    painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{80, 80, 80});
+                    painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{80, 80, 80});
                 }
             }
         }
@@ -213,8 +213,8 @@ private:
         HorizontalFlipFilter hFlipFilter(hFlipClip, flipCenter, evenFlip);
         Point leftTopTarget = {HFLIP_WINDOW.x1, HFLIP_WINDOW.y1};
         Point rightTopTarget = {HFLIP_WINDOW.x2, HFLIP_WINDOW.y1};
-        [[maybe_unused]] Point leftTopSource = hFlipFilter.getPixelPos(static_cast<unsigned int>(leftTopTarget.x), static_cast<unsigned int>(leftTopTarget.y));
-        [[maybe_unused]] Point rightTopSource = hFlipFilter.getPixelPos(static_cast<unsigned int>(rightTopTarget.x), static_cast<unsigned int>(rightTopTarget.y));
+        [[maybe_unused]] Point leftTopSource = hFlipFilter.getPixelPos(UNSIGNED_CAST(unsigned int, leftTopTarget.x), UNSIGNED_CAST(unsigned int, leftTopTarget.y));
+        [[maybe_unused]] Point rightTopSource = hFlipFilter.getPixelPos(UNSIGNED_CAST(unsigned int, rightTopTarget.x), UNSIGNED_CAST(unsigned int, rightTopTarget.y));
 
         
         for (int y = HFLIP_WINDOW.y1; y <= HFLIP_WINDOW.y2; ++y) {
@@ -222,7 +222,7 @@ private:
                 int sourceX = x - HFLIP_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - HFLIP_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                hFlipFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                hFlipFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
         
@@ -238,7 +238,7 @@ private:
                 int sourceX = x - VFLIP_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - VFLIP_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                vFlipFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                vFlipFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
         
@@ -253,7 +253,7 @@ private:
                 int sourceX = x - ROTATION_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ROTATION_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                rotFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                rotFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
     }
@@ -271,9 +271,9 @@ private:
             for (int x = TRANSPARENCY_WINDOW.x1; x <= TRANSPARENCY_WINDOW.x2; ++x) {
                 // Checkered pattern
                 if (((x / 20) + (y / 20)) % 2 == 0) {
-                    transClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{200, 200, 200});
+                    transClip.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{200, 200, 200});
                 } else {
-                    transClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{150, 150, 150});
+                    transClip.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{150, 150, 150});
                 }
             }
         }
@@ -286,7 +286,7 @@ private:
                 int sourceX = x - TRANSPARENCY_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - TRANSPARENCY_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                transFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                transFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
         
@@ -297,9 +297,9 @@ private:
             for (int x = ALPHA_WINDOW.x1; x <= ALPHA_WINDOW.x2; ++x) {
                 // Checkered pattern
                 if (((x / 20) + (y / 20)) % 2 == 0) {
-                    alphaClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{200, 200, 200});
+                    alphaClip.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{200, 200, 200});
                 } else {
-                    alphaClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{150, 150, 150});
+                    alphaClip.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{150, 150, 150});
                 }
             }
         }
@@ -311,7 +311,7 @@ private:
                 int sourceX = x - ALPHA_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ALPHA_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                alphaFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                alphaFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
     }
@@ -335,7 +335,7 @@ private:
                 int sourceX = x - ZOOM_OUT_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ZOOM_OUT_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                spreadFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                spreadFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
         
@@ -350,7 +350,7 @@ private:
                 int sourceX = x - ZOOM_IN_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ZOOM_IN_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                zoomFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                zoomFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
     }
@@ -371,7 +371,7 @@ private:
         
         for (int y = LINEAR_GRADIENT_WINDOW.y1; y <= LINEAR_GRADIENT_WINDOW.y2; ++y) {
             for (int x = LINEAR_GRADIENT_WINDOW.x1; x <= LINEAR_GRADIENT_WINDOW.x2; ++x) {
-                gradFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{0, 0, 0}); // Color is determined by gradient
+                gradFilter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), RgbColor{0, 0, 0}); // Color is determined by gradient
             }
         }
         
@@ -386,12 +386,12 @@ private:
                 float ratio = std::min(1.0f, distance / static_cast<float>(radius));
                 
                 RgbColor color = {
-                    static_cast<unsigned char>((1 - ratio) * 255), // Red decreases with distance
-                    static_cast<unsigned char>((1 - ratio) * 100), // Some green
-                    static_cast<unsigned char>(ratio * 255) // Blue increases with distance
+                    UNSIGNED_CAST(unsigned char, (1 - ratio) * 255), // Red decreases with distance
+                    UNSIGNED_CAST(unsigned char, (1 - ratio) * 100), // Some green
+                    UNSIGNED_CAST(unsigned char, ratio * 255) // Blue increases with distance
                 };
                 
-                radialGradClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                radialGradClip.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             }
         }
     }
@@ -463,14 +463,14 @@ private:
         
         // Draw horizontal lines
         for (int i = x; i < x + width; ++i) {
-            painter.putPixel(static_cast<unsigned int>(i), static_cast<unsigned int>(y), color);
-            painter.putPixel(static_cast<unsigned int>(i), static_cast<unsigned int>(y + height - 1), color);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, i), UNSIGNED_CAST(unsigned int, y), color);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, i), UNSIGNED_CAST(unsigned int, y + height - 1), color);
         }
         
         // Draw vertical lines
         for (int i = y; i < y + height; ++i) {
-            painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(i), color);
-            painter.putPixel(static_cast<unsigned int>(x + width - 1), static_cast<unsigned int>(i), color);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, i), color);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, x + width - 1), UNSIGNED_CAST(unsigned int, i), color);
         }
     }
     
@@ -919,7 +919,7 @@ private:
                         // Draw pixel at scaled size
                         for (int sy = 0; sy < size; ++sy) {
                             for (int sx = 0; sx < size; ++sx) {
-                                painter.putPixel(static_cast<unsigned int>(x + dx * size + sx), static_cast<unsigned int>(y + dy * size + sy), color);
+                                painter.putPixel(UNSIGNED_CAST(unsigned int, x + dx * size + sx), UNSIGNED_CAST(unsigned int, y + dy * size + sy), color);
                             }
                         }
                     }

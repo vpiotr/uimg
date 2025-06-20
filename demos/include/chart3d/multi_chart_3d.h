@@ -3,6 +3,7 @@
 
 #include "chart_z_fxy_3d.h"
 #include "chart3d_functions.h"
+#include "uimg/utils/cast.h"
 #include <string>
 
 /**
@@ -30,9 +31,9 @@ public:
 protected:
     virtual RgbColor getPlotColor(double x, double y, double z) override {
         RgbColor color;
-        color.red = static_cast<unsigned char>(std::max(70, std::min(255, 200+(int)floor(z * 200))));
-        color.green = static_cast<unsigned char>(std::min(255, 50+(int)math_utils::iabs(200.0*x/2520)));
-        color.blue = static_cast<unsigned char>(std::min(255, 50+(int)math_utils::iabs(200.0*y/2520)));
+        color.red = UNSIGNED_CAST(unsigned char, std::max(70, std::min(255, 200+(int)floor(z * 200))));
+        color.green = UNSIGNED_CAST(unsigned char, std::min(255, 50+(int)math_utils::iabs(200.0*x/2520)));
+        color.blue = UNSIGNED_CAST(unsigned char, std::min(255, 50+(int)math_utils::iabs(200.0*y/2520)));
         return color;
     }
 
@@ -58,9 +59,9 @@ protected:
         RgbColor color;
         // Use a blue-to-red gradient for Gaussian
         int intensity = std::max(0, std::min(255, (int)(z * 255)));
-        color.red = static_cast<unsigned char>(intensity);
-        color.green = static_cast<unsigned char>(intensity / 2);
-        color.blue = static_cast<unsigned char>(255 - intensity);
+        color.red = UNSIGNED_CAST(unsigned char, intensity);
+        color.green = UNSIGNED_CAST(unsigned char, intensity / 2);
+        color.blue = UNSIGNED_CAST(unsigned char, 255 - intensity);
         return color;
     }
 
@@ -86,9 +87,9 @@ protected:
         RgbColor color;
         // Use a green-based color scheme for ripples
         int intensity = std::max(0, std::min(255, (int)((z + 1) * 127.5))); // z ranges from -1 to 1
-        color.red = static_cast<unsigned char>(intensity / 3);
-        color.green = static_cast<unsigned char>(intensity);
-        color.blue = static_cast<unsigned char>(intensity / 2);
+        color.red = UNSIGNED_CAST(unsigned char, intensity / 3);
+        color.green = UNSIGNED_CAST(unsigned char, intensity);
+        color.blue = UNSIGNED_CAST(unsigned char, intensity / 2);
         return color;
     }
 
@@ -116,13 +117,13 @@ protected:
         if (z >= 0) {
             int intensity = std::max(0, std::min(255, (int)(z * 255 * 10))); // Scale for visibility
             color.red = 255;
-            color.green = static_cast<unsigned char>(165 - intensity/2);
+            color.green = UNSIGNED_CAST(unsigned char, 165 - intensity/2);
             color.blue = 0;
         } else {
             int intensity = std::max(0, std::min(255, (int)(-z * 255 * 10)));
-            color.red = static_cast<unsigned char>(128 - intensity/2);
+            color.red = UNSIGNED_CAST(unsigned char, 128 - intensity/2);
             color.green = 0;
-            color.blue = static_cast<unsigned char>(128 + intensity/2);
+            color.blue = UNSIGNED_CAST(unsigned char, 128 + intensity/2);
         }
         return color;
     }

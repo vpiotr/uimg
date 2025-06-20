@@ -5,6 +5,7 @@
 
 #include "samples/mandelbrot/mandelbrot.h"
 #include "samples/test_painter_base.h"
+#include "uimg/utils/cast.h"
 
 class test_mandelbrot : public test_painter_base {
 public:
@@ -12,7 +13,7 @@ public:
 
 protected:
     virtual void paint() {
-        srand(static_cast<unsigned int>(time(NULL)));
+        srand(UNSIGNED_CAST(unsigned int, time(NULL)));
         Mandelbrot mb;
         mb.Make(getImage().getSize(), getPainter(), 20);
     }

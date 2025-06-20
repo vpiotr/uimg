@@ -12,6 +12,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/font_utils.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
+#include "uimg/utils/cast.h"
 #include "samples/test_painter_base.h"
 
 class test_text_demo : public test_painter_base {
@@ -81,7 +82,7 @@ private:
         };
         
         for (size_t i = 0; i < colors.size(); ++i) {
-            textPainter_->drawText(50, static_cast<unsigned int>(120 + i * 40), colorNames[i], colors[i]);
+            textPainter_->drawText(50, UNSIGNED_CAST(unsigned int, 120 + i * 40), colorNames[i], colors[i]);
         }
     }
     
@@ -103,7 +104,7 @@ private:
         };
         
         for (size_t i = 0; i < sampleText.size(); ++i) {
-            textPainter_->drawText(400, static_cast<unsigned int>(150 + i * 30), sampleText[i], textColor);
+            textPainter_->drawText(400, UNSIGNED_CAST(unsigned int, 150 + i * 30), sampleText[i], textColor);
         }
     }
     
@@ -116,13 +117,13 @@ private:
         
         // Draw border rectangle
         for (int x = 0; x < size.x; ++x) {
-            painter.putPixel(static_cast<unsigned int>(x), 0, borderColor);
-            painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(size.y - 1), borderColor);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, x), 0, borderColor);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, size.y - 1), borderColor);
         }
         
         for (int y = 0; y < size.y; ++y) {
-            painter.putPixel(0, static_cast<unsigned int>(y), borderColor);
-            painter.putPixel(static_cast<unsigned int>(size.x - 1), static_cast<unsigned int>(y), borderColor);
+            painter.putPixel(0, UNSIGNED_CAST(unsigned int, y), borderColor);
+            painter.putPixel(UNSIGNED_CAST(unsigned int, size.x - 1), UNSIGNED_CAST(unsigned int, y), borderColor);
         }
     }
     

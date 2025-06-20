@@ -5,6 +5,7 @@
 
 #include "samples/test_painter_base.h"
 #include "uimg/painters/copier_for_pixels.h"
+#include "uimg/utils/cast.h"
 
 class test_draw_primitives : public test_painter_base {
 public:
@@ -12,7 +13,7 @@ public:
 
 protected:
     virtual void paint() {
-        srand(static_cast<unsigned int>(time(NULL)));
+        srand(UNSIGNED_CAST(unsigned int, time(NULL)));
 
         RgbImage &image = getImage();
 
@@ -51,8 +52,8 @@ protected:
         std::vector<Point> points;
         Point p;
         for (int i = 0; i < 10; ++i) {
-            p.x = static_cast<int>(static_cast<unsigned int>(rand()) % static_cast<unsigned int>(splineDx)) + 40;
-            p.y = static_cast<int>(static_cast<unsigned int>(rand()) % static_cast<unsigned int>(splineDy)) + 200;
+            p.x = UNSIGNED_CAST(int, UNSIGNED_CAST(unsigned int, rand()) % UNSIGNED_CAST(unsigned int, splineDx)) + 40;
+            p.y = UNSIGNED_CAST(int, UNSIGNED_CAST(unsigned int, rand()) % UNSIGNED_CAST(unsigned int, splineDy)) + 200;
             points.push_back(p);
         }
 
