@@ -362,8 +362,8 @@ public:
 
 protected:
     virtual int calcPointCount(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
-        int dx = x2 - x1;
-        int dy = y2 - y1;
+        int dx = static_cast<int>(x2) - static_cast<int>(x1);
+        int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
         unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidth_ / 2));
 
@@ -373,7 +373,7 @@ protected:
         else {
             cnt = static_cast<int>(round(sqrt(std::max(1, math_utils::square(math_utils::iabs(dx))) *
                                               std::max(1, math_utils::square(math_utils::iabs(dy))))));
-            cnt = cnt / lineWidthD2;
+            cnt = cnt / static_cast<int>(lineWidthD2);
         }
 
         return cnt;
@@ -405,27 +405,27 @@ public:
     virtual void drawLine(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RgbColor &color) {
         checkConfig();
 
-        int dx = x2 - x1;
-        int dy = y2 - y1;
+        int dx = static_cast<int>(x2) - static_cast<int>(x1);
+        int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
         float lineWidthD2f = lineWidth_ / 2.0f;
         unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidthD2f));
 
         int cnt = calcPointCount(x1, y1, x2, y2);
 
-        float fdx = static_cast<float>(dx) / cnt;
-        float fdy = static_cast<float>(dy) / cnt;
+        float fdx = static_cast<float>(dx) / static_cast<float>(cnt);
+        float fdy = static_cast<float>(dy) / static_cast<float>(cnt);
 
         float x = static_cast<float>(x1);
         float y = static_cast<float>(y1);
 
         bool dash = true;
-        int xp = x1, yp = y1;
+        int xp = static_cast<int>(x1), yp = static_cast<int>(y1);
         size_t patternPos = 0;
-        int patternDist = pattern_[patternPos];
+        int patternDist = static_cast<int>(pattern_[patternPos]);
         float dashDistSqr;
 
-        int sx, sy;
+        unsigned int sx, sy;
 
         for (int i = 0, epos = cnt; i < epos; ++i) {
             sx = static_cast<unsigned int>(round(x));
@@ -435,13 +435,13 @@ public:
                 usedCirclePainter_.drawFull(sx, sy, lineWidthD2, color);
             }
 
-            dashDistSqr = sqrt(math_utils::square(sx - xp) + math_utils::square(sy - yp));
+            dashDistSqr = static_cast<float>(sqrt(math_utils::square(static_cast<int>(sx) - xp) + math_utils::square(static_cast<int>(sy) - yp)));
             if (
                     (dash && (round(dashDistSqr + lineWidthD2f) > patternDist))
                     ||
                     (!dash && (round(dashDistSqr - lineWidthD2f) > patternDist))
                     ) {
-                nextDash(sx, sy, dash, patternPos, xp, yp, patternDist);
+                nextDash(static_cast<int>(sx), static_cast<int>(sy), dash, patternPos, xp, yp, patternDist);
             }
 
             x += fdx;
@@ -452,8 +452,8 @@ public:
 
 protected:
     virtual int calcPointCount(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
-        int dx = x2 - x1;
-        int dy = y2 - y1;
+        int dx = static_cast<int>(x2) - static_cast<int>(x1);
+        int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
         unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidth_ / 2));
 
@@ -463,7 +463,7 @@ protected:
         else {
             cnt = static_cast<int>(round(sqrt(std::max(1, math_utils::square(math_utils::iabs(dx))) *
                                               std::max(1, math_utils::square(math_utils::iabs(dy))))));
-            cnt = cnt / lineWidthD2;
+            cnt = cnt / static_cast<int>(lineWidthD2);
         }
 
         return cnt;
@@ -484,7 +484,7 @@ protected:
         }
         xp = x;
         yp = y;
-        patternDist = pattern_[patternPos];
+        patternDist = static_cast<int>(pattern_[patternPos]);
     }
 
 protected:
@@ -506,7 +506,7 @@ public:
                                                                                                              2)))) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
-        circlePainter_.drawFull(x, y, radius_, color);
+        circlePainter_.drawFull(x, y, static_cast<unsigned int>(radius_), color);
     }
 
     virtual void getPixel(unsigned int x, unsigned int y, RgbColor &output) {
@@ -536,23 +536,23 @@ public:
             long int yc = irxy2 - yi2 * irx2;
             for (int xi = -irx; xi <= irx; xi++)
                 if (iry2 * xi * xi <= yc)
-                    pixelPainter_.putPixel(x + xi, y + yi, color);
+                    pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x) + xi), static_cast<unsigned int>(static_cast<int>(y) + yi), color);
         }
     }
 
     // Bresenham's ellipse drawing algorithm
     virtual void drawEmpty(unsigned int x0, unsigned int y0, unsigned int rx, unsigned int ry, const RgbColor &color) {
-        int a2 = rx * rx;
-        int b2 = ry * ry;
+        int a2 = static_cast<int>(rx * rx);
+        int b2 = static_cast<int>(ry * ry);
         int fa2 = 4 * a2, fb2 = 4 * b2;
         int xi, yi, sigma;
 
         /* first half */
-        for (xi = 0, yi = ry, sigma = 2 * b2 + a2 * (1 - 2 * ry); b2 * xi <= a2 * yi; xi++) {
-            pixelPainter_.putPixel(x0 + xi, y0 + yi, color);
-            pixelPainter_.putPixel(x0 - xi, y0 + yi, color);
-            pixelPainter_.putPixel(x0 + xi, y0 - yi, color);
-            pixelPainter_.putPixel(x0 - xi, y0 - yi, color);
+        for (xi = 0, yi = static_cast<int>(ry), sigma = 2 * b2 + a2 * (1 - 2 * static_cast<int>(ry)); b2 * xi <= a2 * yi; xi++) {
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
 
             if (sigma >= 0) {
                 sigma += fa2 * (1 - yi);
@@ -563,11 +563,11 @@ public:
         }
 
         /* second half */
-        for (xi = rx, yi = 0, sigma = 2 * a2 + b2 * (1 - 2 * rx); a2 * yi <= b2 * xi; yi++) {
-            pixelPainter_.putPixel(x0 + xi, y0 + yi, color);
-            pixelPainter_.putPixel(x0 - xi, y0 + yi, color);
-            pixelPainter_.putPixel(x0 + xi, y0 - yi, color);
-            pixelPainter_.putPixel(x0 - xi, y0 - yi, color);
+        for (xi = static_cast<int>(rx), yi = 0, sigma = 2 * a2 + b2 * (1 - 2 * static_cast<int>(rx)); a2 * yi <= b2 * xi; yi++) {
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) + yi), color);
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) + xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
+            pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x0) - xi), static_cast<unsigned int>(static_cast<int>(y0) - yi), color);
 
             if (sigma >= 0) {
                 sigma += fb2 * (1 - xi);
