@@ -1,12 +1,12 @@
 #include <iostream>
-#include "samples/test_painter_base.h"
-#include "chart3d/test_chart_z_fxy_3d_c.h"
+#include "samples/demo_painter_base.h"
+#include "chart3d/chart_z_fxy_3d_demo.h"
 #include "chart3d/chart_z_fxy_3d.h"
 #include "chart3d/chart3d_renderer.h"
 #include "dlog/dlog.h"
 
 int main(int argc, const char *argv[]) {
-    auto demoInfo = test_painter_base::get_test_args(argc, argv, "chart3d");
+    auto demoInfo = demo_painter_base::get_demo_args(argc, argv, "chart3d");
 
     // Initialize logger
     dlog::Logger::getInstance()->setLevel(demoInfo.logLevel);
@@ -22,18 +22,18 @@ int main(int argc, const char *argv[]) {
     std::cerr << "main - Tracing: " << (demoInfo.traceEnabled ? "Enabled" : "Disabled") << std::endl;
 
     if (demoInfo.numCharts == 1) {
-        // Single chart - use original implementation
-        test_chart_z_fxy_3d_c test(demoInfo.outFileName);
-        test.setUseAntiAliasing(demoInfo.useAntiAliasing);
-        test.setDrawBorders(demoInfo.drawBorders);
-        test.run();
+        // Single chart - use demo implementation
+        chart_z_fxy_3d_demo demo(demoInfo.outFileName);
+        demo.setUseAntiAliasing(demoInfo.useAntiAliasing);
+        demo.setDrawBorders(demoInfo.drawBorders);
+        demo.run();
     } else {
         // For multi-chart, use the same single chart implementation but indicate it's not supported yet
         std::cerr << "Warning: Multi-chart support is not fully implemented. Using single chart." << std::endl;
-        test_chart_z_fxy_3d_c test(demoInfo.outFileName);
-        test.setUseAntiAliasing(demoInfo.useAntiAliasing);
-        test.setDrawBorders(demoInfo.drawBorders);
-        test.run();
+        chart_z_fxy_3d_demo demo(demoInfo.outFileName);
+        demo.setUseAntiAliasing(demoInfo.useAntiAliasing);
+        demo.setDrawBorders(demoInfo.drawBorders);
+        demo.run();
     }
     
     return 0;

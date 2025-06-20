@@ -63,7 +63,7 @@ protected:
         };
 
         // Create pixel tracing filter for the single chart
-        PixelTracingFilter tracingFilter(getImage(), "Sinc Chart (Single)");
+        PixelTracingFilter tracingFilter(getPainter(), "Sinc Chart (Single)");
         
         chart_z_fxy_3d_c chart1(getImage().getSize(), tracingFilter, useAntiAliasing_, drawBorders_);
         

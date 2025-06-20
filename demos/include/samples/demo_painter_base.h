@@ -124,23 +124,46 @@ public:
     }
 
 protected:
-    virtual void init() {
-        const unsigned width = 640;
-        const unsigned height = 480;
-
-        img_ = std::make_shared<RgbImage>(width, height);
+    virtual void paint() = 0;
+    
+    virtual std::string get_output_fname() {
+        if (!output_fname_.empty())
+            return output_fname_;
+        else
+            return "output.ppm";
     }
 
-    virtual void paint() = 0;
+    virtual Point getImageSize() {
+        return {512, 512};
+    }
+
+    virtual void init() {
+        Point size = getImageSize();
+        img_ = std::make_shared<RgbImage>(UNSIGNED_CAST(unsigned int, size.x), UNSIGNED_CAST(unsigned int, size.y));
+        painter_ = std::make_shared<PixelPainterForRgbImage>(*img_);
+    }
 
     virtual void write() {
-        std::ofstream outFile(output_fname_, std::ios::binary);
-        PpmWriterForRgbImage writer(outFile);
+        using namespace std;
+        std::ofstream output(get_output_fname(), ios::out | ios::binary);
+
+        PpmWriterForRgbImage writer(output);
+
         writer.writeImage(*img_);
+        
+        output.close();
     }
 
     RgbImage &getImage() {
         return *img_.get();
+    }
+    
+    PixelPainter &getPainter() {
+        return *painter_;
+    }
+    
+    virtual Point getScreenOffset() {
+        return { 10, 100 };
     }
 
     const std::string &getOutputFileName() const {
@@ -150,6 +173,7 @@ protected:
 private:
     std::string output_fname_;
     std::shared_ptr<RgbImage> img_;
+    std::shared_ptr<PixelPainter> painter_;
 };
 
 #endif
