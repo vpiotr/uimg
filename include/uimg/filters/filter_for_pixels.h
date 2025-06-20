@@ -426,10 +426,10 @@ protected:    RgbColor mixColors(const RgbColor &color1, double r1, const RgbCol
         int ub = math_utils::square(dx_) + math_utils::square(dy_);
         if (ub == 0)
             return startPoint_;
-        float u = static_cast<float>(ua) / static_cast<float>(ub);
+        float u = static_cast<float>(ua) / static_cast<float>(ub);        
         Point result;
-        result.x = static_cast<int>(round(startPoint_.x + static_cast<float>(dx_)*u));
-        result.y = static_cast<int>(round(startPoint_.y + static_cast<float>(dy_)*u));
+        result.x = static_cast<int>(round(static_cast<float>(startPoint_.x) + static_cast<float>(dx_)*u));
+        result.y = static_cast<int>(round(static_cast<float>(startPoint_.y) + static_cast<float>(dy_)*u));
         return result;
     }
 private:

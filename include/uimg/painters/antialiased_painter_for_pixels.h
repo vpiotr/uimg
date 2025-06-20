@@ -55,12 +55,12 @@ public:
         int dy = iy2 - iy1;
         
         // Calculate the gradient (slope)
-        float gradient = (dx == 0) ? 1.0f : static_cast<float>(dy) / dx;
+        float gradient = (dx == 0) ? 1.0f : static_cast<float>(dy) / static_cast<float>(dx);
 
         // Handle first endpoint
-        int xend = std::round(ix1);
-        float yend = iy1 + gradient * (xend - ix1);
-        float xgap = 1.0f - fractionalPart(ix1 + 0.5f);
+        int xend = static_cast<int>(std::round(ix1));
+        float yend = static_cast<float>(iy1) + gradient * (static_cast<float>(xend) - static_cast<float>(ix1));
+        float xgap = 1.0f - fractionalPart(static_cast<float>(ix1) + 0.5f);
         int xpxl1 = xend;
         int ypxl1 = static_cast<int>(yend); // Integer part of y
 
@@ -71,11 +71,11 @@ public:
         // Draw first endpoint
         if (steep) {
             // If the line is steep, x and y are swapped
-            plotPixel(ypxl1, xpxl1, color, rfpart_yend * xgap);
-            plotPixel(ypxl1 + 1, xpxl1, color, fpart_yend * xgap);
+            plotPixel(static_cast<unsigned int>(ypxl1), static_cast<unsigned int>(xpxl1), color, rfpart_yend * xgap);
+            plotPixel(static_cast<unsigned int>(ypxl1 + 1), static_cast<unsigned int>(xpxl1), color, fpart_yend * xgap);
         } else {
-            plotPixel(xpxl1, ypxl1, color, rfpart_yend * xgap);
-            plotPixel(xpxl1, ypxl1 + 1, color, fpart_yend * xgap);
+            plotPixel(static_cast<unsigned int>(xpxl1), static_cast<unsigned int>(ypxl1), color, rfpart_yend * xgap);
+            plotPixel(static_cast<unsigned int>(xpxl1), static_cast<unsigned int>(ypxl1 + 1), color, fpart_yend * xgap);
         }
 
         // Initialize the y-coordinate for the main loop

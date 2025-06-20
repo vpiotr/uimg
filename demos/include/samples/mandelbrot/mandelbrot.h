@@ -23,7 +23,7 @@ private:
         double windowImStart = -1;
         double windowImSize = 2;
 
-        int maxIterations = colors_.size() - 1;
+        int maxIterations = static_cast<int>(colors_.size()) - 1;
 
         int w = canvasSize_.x, h = canvasSize_.y;
         for (int y = 0; y < h; y++) {
@@ -31,11 +31,11 @@ private:
                 double c_re = windowReStart + (static_cast<double>(x) / w) * windowReSize;
                 double c_im = windowImStart + (static_cast<double>(y) / h) * windowImSize;
                 int m = 1 + countMandelbrot(c_re, c_im, maxIterations);
-                if (m >= colors_.size()) {
+                if (m >= static_cast<int>(colors_.size())) {
                     m = 0;
                 }
 
-                painter_->putPixel(x, y, colors_[m]);
+                painter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), colors_[static_cast<size_t>(m)]);
             }
         }
     }
@@ -56,7 +56,7 @@ private:
         RgbColor background = {0, 0, 0};
         colors_.push_back(background);
 
-        for (size_t i = 0; i < count; i++) {
+        for (size_t i = 0; i < static_cast<size_t>(count); i++) {
             RgbColor c = {
                     static_cast<unsigned char>(rand() % 200 + 50),
                     static_cast<unsigned char>(rand() % 200 + 55),

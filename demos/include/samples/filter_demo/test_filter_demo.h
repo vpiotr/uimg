@@ -74,7 +74,7 @@ private:
     }
 
     void drawSourceShapes() {
-        RgbImage &img = getImage();
+        [[maybe_unused]] RgbImage &img = getImage();
         PixelPainter &painter = getPainter();
 
         int x0 = ORIGINAL_WINDOW.x1, y0 = ORIGINAL_WINDOW.y1;
@@ -109,14 +109,14 @@ private:
         for (int y = tri_apex_y; y <= tri_base_y; ++y)
         {
             float progress = float(y - tri_apex_y) / float(tri_base_y - tri_apex_y); // 0.0 at apex, 1.0 at base
-            int half_width = static_cast<int>(progress * tri_half_base);
+            int half_width = static_cast<int>(progress * static_cast<float>(tri_half_base));
             int x_start = tri_center_x - half_width;
             int x_end = tri_center_x + half_width;
             for (int x = x_start; x <= x_end; ++x)
             {
                 if (x >= x0 && x < x1 && y >= y0 && y < y1)
                 {
-                    painter.putPixel(x, y, RgbColor{0, 200, 0});
+                    painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{0, 200, 0});
                 }
             }
         }
@@ -136,7 +136,7 @@ private:
                 {
                     if (x >= x0 && x < x1 && y >= y0 && y < y1)
                     {                                                // Bounds check
-                        painter.putPixel(x, y, RgbColor{0, 0, 255}); // Blue
+                        painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{0, 0, 255}); // Blue
                     }
                 }
             }
@@ -150,7 +150,7 @@ private:
         {
             for (int x = x0 + 20; x < x0 + 80; ++x)
             {
-                painter.putPixel(x, y, RgbColor{255, 0, 0}); // Red
+                painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{255, 0, 0}); // Red
             }
         }
     }
@@ -166,7 +166,7 @@ private:
                 int r = std::min(255, std::max(0, 255 - (x - x0) / 2));
                 int g = std::min(255, std::max(0, 100 + (y - y0 - heigth / 2) / 2));
                 int b = std::min(255, std::max(0, 100 + (x - x0) / 2));
-                painter.putPixel(x, y, RgbColor{static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b)});
+                painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b)});
             }
         }
     }
@@ -178,7 +178,7 @@ private:
         {
             for (int x = x0; x < x0 + width; ++x)
             {
-                painter.putPixel(x, y, RgbColor{240, 240, 240});
+                painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{240, 240, 240});
             }
         }
 
@@ -189,11 +189,11 @@ private:
             {
                 if (((x / 20) + (y / 20)) % 2 == 0)
                 {
-                    painter.putPixel(x, y, RgbColor{220, 220, 220});
+                    painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{220, 220, 220});
                 }
                 else
                 {
-                    painter.putPixel(x, y, RgbColor{80, 80, 80});
+                    painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{80, 80, 80});
                 }
             }
         }
@@ -212,8 +212,8 @@ private:
         HorizontalFlipFilter hFlipFilter(hFlipClip, flipCenter, evenFlip);
         Point leftTopTarget = {HFLIP_WINDOW.x1, HFLIP_WINDOW.y1};
         Point rightTopTarget = {HFLIP_WINDOW.x2, HFLIP_WINDOW.y1};
-        Point leftTopSource = hFlipFilter.getPixelPos(leftTopTarget.x, leftTopTarget.y);
-        Point rightTopSource = hFlipFilter.getPixelPos(rightTopTarget.x, rightTopTarget.y);
+        [[maybe_unused]] Point leftTopSource = hFlipFilter.getPixelPos(leftTopTarget.x, leftTopTarget.y);
+        [[maybe_unused]] Point rightTopSource = hFlipFilter.getPixelPos(rightTopTarget.x, rightTopTarget.y);
 
         
         for (int y = HFLIP_WINDOW.y1; y <= HFLIP_WINDOW.y2; ++y) {
@@ -221,7 +221,7 @@ private:
                 int sourceX = x - HFLIP_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - HFLIP_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                hFlipFilter.putPixel(x, y, color);
+                hFlipFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
         
@@ -237,7 +237,7 @@ private:
                 int sourceX = x - VFLIP_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - VFLIP_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                vFlipFilter.putPixel(x, y, color);
+                vFlipFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
         
@@ -252,7 +252,7 @@ private:
                 int sourceX = x - ROTATION_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ROTATION_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                rotFilter.putPixel(x, y, color);
+                rotFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
     }
@@ -270,9 +270,9 @@ private:
             for (int x = TRANSPARENCY_WINDOW.x1; x <= TRANSPARENCY_WINDOW.x2; ++x) {
                 // Checkered pattern
                 if (((x / 20) + (y / 20)) % 2 == 0) {
-                    transClip.putPixel(x, y, RgbColor{200, 200, 200});
+                    transClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{200, 200, 200});
                 } else {
-                    transClip.putPixel(x, y, RgbColor{150, 150, 150});
+                    transClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{150, 150, 150});
                 }
             }
         }

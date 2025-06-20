@@ -35,12 +35,12 @@ private:
                     d = DistanceSqrd(p, ww, hh);
                     if (d < dist) {
                         dist = d;
-                        ind = it;
+                        ind = static_cast<int>(it);
                     }
                 }
 
                 if (ind > -1) {
-                    painter_->putPixel(ww, hh, colors_[ind]);
+                    painter_->putPixel(static_cast<unsigned int>(ww), static_cast<unsigned int>(hh), colors_[static_cast<size_t>(ind)]);
                 }
             }
         }
@@ -53,7 +53,7 @@ private:
             int x = point.x, y = point.y;
             for (int i = -1; i < 2; i++)
                 for (int j = -1; j < 2; j++) {
-                    painter_->putPixel(x + i, y + j, pixel);
+                    painter_->putPixel(static_cast<unsigned int>(x + i), static_cast<unsigned int>(y + j), pixel);
                 }
         }
     }
