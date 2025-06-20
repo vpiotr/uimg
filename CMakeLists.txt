@@ -6,14 +6,14 @@ set(CMAKE_CXX_STANDARD 17)
 # Enable testing for CTest integration
 enable_testing()
 
-include_directories(apps/include)
-include_directories(apps/include/samples)
-include_directories(apps/include/samples/voronoi)
-include_directories(apps/include/samples/mandelbrot)
-include_directories(apps/include/samples/chart3d)
-include_directories(apps/include/samples/draw_primitives)
-include_directories(apps/include/samples/text_demo)
-include_directories(apps/include/samples/filter_demo)
+include_directories(demos/include)
+include_directories(demos/include/samples)
+include_directories(demos/include/samples/voronoi)
+include_directories(demos/include/samples/mandelbrot)
+include_directories(demos/include/samples/chart3d)
+include_directories(demos/include/samples/draw_primitives)
+include_directories(demos/include/samples/text_demo)
+include_directories(demos/include/samples/filter_demo)
 include_directories(include)
 include_directories(include/uimg)
 include_directories(include/uimg/painters)
@@ -23,10 +23,10 @@ include_directories(include/ulog)
 add_executable(voronoi
         LICENSE
         README.md
-        apps/include/samples/voronoi/test_voronoi.h
-        apps/include/samples/voronoi/voronoi.h
-        apps/include/samples/test_painter_base.h
-        apps/voronoi.cpp
+        demos/include/samples/voronoi/test_voronoi.h
+        demos/include/samples/voronoi/voronoi.h
+        demos/include/samples/test_painter_base.h
+        demos/voronoi.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -42,10 +42,10 @@ add_executable(voronoi
 add_executable(mandelbrot
         LICENSE
         README.md
-        apps/include/samples/mandelbrot/test_mandelbrot.h
-        apps/include/samples/mandelbrot/mandelbrot.h
-        apps/include/samples/test_painter_base.h
-        apps/mandelbrot.cpp
+        demos/include/samples/mandelbrot/test_mandelbrot.h
+        demos/include/samples/mandelbrot/mandelbrot.h
+        demos/include/samples/test_painter_base.h
+        demos/mandelbrot.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -61,10 +61,10 @@ add_executable(mandelbrot
 add_executable(chart3d
         LICENSE
         README.md
-        apps/include/samples/chart3d/test_chart_z_fxy_3d_c.h
-        apps/include/samples/chart3d/chart_z_fxy_3d.h
-        apps/include/samples/test_painter_base.h
-        apps/chart3d.cpp
+        demos/include/samples/chart3d/test_chart_z_fxy_3d_c.h
+        demos/include/samples/chart3d/chart_z_fxy_3d.h
+        demos/include/samples/test_painter_base.h
+        demos/chart3d.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -86,9 +86,9 @@ add_executable(chart3d
 add_executable(draw_primitives
         LICENSE
         README.md
-        apps/include/samples/draw_primitives/test_draw_primitives.h
-        apps/include/samples/test_painter_base.h
-        apps/draw_primitives.cpp
+        demos/include/samples/draw_primitives/test_draw_primitives.h
+        demos/include/samples/test_painter_base.h
+        demos/draw_primitives.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -104,9 +104,9 @@ add_executable(draw_primitives
 add_executable(filter_demo
         LICENSE
         README.md
-        apps/include/samples/filter_demo/test_filter_demo.h
-        apps/include/samples/test_painter_base.h
-        apps/filter_demo.cpp
+        demos/include/samples/filter_demo/test_filter_demo.h
+        demos/include/samples/test_painter_base.h
+        demos/filter_demo.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -116,11 +116,11 @@ add_executable(filter_demo
 add_executable(2d_line_chart_demo
         LICENSE
         README.md
-        apps/2d_line_chart_demo.cpp
+        demos/2d_line_chart_demo.cpp
         include/uimg/charts/chart.h
         include/uimg/charts/chart_styles.h
         include/uimg/charts/chart_renderer.h
-        apps/include/samples/test_painter_base.h
+        demos/include/samples/test_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
         include/uimg/images/ppm_image.h
@@ -139,9 +139,9 @@ add_executable(2d_line_chart_demo
 add_executable(text_demo
         LICENSE
         README.md
-        apps/text_demo.cpp
-        apps/include/samples/text_demo/test_text_demo.h
-        apps/include/samples/test_painter_base.h
+        demos/text_demo.cpp
+        demos/include/samples/text_demo/test_text_demo.h
+        demos/include/samples/test_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
         include/uimg/images/ppm_image.h
@@ -160,16 +160,16 @@ add_executable(text_demo
 add_executable(test_chart3d
         LICENSE
         README.md
-        apps/test_chart3d.cpp
-        apps/include/samples/test_chart3d.h
-        apps/include/samples/test_logger.h
-        apps/include/samples/chart3d/chart_z_fxy_3d.h
-        apps/include/samples/chart3d/chart3d_renderer.h
-        apps/include/samples/chart3d/chart3d_layout.h
-        apps/include/samples/chart3d/multi_chart_3d.h
-        apps/include/samples/chart3d/test_chart_z_fxy_3d_c.h
-        apps/include/samples/test_painter_base.h
-        apps/include/samples/logger.h
+        demos/test_chart3d.cpp
+        demos/include/samples/test_chart3d.h
+        demos/include/samples/test_logger.h
+        demos/include/samples/chart3d/chart_z_fxy_3d.h
+        demos/include/samples/chart3d/chart3d_renderer.h
+        demos/include/samples/chart3d/chart3d_layout.h
+        demos/include/samples/chart3d/multi_chart_3d.h
+        demos/include/samples/chart3d/test_chart_z_fxy_3d_c.h
+        demos/include/samples/test_painter_base.h
+        demos/include/samples/logger.h
         include/utest/utest.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
@@ -191,16 +191,14 @@ add_executable(test_chart3d
 add_executable(observers_demo
         LICENSE
         README.md
-        apps/observers_demo.cpp
-        include/ulog/ulog.h
-        include/ulog/log_output.h)
+        demos/observers_demo.cpp
+        include/dlog/dlog.h)
 
 add_executable(basic_logging_demo
         LICENSE
         README.md
-        apps/basic_logging_demo.cpp
-        include/ulog/ulog.h
-        include/ulog/log_output.h)
+        demos/basic_logging_demo.cpp
+        include/dlog/dlog.h)
 
 # Add tests for CTest integration
 add_test(NAME Chart3DComprehensiveTest 

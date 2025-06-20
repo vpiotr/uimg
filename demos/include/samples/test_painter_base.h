@@ -11,7 +11,7 @@
 #include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_rgb_image.h"
 #include "uimg/images/ppm_image.h"
-#include "samples/logger.h"
+#include "dlog/dlog.h"
 
 struct test_args {
     const std::string testName;
@@ -21,9 +21,9 @@ struct test_args {
     std::string layout;
     bool drawBorders;
     bool traceEnabled;
-    LogLevel logLevel;
+    dlog::LogLevel logLevel;
 
-    test_args(std::string testName, std::string outFileName, bool useAntiAliasing = false, int numCharts = 1, std::string layout = "auto", bool drawBorders = false, bool traceEnabled = false, LogLevel logLevel = LogLevel::INFO) 
+    test_args(std::string testName, std::string outFileName, bool useAntiAliasing = false, int numCharts = 1, std::string layout = "auto", bool drawBorders = false, bool traceEnabled = false, dlog::LogLevel logLevel = dlog::LogLevel::INFO) 
         : testName(testName), outFileName(outFileName), useAntiAliasing(useAntiAliasing), numCharts(numCharts), layout(layout), drawBorders(drawBorders), traceEnabled(traceEnabled), logLevel(logLevel) {}
 };
 
@@ -53,7 +53,7 @@ public:
         std::string layout = "auto";
         bool drawBorders = false;
         bool trace_enabled = false;
-        LogLevel logLevel = LogLevel::INFO;
+        dlog::LogLevel logLevel = dlog::LogLevel::INFO;
 
         for (int i = 1; i < argc; ++i) {
             if ((strcmp(argv[i], "-run") == 0) && (i + 1 < argc)) {
@@ -79,11 +79,11 @@ public:
                 std::cerr << "[chart3d] Tracing enabled via -trace" << std::endl;
             } else if ((strcmp(argv[i], "-log-level") == 0) && (i + 1 < argc)) {
                 std::string levelStr = argv[i + 1];
-                logLevel = DemoLogger::stringToLevel(levelStr);
-                std::cerr << "[logger] Log level set to: " << DemoLogger::levelToString(logLevel) << std::endl;
+                logLevel = dlog::Logger::stringToLevel(levelStr);
+                std::cerr << "[logger] Log level set to: " << dlog::Logger::levelToString(logLevel) << std::endl;
             } else if ((strcmp(argv[i], "-log-level") == 0)) {
                 // Default to INFO level if no level specified
-                logLevel = LogLevel::INFO;
+                logLevel = dlog::LogLevel::INFO;
                 std::cerr << "[logger] Log level set to: INFO (default)" << std::endl;
             } else if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "--help") == 0)) {
                 // Display help information

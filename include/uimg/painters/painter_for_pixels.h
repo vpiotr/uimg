@@ -8,6 +8,7 @@
 #include "uimg/pixels/pixel_painter.h"
 #include "uimg/utils/math_utils.h"
 #include "uimg/utils/cubic_spline_utils.h"
+#include "uimg/painters/painter_base.h"
 
 using LineDashPattern = std::vector<unsigned int>;
 

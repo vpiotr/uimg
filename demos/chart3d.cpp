@@ -3,21 +3,21 @@
 #include "samples/chart3d/test_chart_z_fxy_3d_c.h"
 #include "samples/chart3d/chart_z_fxy_3d.h"
 #include "samples/chart3d/chart3d_renderer.h"
-#include "samples/logger.h"
+#include "dlog/dlog.h"
 
 int main(int argc, const char *argv[]) {
     auto testInfo = test_painter_base::get_test_args(argc, argv, "chart3d");
 
     // Initialize logger
-    DemoLogger::getInstance()->setLevel(testInfo.logLevel);
-    auto logger = DemoLogger::getInstance();
+    dlog::Logger::getInstance()->setLevel(testInfo.logLevel);
+    auto logger = dlog::Logger::getInstance();
     
     // Display configuration
     std::cerr << "Anti-aliasing: " << (testInfo.useAntiAliasing ? "Enabled" : "Disabled") << std::endl;
     std::cerr << "Number of charts: " << testInfo.numCharts << std::endl;
     std::cerr << "Layout: " << testInfo.layout << std::endl;
     std::cerr << "Borders: " << (testInfo.drawBorders ? "Enabled" : "Disabled") << std::endl;
-    std::cerr << "Log Level: " << DemoLogger::levelToString(testInfo.logLevel) << std::endl;
+    std::cerr << "Log Level: " << dlog::Logger::levelToString(testInfo.logLevel) << std::endl;
 
     Chart3DTracer::getInstance()->setEnabled(testInfo.traceEnabled);
     std::cerr << "main - Tracing: " << (testInfo.traceEnabled ? "Enabled" : "Disabled") << std::endl;

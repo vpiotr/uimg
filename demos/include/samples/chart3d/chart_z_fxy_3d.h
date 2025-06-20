@@ -17,7 +17,7 @@
 #include "uimg/filters/pixel_tracing_filter.h"
 #include "uimg/utils/math_utils.h"
 #include "samples/chart3d/chart3d_tracer.h"
-#include "samples/logger.h"
+#include "dlog/dlog.h"
 #include "uimg/painters/painter_utils.h"
 
 
@@ -245,9 +245,9 @@ public:
         int sampleSpaceY = static_cast<int>((availableHeight - projectionMarginY) * adaptiveSafetyFactor);
         
         // Debug the adaptive safety factor calculation (reduced verbosity for production)
-        auto safetyLogger = DemoLogger::getInstance();
+        auto safetyLogger = dlog::Logger::getInstance();
         safetyLogger->debug("=== Adaptive Safety Factor ===");
-        safetyLogger->debug("Available: %dx%d, Safety: %.1f%%, Margins: %.1fx%.1f, Sample: %dx%d", 
+        safetyLogger->debug("Available: {0}x{1}, Safety: {2:.1f}%, Margins: {3:.1f}x{4:.1f}, Sample: {5}x{6}", 
                            availableWidth, availableHeight, adaptiveSafetyFactor * 100, 
                            projectionMarginX, projectionMarginY, sampleSpaceX, sampleSpaceY);
         
@@ -265,11 +265,11 @@ public:
         
         sampleSpaceX = std::max(sampleSpaceX, minSampleSpaceX);
         sampleSpaceY = std::max(sampleSpaceY, minSampleSpaceY);
-        safetyLogger->debug("Final sample space: %dx%d (mins: %dx%d)", 
+        safetyLogger->debug("Final sample space: {0}x{1} (mins: {2}x{3})", 
                            sampleSpaceX, sampleSpaceY, minSampleSpaceX, minSampleSpaceY);
         
         if (sampleSpaceX != sampleSpaceX_beforeAlign || sampleSpaceY != sampleSpaceY_beforeAlign) {
-            safetyLogger->debug("Step size alignment changed sample space from %dx%d to %dx%d", 
+            safetyLogger->debug("Step size alignment changed sample space from {0}x{1} to {2}x{3}", 
                                sampleSpaceX_beforeAlign, sampleSpaceY_beforeAlign, sampleSpaceX, sampleSpaceY);
         }
         
@@ -297,19 +297,39 @@ public:
         double sampleScaleForY = sampleScale * sin(skewAngle * degreesToRadiansFactor);
 
         // Debug logging
-        auto logger = DemoLogger::getInstance();
+        auto logger = dlog::Logger::getInstance();
         
         logger->debug("=== Using getAllowedDrawingArea() for Chart Sizing ===");
-        logger->debug("Canvas size: %dx%d", canvasSize_.x, canvasSize_.y);
-        logger->debug("Chart size: %dx%d", chartSize.x, chartSize.y);
-        logger->debug("Screen offset: (%d, %d)", screenOffsetX, screenOffsetY);
-        logger->debug("Allowed drawing area: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
-        logger->debug("Allowed area dimensions: %dx%d", availableRight - availableLeft + 1, availableBottom - availableTop + 1);
-        
+        logger->debug("Canvas size: {0}x{1}", canvasSize_.x, canvasSize_.y);
+        logger->debug("Chart size: {0}x{1}", chartSize.x, chartSize.y);
+        logger->debug("Screen offset: ({0}, {1})", screenOffsetX, screenOffsetY);
+        logger->debug("Allowed drawing area: ({0},{1}) to ({2},{3})", availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Allowed area dimensions: {0}x{1}", availableRight - availableLeft + 1, availableBottom - availableTop + 1);
+
         // Calculate the center of the allowed drawing area for proper chart centering
-        double availableCenterX = (availableLeft + availableRight) / 2.0;
-        double availableCenterY = (availableTop + availableBottom) / 2.0;
+        // Add a small margin within the allowed area to prevent touching edges
+        const double marginPercent = 0.05; // 5% margin within allowed area
+        int marginX = static_cast<int>(availableWidth * marginPercent);
+        int marginY = static_cast<int>(availableHeight * marginPercent);
         
+        // Ensure minimum margins for very small areas
+        marginX = std::max(marginX, 3);
+        marginY = std::max(marginY, 3);
+        
+        // Create target area with margins for chart centering
+        int targetLeft = availableLeft + marginX;
+        int targetRight = availableRight - marginX;
+        int targetTop = availableTop + marginY;
+        int targetBottom = availableBottom - marginY;
+        
+        double availableCenterX = (targetLeft + targetRight) / 2.0;
+        double availableCenterY = (targetTop + targetBottom) / 2.0;
+        
+        logger->debug("=== Chart Centering with Margins ===");
+        logger->debug("Allowed area: ({0},{1}) to ({2},{3})", availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Margin: {0}x{1} pixels ({2:.1f}% of available area)", marginX, marginY, marginPercent * 100);
+        logger->debug("Target area: ({0},{1}) to ({2},{3})", targetLeft, targetTop, targetRight, targetBottom);
+
         // Original centering calculation (for reference)
         double xe0_old = midSampleSpaceX + sampleScaleForX * midSampleSpaceY + screenOffsetX;
         double ye0_old = sampleScaleForY * midSampleSpaceY + screenOffsetY;
@@ -336,15 +356,15 @@ public:
         double ye0 = maxY - availableCenterY - z_center;  // Direct centering without empirical offset
         
         logger->debug("=== Chart Centering Debug ===");
-        logger->debug("Available space: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
-        logger->debug("Available space center: (%.1f, %.1f)", availableCenterX, availableCenterY);
-        logger->debug("Sample space: %dx%d (mid: %d,%d)", sampleSpaceX, sampleSpaceY, midSampleSpaceX, midSampleSpaceY);
-        logger->debug("Center Z value: %.2f (scaled: %.2f)", getCenterZ(), z_center);
-        logger->debug("maxY: %d", maxY);
-        logger->debug("Chart origin: xe0=%.1f, ye0=%.1f", xe0, ye0);
-        logger->debug("Expected pixel center: (%.1f, %.1f)", xe0, maxY - (ye0 + z_center));
-        logger->debug("Direct centering: using allowed area center without empirical offsets");
-        logger->debug("Sample space Y range: q=[%d,%d], actual Y input range: [%.3f,%.3f]", 
+        logger->debug("Available space: ({0},{1}) to ({2},{3})", availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Target space center: ({0:.1f}, {1:.1f})", availableCenterX, availableCenterY);
+        logger->debug("Sample space: {0}x{1} (mid: {2},{3})", sampleSpaceX, sampleSpaceY, midSampleSpaceX, midSampleSpaceY);
+        logger->debug("Center Z value: {0:.2f} (scaled: {1:.2f})", getCenterZ(), z_center);
+        logger->debug("maxY: {0}", maxY);
+        logger->debug("Chart origin: xe0={0:.1f}, ye0={1:.1f}", xe0, ye0);
+        logger->debug("Expected pixel center: ({0:.1f}, {1:.1f})", xe0, maxY - (ye0 + z_center));
+        logger->debug("Centering within target area with margins to prevent edge touching");
+        logger->debug("Sample space Y range: q=[{0},{1}], actual Y input range: [{2:.3f},{3:.3f}]",
                      -midSampleSpaceY, midSampleSpaceY, sampleToInputShiftY, sampleToInputShiftY + 2*midSampleSpaceY*sampleToInputRatioY);
 
         // Draw border if enabled (using base painter to bypass tracing)
@@ -384,9 +404,68 @@ public:
 
         // Assert: outer loop q will terminate
         assert(midSampleSpaceY >= 0 && sampleStepY > 0 && "midSampleSpaceY and sampleStepY must be non-negative and positive");
+        
+        // Line debugging infrastructure for tracking pixel positions
+        struct LineDebugInfo {
+            double startX, startY;      // Start coordinates of the line
+            double endX, endY;          // End coordinates of the line  
+            double minY, maxY;          // Y range of the line
+            bool hasData;               // Whether this line has any data
+            
+            LineDebugInfo() : startX(0), startY(0), endX(0), endY(0), 
+                            minY(std::numeric_limits<double>::max()), 
+                            maxY(std::numeric_limits<double>::lowest()), 
+                            hasData(false) {}
+        };
+        
+        // Identify which q values correspond to first, middle, and last lines
+        // Use the actual q values that will be hit in the loop instead of exact target values
+        int firstQ = -midSampleSpaceY;  // This will always be hit (loop starts here)
+        int middleQ = INT_MAX;  // Will find the closest to 0
+        int lastQ = INT_MIN;    // Will find the actual last q value processed
+        
+        // Find the q value closest to 0 and the actual last q value that will be hit in the loop
+        int bestMiddleDistance = INT_MAX;
+        for (int q = -midSampleSpaceY; q <= midSampleSpaceY; q += sampleStepY) {
+            // Track closest to middle (0)
+            int distance = abs(q);
+            if (distance < bestMiddleDistance) {
+                bestMiddleDistance = distance;
+                middleQ = q;
+            }
+            // Track actual last q value
+            lastQ = q;  // This will be the last value when the loop ends
+        }
+        
+        LineDebugInfo firstLineInfo, middleLineInfo, lastLineInfo;
+        LineDebugInfo* currentLineInfo = nullptr;
+        
         auto tracer = Chart3DTracer::getInstance();
         tracer->trace("Starting outer loop over q (Y axis) in paint()");
+        
+        // Debug: Log the actual q values that will be processed
+        logger->debug("=== Loop Range Analysis ===");
+        logger->debug("Sample space Y: midSampleSpaceY=%d, sampleStepY=%d", midSampleSpaceY, sampleStepY);
+        logger->debug("Target lines: first=%d, middle=%d, last=%d", firstQ, middleQ, lastQ);
+        int qCount = 0;
         for (int q = -midSampleSpaceY; q <= midSampleSpaceY; q += sampleStepY) {
+            qCount++;
+            if (qCount <= 3 || q == middleQ || q >= midSampleSpaceY - sampleStepY) {
+                logger->debug("  q=%d (iteration %d)", q, qCount);
+            }
+        }
+        logger->debug("Total q iterations: %d", qCount);
+        for (int q = -midSampleSpaceY; q <= midSampleSpaceY; q += sampleStepY) {
+            // Identify which line we're tracking for debugging
+            currentLineInfo = nullptr;
+            if (q == firstQ) {
+                currentLineInfo = &firstLineInfo;
+            } else if (q == middleQ) {
+                currentLineInfo = &middleLineInfo;
+            } else if (q == lastQ) {
+                currentLineInfo = &lastLineInfo;
+            }
+            
             y = sampleToInputShiftY + (q + midSampleSpaceY) * sampleToInputRatioY;
             tracer->trace("q=%d, y=%f", q, y);
             tracer->trace(" Starting inner loop over m (X axis) for q=%d", q);
@@ -409,14 +488,14 @@ public:
 
                 // Debug: Check point closest to center (m and q closest to 0)
                 if (abs(m) <= 3 && abs(q) <= 5) {
-                    auto logger = DemoLogger::getInstance();
+                    auto logger = dlog::Logger::getInstance();
                     logger->debug("NEAR CENTER: m=%d,q=%d input(%.3f,%.3f) -> z=%.3f -> screen(%.1f,%.1f) -> final_pixel(%.1f,%.1f)", 
                                  m, q, x, y, z/resultScale, xe, ye, xe, maxY - ye);
                 }
                 
                 // Special debug for exact mathematical center
                 if (m == 0 && q == 0) {
-                    auto logger = DemoLogger::getInstance();
+                    auto logger = dlog::Logger::getInstance();
                     logger->debug("=== EXACT MATHEMATICAL CENTER ===");
                     logger->debug("Input coordinates: x=%.6f, y=%.6f", x, y);
                     logger->debug("Function value: z=%.6f (scaled: %.2f)", z/resultScale, z);
@@ -477,6 +556,33 @@ public:
                         // Draw pixel and line only if they're within bounds
                         pixelPainter->putPixel(finalX1, finalY1, color);
                         lnPainter->drawLine(finalX1, finalY1, finalX2, finalY2, color);
+                        
+                        // Track pixel positions for line debugging if this is a tracked line
+                        if (currentLineInfo != nullptr) {
+                            if (!currentLineInfo->hasData) {
+                                // First pixel of this line
+                                currentLineInfo->startX = finalX1;
+                                currentLineInfo->startY = finalY1;
+                                currentLineInfo->endX = finalX2;
+                                currentLineInfo->endY = finalY2;
+                                currentLineInfo->minY = std::min(finalY1, finalY2);
+                                currentLineInfo->maxY = std::max(finalY1, finalY2);
+                                currentLineInfo->hasData = true;
+                            } else {
+                                // Update end coordinates and Y range
+                                currentLineInfo->endX = finalX2;
+                                currentLineInfo->endY = finalY2;
+                                currentLineInfo->minY = std::min(currentLineInfo->minY, std::min(finalY1, finalY2));
+                                currentLineInfo->maxY = std::max(currentLineInfo->maxY, std::max(finalY1, finalY2));
+                            }
+                        }
+                    } else if (currentLineInfo != nullptr) {
+                        // Debug: Track why certain lines don't get data rendered
+                        static int debugCount = 0;
+                        if (debugCount < 3) { // Limit debug output to avoid spam
+                            logger->debug("Line q=%d: f1*f2=%d (f1=%d, f2=%d) - no rendering", q, f1*f2, f1, f2);
+                            debugCount++;
+                        }
                     }
 
                     x1 = x2; 
@@ -487,6 +593,42 @@ public:
             tracer->trace(" Finished inner loop for q=%d", q);
         }
         tracer->trace("Finished outer loop in paint()");
+        
+        // Output line position debugging information
+        logger->debug("=== Line Position Debug Information ===");
+        logger->debug("Rectangle range of available chart space: (%d,%d) to (%d,%d)", 
+                     availableLeft, availableTop, availableRight, availableBottom);
+        logger->debug("Chart space dimensions: %dx%d pixels", 
+                     availableRight - availableLeft + 1, availableBottom - availableTop + 1);
+        logger->debug("Chart space center: (%.1f, %.1f)", 
+                     (availableLeft + availableRight) / 2.0, (availableTop + availableBottom) / 2.0);
+        
+        if (firstLineInfo.hasData) {
+            logger->debug("FIRST line (q=%d): start(%.1f,%.1f) -> end(%.1f,%.1f), Y range[%.1f,%.1f]", 
+                         firstQ, firstLineInfo.startX, firstLineInfo.startY, 
+                         firstLineInfo.endX, firstLineInfo.endY,
+                         firstLineInfo.minY, firstLineInfo.maxY);
+        } else {
+            logger->debug("FIRST line (q=%d): No data rendered", firstQ);
+        }
+        
+        if (middleLineInfo.hasData) {
+            logger->debug("MIDDLE line (q=%d): start(%.1f,%.1f) -> end(%.1f,%.1f), Y range[%.1f,%.1f]", 
+                         middleQ, middleLineInfo.startX, middleLineInfo.startY,
+                         middleLineInfo.endX, middleLineInfo.endY,
+                         middleLineInfo.minY, middleLineInfo.maxY);
+        } else {
+            logger->debug("MIDDLE line (q=%d): No data rendered", middleQ);
+        }
+        
+        if (lastLineInfo.hasData) {
+            logger->debug("LAST line (q=%d): start(%.1f,%.1f) -> end(%.1f,%.1f), Y range[%.1f,%.1f]", 
+                         lastQ, lastLineInfo.startX, lastLineInfo.startY,
+                         lastLineInfo.endX, lastLineInfo.endY,
+                         lastLineInfo.minY, lastLineInfo.maxY);
+        } else {
+            logger->debug("LAST line (q=%d): No data rendered", lastQ);
+        }
         
         // Log chart sizing effectiveness before validation
         logger->debug("=== Chart Sizing Verification ===");
@@ -537,7 +679,7 @@ protected:
      * @param availableBottom Bottom boundary of available space
      */
     virtual void validatePixelRange(int availableLeft, int availableRight, int availableTop, int availableBottom) {
-        auto logger = DemoLogger::getInstance();
+        auto logger = dlog::Logger::getInstance();
         
         // After chart drawing is complete, validate pixel usage against available space
         PixelTracingFilter* tracingFilter = dynamic_cast<PixelTracingFilter*>(&pixelPainter_);
@@ -593,6 +735,11 @@ protected:
                     
                     logger->debug("Margins: left=%d, right=%d, top=%d, bottom=%d", 
                                  leftMargin, rightMargin, topMargin, bottomMargin);
+                    
+                    // Final success summary
+                    if (leftMargin == 0 && rightMargin == 0 && topMargin == 0 && bottomMargin == 0) {
+                        logger->debug("PERFECT: Chart utilizes 100%% of available space with zero boundary violations!");
+                    }
                 }
             }
         } else {

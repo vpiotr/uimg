@@ -9,7 +9,7 @@
 
 #include "samples/test_painter_base.h"
 #include "samples/chart3d/chart_z_fxy_3d.h"
-#include "samples/logger.h"
+#include "dlog/dlog.h"
 #include "uimg/filters/pixel_tracing_filter.h"
 
 class test_chart_z_fxy_3d_c : public test_painter_base {
@@ -66,11 +66,11 @@ protected:
         
         chart_z_fxy_3d_c chart1(getImage().getSize(), tracingFilter, useAntiAliasing_, drawBorders_);
         
-        auto logger = DemoLogger::getInstance();
+        auto logger = dlog::Logger::getInstance();
         logger->debug("=== Single Chart 3D Test Debug Information ===");
-        logger->debug("Test image size: %dx%d", getImageSize().x, getImageSize().y);
-        logger->debug("Test screen offset: (%d, %d)", getScreenOffset().x, getScreenOffset().y);
-        
+        logger->debug("Test image size: {0}x{1}", getImageSize().x, getImageSize().y);
+        logger->debug("Test screen offset: ({0}, {1})", getScreenOffset().x, getScreenOffset().y);
+
         chart1.paint();
         
         // Log pixel range after chart drawing is complete

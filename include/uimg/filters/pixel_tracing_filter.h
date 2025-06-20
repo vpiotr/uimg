@@ -6,7 +6,7 @@
 #define UIMG_PIXEL_TRACING_FILTER_H
 
 #include "uimg/pixels/pixel_painter.h"
-#include "samples/logger.h"
+#include "dlog/dlog.h"
 #include <limits>
 #include <memory>
 
@@ -101,7 +101,7 @@ public:
      * @brief Log the current pixel range with DEBUG level
      */
     void logPixelRange() const {
-        auto logger = DemoLogger::getInstance();
+        auto logger = dlog::Logger::getInstance();
         if (hasPixels_) {
             logger->debug("%s chart pixel range: x=[%d, %d], y=[%d, %d]  [%ux%u pixels]", 
                         chartName_.c_str(), 

@@ -2,6 +2,21 @@
 Minimal, independent library for basic scientific diagram generation.
 Portable, does not depend on OS or any third-party libraries.
 
+# Building
+
+To build the project from scratch:
+
+```bash
+./rebuild.sh    # Build everything (demos and tests)
+./run_demos.sh  # Run all demo applications
+./run_tests.sh  # Run all tests
+./clean.sh      # Clean all build artifacts
+```
+
+All binaries are placed in the `build/` directory:
+- Demo executables: `build/`
+- Test executables: `build/tests/`
+
 # Features
 
 Library provided two levels of abstraction:
@@ -16,7 +31,7 @@ Output: currently only PPM files (batch generation).
 
 Line chart with customizable options including anti-aliasing for smoother line rendering.
 
-See [apps/2d_line_chart_demo.cpp](apps/2d_line_chart_demo.cpp)
+See [demos/2d_line_chart_demo.cpp](demos/2d_line_chart_demo.cpp)
 
 Usage:
 ```
@@ -31,7 +46,7 @@ Sample output (anti-aliased):
 
 Pixel map depicting Voronoi diagram.
 
-See [apps/voronoi.cpp](apps/voronoi.cpp)
+See [demos/voronoi.cpp](demos/voronoi.cpp)
 
 Sample output: 
 
@@ -41,7 +56,7 @@ Sample output:
 
 Pixel map image for selected window.
 
-See [apps/mandelbrot.cpp](apps/mandelbrot.cpp)
+See [demos/mandelbrot.cpp](demos/mandelbrot.cpp)
 
 Sample output: 
 
@@ -56,7 +71,7 @@ Customizable 3D surface charts with support for multiple functions and layouts. 
 - Several built-in function types (Sinc, Gaussian, Ripple, Saddle)
 - Backward compatibility with single-chart mode
 
-See [apps/chart3d.cpp](apps/chart3d.cpp)
+See [demos/chart3d.cpp](demos/chart3d.cpp)
 
 Usage:
 ```
@@ -78,7 +93,7 @@ Sample output (dual charts with anti-aliasing):
 
 Demonstration of BDF font rendering capabilities.
 
-See [apps/text_demo.cpp](apps/text_demo.cpp)
+See [demos/text_demo.cpp](demos/text_demo.cpp)
 
 Sample output:
 
@@ -88,7 +103,7 @@ Sample output:
 
 Demonstration of various pixel filters including transformations, transparency, zoom, and gradients.
 
-See [apps/filter_demo.cpp](apps/filter_demo.cpp)
+See [demos/filter_demo.cpp](demos/filter_demo.cpp)
 
 Sample output:
 
@@ -98,7 +113,7 @@ Sample output:
 
 Demonstration of included primitive shape support.
 
-See [apps/draw_primitives.cpp](apps/draw_primitives.cpp)
+See [demos/draw_primitives.cpp](demos/draw_primitives.cpp)
 
 Sample output: 
 

@@ -6,7 +6,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "chart_z_fxy_3d.h"
-#include "samples/logger.h"
+#include "dlog/dlog.h"
 #include "uimg/filters/pixel_tracing_filter.h"
 #include <memory>
 #include <vector>
@@ -28,10 +28,10 @@ public:
         // Limit to supported range
         numCharts = std::max(1, std::min(4, numCharts));
         
-        auto logger = DemoLogger::getInstance();
+        auto logger = dlog::Logger::getInstance();
         logger->debug("=== Multi-Chart 3D Renderer Debug Information ===");
-        logger->debug("Total image size: %dx%d", image_.getSize().x, image_.getSize().y);
-        logger->debug("Number of charts to render: %d", numCharts);
+        logger->debug("Total image size: {0}x{1}", image_.getSize().x, image_.getSize().y);
+        logger->debug("Number of charts to render: {0}", numCharts);
         
         // Calculate layout
         auto rects = layoutManager_.calculateLayout(numCharts);
@@ -40,8 +40,8 @@ public:
         for (int i = 0; i < numCharts; ++i) {
             Point chartSize = rects[i].getSize();
             Point chartOffset = rects[i].getTopLeft();
-            
-            logger->debug("Chart %d layout: size=%dx%d, offset=(%d,%d)", 
+
+            logger->debug("Chart {0} layout: size={1}x{2}, offset=({3},{4})", 
                          i, chartSize.x, chartSize.y, chartOffset.x, chartOffset.y);
             
             // Create chart with adjusted size and offset
@@ -51,9 +51,9 @@ public:
 
 private:
     void renderSingleChart(int chartType, Point chartSize, Point offset) {
-        auto logger = DemoLogger::getInstance();
-        logger->debug("--- Rendering single chart %d ---", chartType);
-        logger->debug("Chart type: %d, Canvas size: %dx%d, Offset: (%d,%d)", 
+        auto logger = dlog::Logger::getInstance();
+        logger->debug("--- Rendering single chart {0} ---", chartType);
+        logger->debug("Chart type: {0}, Canvas size: {1}x{2}, Offset: ({3},{4})", 
                      chartType, chartSize.x, chartSize.y, offset.x, offset.y);
         
         // Create an offset painter
@@ -96,7 +96,7 @@ private:
         // Paint the chart
         if (chart) {
             chart->paint();
-            logger->debug("Chart %d painted successfully", chartType);
+            logger->debug("Chart {0} painted successfully", chartType);
             
             // Log pixel range after chart drawing is complete
             tracingFilter.logPixelRange();
