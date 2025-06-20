@@ -1,8 +1,8 @@
 #ifndef __UIMG_MULTI_CHART_3D_H__
 #define __UIMG_MULTI_CHART_3D_H__
 
-#include "chart_z_fxy_3d.h"
-#include "chart3d_functions.h"
+#include "chart3d/chart_z_fxy_3d.h"
+#include "chart3d/chart3d_functions.h"
 #include "uimg/utils/cast.h"
 #include <string>
 

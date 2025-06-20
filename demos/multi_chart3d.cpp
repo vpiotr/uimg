@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "samples/demo_painter_base.h"
-#include "chart3d/multi_chart_3d_demo.h"
+#include "samples/multi_chart3d/multi_chart_3d_demo.h"
 #include "dlog/dlog.h"
 
 void printUsage(const char* programName) {

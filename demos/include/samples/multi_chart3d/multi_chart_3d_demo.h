@@ -6,9 +6,9 @@
 #include <string>
 
 #include "samples/demo_painter_base.h"
-#include "chart_z_fxy_3d.h"
-#include "chart3d_renderer.h"
-#include "chart3d_z_fxy.h"
+#include "chart3d/chart_z_fxy_3d.h"
+#include "chart3d/chart3d_renderer.h"
+#include "chart3d/chart3d_z_fxy.h"
 #include "uimg/filters/anti_aliasing_filter.h"
 
 class multi_chart_3d_demo : public demo_painter_base {

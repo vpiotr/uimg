@@ -1,7 +1,7 @@
 #include <iostream>
 #include "samples/demo_painter_base.h"
-#include "chart3d/chart_z_fxy_3d_demo.h"
-#include "chart3d/multi_chart_3d_demo.h"
+#include "samples/chart3d/chart3d_demo.h"
+#include "samples/multi_chart3d/multi_chart_3d_demo.h"
 #include "chart3d/chart_z_fxy_3d.h"
 #include "chart3d/chart3d_renderer.h"
 #include "dlog/dlog.h"
@@ -24,7 +24,7 @@ int main(int argc, const char *argv[]) {
 
     if (demoInfo.numCharts == 1) {
         // Single chart - use demo implementation
-        chart_z_fxy_3d_demo demo(demoInfo.outFileName);
+        chart3d_demo demo(demoInfo.outFileName);
         demo.setUseAntiAliasing(demoInfo.useAntiAliasing);
         demo.setDrawBorders(demoInfo.drawBorders);
         demo.run();

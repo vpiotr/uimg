@@ -32,6 +32,7 @@ include_directories(demos/include/samples)
 include_directories(demos/include/samples/voronoi)
 include_directories(demos/include/samples/mandelbrot)
 include_directories(demos/include/samples/chart3d)
+include_directories(demos/include/samples/multi_chart3d)
 include_directories(demos/include/samples/draw_primitives)
 include_directories(demos/include/samples/text_demo)
 include_directories(demos/include/samples/filter_demo)
@@ -83,6 +84,8 @@ add_executable(chart3d
         LICENSE
         README.md
         demos/include/chart3d/chart_z_fxy_3d.h
+        demos/include/samples/chart3d/chart3d_demo.h
+        demos/include/samples/chart3d/chart_z_fxy_3d_sqrt.h
         demos/chart3d.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
@@ -105,7 +108,8 @@ add_executable(chart3d
 add_executable(multi_chart3d
         LICENSE
         README.md
-        demos/include/chart3d/multi_chart_3d_demo.h
+        demos/include/samples/multi_chart3d/multi_chart_3d_demo.h
+        demos/include/samples/multi_chart3d/multi_chart_3d.h
         demos/include/chart3d/chart3d_renderer.h
         demos/include/chart3d/chart3d_z_fxy.h
         demos/include/chart3d/chart_z_fxy_3d.h
