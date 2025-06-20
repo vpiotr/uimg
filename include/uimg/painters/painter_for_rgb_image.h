@@ -13,11 +13,11 @@ public:
     PixelPainterForImageBase(PixelImageBase &target) : target_(target) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
-        target_.setPixel(Point(x, y), color);
+        target_.setPixel(Point(static_cast<int>(x), static_cast<int>(y)), color);
     }
 
     virtual void getPixel(unsigned int x, unsigned int y, RgbColor &output) {
-        output = target_.getPixel(Point(x, y));
+        output = target_.getPixel(Point(static_cast<int>(x), static_cast<int>(y)));
     }
 
 private:
@@ -34,7 +34,7 @@ public:
         if (offset >= image_.dataSize())
             return;
 
-        char *dataPtr = static_cast<char *>(image_.data()) + offset;
+        unsigned char *dataPtr = static_cast<unsigned char *>(image_.data()) + offset;
         *(dataPtr++) = color.red;
         *(dataPtr++) = color.green;
         *(dataPtr++) = color.blue;
@@ -48,7 +48,7 @@ public:
             return;
         }
 
-        char *dataPtr = static_cast<char *>(image_.data()) + offset;
+        unsigned char *dataPtr = static_cast<unsigned char *>(image_.data()) + offset;
         output.red = *(dataPtr++);
         output.green = *(dataPtr++);
         output.blue = *(dataPtr++);

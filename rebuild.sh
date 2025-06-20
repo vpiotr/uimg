@@ -3,7 +3,16 @@
 # rebuild.sh - Rebuilds everything from scratch using CMake
 # Makes sure only "build" directory is used and CMake is used
 
-echo "=== UIMG Project Rebuild Script ==="
+# Check for --show-warnings flag
+SHOW_WARNINGS=false
+if [[ "$1" == "--show-warnings" ]]; then
+    SHOW_WARNINGS=true
+    echo "=== UIMG Project Rebuild Script (with warnings) ==="
+else
+    echo "=== UIMG Project Rebuild Script (warnings suppressed) ==="
+    echo "Use './rebuild.sh --show-warnings' to see compiler warnings"
+fi
+
 echo "Rebuilding everything from scratch..."
 
 # Get the script directory (project root)
@@ -44,9 +53,21 @@ fi
 
 # Build the project (we're already in build directory)
 echo "Building the project..."
-make -j$(nproc)
+if [ "$SHOW_WARNINGS" = true ]; then
+    make -j$(nproc)
+    BUILD_RESULT=$?
+else
+    # Redirect stderr to /dev/null to suppress all warnings, but show progress
+    make -j$(nproc) 2>/dev/null
+    BUILD_RESULT=$?
+    # If build failed, run again with stderr to show the actual error
+    if [ $BUILD_RESULT -ne 0 ]; then
+        echo "Build failed. Showing error details:"
+        make -j$(nproc)
+    fi
+fi
 
-if [ $? -ne 0 ]; then
+if [ $BUILD_RESULT -ne 0 ]; then
     echo "ERROR: Build failed!"
     exit 1
 fi
@@ -57,9 +78,21 @@ cd "$PROJECT_ROOT/tests"
 mkdir -p build
 cd build
 cmake ..
-make -j$(nproc)
+if [ "$SHOW_WARNINGS" = true ]; then
+    make -j$(nproc)
+    TEST_BUILD_RESULT=$?
+else
+    # Redirect stderr to /dev/null to suppress all warnings, but show progress
+    make -j$(nproc) 2>/dev/null
+    TEST_BUILD_RESULT=$?
+    # If build failed, run again with stderr to show the actual error
+    if [ $TEST_BUILD_RESULT -ne 0 ]; then
+        echo "Test build failed. Showing error details:"
+        make -j$(nproc)
+    fi
+fi
 
-if [ $? -ne 0 ]; then
+if [ $TEST_BUILD_RESULT -ne 0 ]; then
     echo "ERROR: Tests build failed!"
     exit 1
 fi

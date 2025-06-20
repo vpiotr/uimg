@@ -63,7 +63,7 @@ protected:
         p3 = find_mid_point_close_first(p1, p2);
 
         it = pixelPoints.begin();
-        pixelPoints.insert(it + (n - 1), p3);
+        pixelPoints.insert(it + static_cast<std::vector<Point>::difference_type>(n - 1), p3);
     }
 
 private:
@@ -86,7 +86,7 @@ private:
         } else {
             np = (dx < 0) ? -1 : 1;
             result.x = p1.x + np;
-            result.y = p1.y + static_cast<int>(round(static_cast<float>(np * dy) / dx));
+            result.y = p1.y + static_cast<int>(round(static_cast<float>(np * dy) / static_cast<float>(dx)));
         }
 
         return result;
