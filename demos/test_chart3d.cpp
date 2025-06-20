@@ -3,7 +3,7 @@
 #include <iostream>
 #include <exception>
 
-int main(int argc, const char* argv[]) {
+int main(int /*argc*/, const char* /*argv*/[]) {
     printf("Chart3D Comprehensive Test Suite\n");
     printf("================================\n\n");
     

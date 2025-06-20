@@ -10,7 +10,6 @@ int main(int argc, const char *argv[]) {
 
     // Initialize logger
     dlog::Logger::getInstance()->setLevel(testInfo.logLevel);
-    auto logger = dlog::Logger::getInstance();
     
     // Display configuration
     std::cerr << "Anti-aliasing: " << (testInfo.useAntiAliasing ? "Enabled" : "Disabled") << std::endl;

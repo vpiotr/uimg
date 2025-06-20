@@ -69,13 +69,13 @@ private:
         bool hasPixels = filter.getPixelRange(minX, minY, maxX, maxY);
         
         UTEST_ASSERT_TRUE_MSG(hasPixels, "No pixels were drawn");
-        UTEST_ASSERT_TRUE_MSG(minX >= expectedBounds.x1, 
+        UTEST_ASSERT_TRUE_MSG(static_cast<int>(minX) >= expectedBounds.x1, 
             "Pixels drawn outside left boundary");
-        UTEST_ASSERT_TRUE_MSG(maxX <= expectedBounds.x2, 
+        UTEST_ASSERT_TRUE_MSG(static_cast<int>(maxX) <= expectedBounds.x2, 
             "Pixels drawn outside right boundary");
-        UTEST_ASSERT_TRUE_MSG(minY >= expectedBounds.y1, 
+        UTEST_ASSERT_TRUE_MSG(static_cast<int>(minY) >= expectedBounds.y1, 
             "Pixels drawn outside top boundary");
-        UTEST_ASSERT_TRUE_MSG(maxY <= expectedBounds.y2, 
+        UTEST_ASSERT_TRUE_MSG(static_cast<int>(maxY) <= expectedBounds.y2, 
             "Pixels drawn outside bottom boundary");
     }
     
@@ -84,7 +84,7 @@ private:
         printf("Logger validation (simplified): Looking for '%s' - PASSED\n", expectedContent.c_str());
     }
     
-    void validateLoggerOutputCount(dlog::LogLevel level, size_t minCount) {
+    void validateLoggerOutputCount(dlog::LogLevel /*level*/, size_t minCount) {
         // Simplified validation - just log the expectation
         printf("Logger count validation (simplified): Expected %zu entries of level - PASSED\n", minCount);
     }
@@ -113,7 +113,7 @@ private:
                 return sin(r) / r;
             }
             
-            virtual RgbColor getPlotColor(double x, double y, double z) override {
+            virtual RgbColor getPlotColor(double /*x*/, double /*y*/, double /*z*/) override {
                 return {200, 100, 150};
             }
         };
@@ -153,7 +153,7 @@ private:
                 return x*x - y*y;  // Saddle function
             }
             
-            virtual RgbColor getPlotColor(double x, double y, double z) override {
+            virtual RgbColor getPlotColor(double /*x*/, double /*y*/, double /*z*/) override {
                 return {150, 200, 100};
             }
         };
@@ -197,10 +197,8 @@ private:
             unsigned int minX, minY, maxX, maxY;
             bool hasPixels = tracingFilter.getPixelRange(minX, minY, maxX, maxY);
             UTEST_ASSERT_TRUE_MSG(hasPixels, "No pixels drawn in size test");
-            UTEST_ASSERT_TRUE_MSG(minX >= 0, "Pixels drawn outside left image boundary");
-            UTEST_ASSERT_TRUE_MSG(maxX < config.imageSize.x, "Pixels drawn outside right image boundary");
-            UTEST_ASSERT_TRUE_MSG(minY >= 0, "Pixels drawn outside top image boundary");
-            UTEST_ASSERT_TRUE_MSG(maxY < config.imageSize.y, "Pixels drawn outside bottom image boundary");
+            UTEST_ASSERT_TRUE_MSG(static_cast<int>(maxX) < config.imageSize.x, "Pixels drawn outside right image boundary");
+            UTEST_ASSERT_TRUE_MSG(static_cast<int>(maxY) < config.imageSize.y, "Pixels drawn outside bottom image boundary");
             
             // Validate space utilization logged
             validateLoggerOutput("Canvas utilization");
@@ -235,8 +233,8 @@ private:
             UTEST_ASSERT_TRUE_MSG(hasPixels, "No pixels drawn in aspect ratio test");
             
             // Check that chart uses appropriate portion of available space
-            int usedWidth = maxX - minX + 1;
-            int usedHeight = maxY - minY + 1;
+            int usedWidth = static_cast<int>(maxX - minX) + 1;
+            int usedHeight = static_cast<int>(maxY - minY) + 1;
             int availableWidth = config.imageSize.x;
             int availableHeight = config.imageSize.y;
             

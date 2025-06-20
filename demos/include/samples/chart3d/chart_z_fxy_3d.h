@@ -692,8 +692,8 @@ protected:
                 logger->debug("Available area: (%d,%d) to (%d,%d)", availableLeft, availableTop, availableRight, availableBottom);
                 
                 // Calculate utilization
-                int usedWidth = usedMaxX - usedMinX + 1;
-                int usedHeight = usedMaxY - usedMinY + 1;
+                int usedWidth = static_cast<int>(usedMaxX - usedMinX) + 1;
+                int usedHeight = static_cast<int>(usedMaxY - usedMinY) + 1;
                 int availableWidth = availableRight - availableLeft + 1;
                 int availableHeight = availableBottom - availableTop + 1;
                 
@@ -702,36 +702,34 @@ protected:
                              100.0 * usedHeight / availableHeight);
                 
                 // Check if pixels were drawn outside available space
-                bool outOfBounds = false;
-                if (usedMinX < availableLeft || usedMaxX > availableRight || 
-                    usedMinY < availableTop || usedMaxY > availableBottom) {
-                    outOfBounds = true;
+                if (static_cast<int>(usedMinX) < availableLeft || static_cast<int>(usedMaxX) > availableRight || 
+                    static_cast<int>(usedMinY) < availableTop || static_cast<int>(usedMaxY) > availableBottom) {
                     
                     logger->warn("CHART BOUNDARY VIOLATION: Chart pixels drawn outside available space!");
-                    if (usedMinX < availableLeft) {
+                    if (static_cast<int>(usedMinX) < availableLeft) {
                         logger->warn("  Left overflow: chart used x=%d, available starts at x=%d (-%d pixels)", 
-                                   usedMinX, availableLeft, availableLeft - usedMinX);
+                                   usedMinX, availableLeft, static_cast<unsigned int>(availableLeft - static_cast<int>(usedMinX)));
                     }
-                    if (usedMaxX > availableRight) {
+                    if (static_cast<int>(usedMaxX) > availableRight) {
                         logger->warn("  Right overflow: chart used x=%d, available ends at x=%d (+%d pixels)", 
-                                   usedMaxX, availableRight, usedMaxX - availableRight);
+                                   usedMaxX, availableRight, static_cast<unsigned int>(static_cast<int>(usedMaxX) - availableRight));
                     }
-                    if (usedMinY < availableTop) {
+                    if (static_cast<int>(usedMinY) < availableTop) {
                         logger->warn("  Top overflow: chart used y=%d, available starts at y=%d (-%d pixels)", 
-                                   usedMinY, availableTop, availableTop - usedMinY);
+                                   usedMinY, availableTop, static_cast<unsigned int>(availableTop - static_cast<int>(usedMinY)));
                     }
-                    if (usedMaxY > availableBottom) {
+                    if (static_cast<int>(usedMaxY) > availableBottom) {
                         logger->warn("  Bottom overflow: chart used y=%d, available ends at y=%d (+%d pixels)", 
-                                   usedMaxY, availableBottom, usedMaxY - availableBottom);
+                                   usedMaxY, availableBottom, static_cast<unsigned int>(static_cast<int>(usedMaxY) - availableBottom));
                     }
                 } else {
                     logger->debug("SUCCESS: All chart pixels drawn within allowed area!");
                     
                     // Show margins to help understand space usage
-                    int leftMargin = usedMinX - availableLeft;
-                    int rightMargin = availableRight - usedMaxX;
-                    int topMargin = usedMinY - availableTop;
-                    int bottomMargin = availableBottom - usedMaxY;
+                    int leftMargin = static_cast<int>(usedMinX) - availableLeft;
+                    int rightMargin = availableRight - static_cast<int>(usedMaxX);
+                    int topMargin = static_cast<int>(usedMinY) - availableTop;
+                    int bottomMargin = availableBottom - static_cast<int>(usedMaxY);
                     
                     logger->debug("Margins: left=%d, right=%d, top=%d, bottom=%d", 
                                  leftMargin, rightMargin, topMargin, bottomMargin);
@@ -759,10 +757,10 @@ private:
         int top = area.y1;
         int bottom = area.y2;
         LinePainterForPixels linePainter(*painter);
-        linePainter.drawLine(left, top, right, top, color);       // top edge
-        linePainter.drawLine(right, top, right, bottom, color);   // right edge
-        linePainter.drawLine(right, bottom, left, bottom, color); // bottom edge
-        linePainter.drawLine(left, bottom, left, top, color);     // left edge
+        linePainter.drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(top), color);       // top edge
+        linePainter.drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), color);   // right edge
+        linePainter.drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), color); // bottom edge
+        linePainter.drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(top), color);     // left edge
     }
 
     /**

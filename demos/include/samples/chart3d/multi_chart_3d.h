@@ -30,9 +30,9 @@ public:
 protected:
     virtual RgbColor getPlotColor(double x, double y, double z) override {
         RgbColor color;
-        color.red = std::max(70, std::min(255, 200+(int)floor(z * 200)));
-        color.green = std::min(255, 50+(int)math_utils::iabs(200.0*x/2520));
-        color.blue = std::min(255, 50+(int)math_utils::iabs(200.0*y/2520));
+        color.red = static_cast<unsigned char>(std::max(70, std::min(255, 200+(int)floor(z * 200))));
+        color.green = static_cast<unsigned char>(std::min(255, 50+(int)math_utils::iabs(200.0*x/2520)));
+        color.blue = static_cast<unsigned char>(std::min(255, 50+(int)math_utils::iabs(200.0*y/2520)));
         return color;
     }
 
@@ -54,13 +54,13 @@ public:
         chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Gaussian Function: e^(-r²)", drawBorders) {}
 
 protected:
-    virtual RgbColor getPlotColor(double x, double y, double z) override {
+    virtual RgbColor getPlotColor(double /*x*/, double /*y*/, double z) override {
         RgbColor color;
         // Use a blue-to-red gradient for Gaussian
         int intensity = std::max(0, std::min(255, (int)(z * 255)));
-        color.red = intensity;
-        color.green = intensity / 2;
-        color.blue = 255 - intensity;
+        color.red = static_cast<unsigned char>(intensity);
+        color.green = static_cast<unsigned char>(intensity / 2);
+        color.blue = static_cast<unsigned char>(255 - intensity);
         return color;
     }
 
@@ -82,13 +82,13 @@ public:
         chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Ripple Function: cos(r)·e^(-0.2r)", drawBorders) {}
 
 protected:
-    virtual RgbColor getPlotColor(double x, double y, double z) override {
+    virtual RgbColor getPlotColor(double /*x*/, double /*y*/, double z) override {
         RgbColor color;
         // Use a green-based color scheme for ripples
         int intensity = std::max(0, std::min(255, (int)((z + 1) * 127.5))); // z ranges from -1 to 1
-        color.red = intensity / 3;
-        color.green = intensity;
-        color.blue = intensity / 2;
+        color.red = static_cast<unsigned char>(intensity / 3);
+        color.green = static_cast<unsigned char>(intensity);
+        color.blue = static_cast<unsigned char>(intensity / 2);
         return color;
     }
 
@@ -110,19 +110,19 @@ public:
         chart_z_fxy_3d_with_title(canvasSize, painter, useAntiAliasing, "Saddle Function: x² - y²", drawBorders) {}
 
 protected:
-    virtual RgbColor getPlotColor(double x, double y, double z) override {
+    virtual RgbColor getPlotColor(double /*x*/, double /*y*/, double z) override {
         RgbColor color;
         // Use a purple-orange gradient for saddle
         if (z >= 0) {
             int intensity = std::max(0, std::min(255, (int)(z * 255 * 10))); // Scale for visibility
             color.red = 255;
-            color.green = 165 - intensity/2;
+            color.green = static_cast<unsigned char>(165 - intensity/2);
             color.blue = 0;
         } else {
             int intensity = std::max(0, std::min(255, (int)(-z * 255 * 10)));
-            color.red = 128 - intensity/2;
+            color.red = static_cast<unsigned char>(128 - intensity/2);
             color.green = 0;
-            color.blue = 128 + intensity/2;
+            color.blue = static_cast<unsigned char>(128 + intensity/2);
         }
         return color;
     }

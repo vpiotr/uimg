@@ -370,7 +370,7 @@ private:
         
         for (int y = LINEAR_GRADIENT_WINDOW.y1; y <= LINEAR_GRADIENT_WINDOW.y2; ++y) {
             for (int x = LINEAR_GRADIENT_WINDOW.x1; x <= LINEAR_GRADIENT_WINDOW.x2; ++x) {
-                gradFilter.putPixel(x, y, RgbColor{0, 0, 0}); // Color is determined by gradient
+                gradFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{0, 0, 0}); // Color is determined by gradient
             }
         }
         
@@ -381,8 +381,8 @@ private:
         
         for (int y = RADIAL_GRADIENT_WINDOW.y1; y <= RADIAL_GRADIENT_WINDOW.y2; ++y) {
             for (int x = RADIAL_GRADIENT_WINDOW.x1; x <= RADIAL_GRADIENT_WINDOW.x2; ++x) {
-                float distance = sqrt((x - center.x) * (x - center.x) + (y - center.y) * (y - center.y));
-                float ratio = std::min(1.0f, distance / radius);
+                float distance = static_cast<float>(sqrt((x - center.x) * (x - center.x) + (y - center.y) * (y - center.y)));
+                float ratio = std::min(1.0f, distance / static_cast<float>(radius));
                 
                 RgbColor color = {
                     static_cast<unsigned char>((1 - ratio) * 255), // Red decreases with distance
@@ -390,7 +390,7 @@ private:
                     static_cast<unsigned char>(ratio * 255) // Blue increases with distance
                 };
                 
-                radialGradClip.putPixel(x, y, color);
+                radialGradClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
     }
@@ -428,7 +428,6 @@ private:
 
     void drawSectionTitles()
     {
-        RgbImage &img = getImage();
         PixelPainter &painter = getPainter();
 
         // Section titles
@@ -463,24 +462,23 @@ private:
         
         // Draw horizontal lines
         for (int i = x; i < x + width; ++i) {
-            painter.putPixel(i, y, color);
-            painter.putPixel(i, y + height - 1, color);
+            painter.putPixel(static_cast<unsigned int>(i), static_cast<unsigned int>(y), color);
+            painter.putPixel(static_cast<unsigned int>(i), static_cast<unsigned int>(y + height - 1), color);
         }
         
         // Draw vertical lines
         for (int i = y; i < y + height; ++i) {
-            painter.putPixel(x, i, color);
-            painter.putPixel(x + width - 1, i, color);
+            painter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(i), color);
+            painter.putPixel(static_cast<unsigned int>(x + width - 1), static_cast<unsigned int>(i), color);
         }
     }
     
     void drawText(PixelPainter &painter, int x, int y, const std::string &text, const RgbColor &color, int size = 1) {
         // Simple bitmap font rendering (very basic)
         static const int charWidth = 6;
-        static const int charHeight = 8;
         
         for (size_t i = 0; i < text.length(); ++i) {
-            drawChar(painter, x + i * charWidth * size, y, text[i], color, size);
+            drawChar(painter, x + static_cast<int>(i * static_cast<size_t>(charWidth) * static_cast<size_t>(size)), y, text[i], color, size);
         }
     }
     
@@ -920,7 +918,7 @@ private:
                         // Draw pixel at scaled size
                         for (int sy = 0; sy < size; ++sy) {
                             for (int sx = 0; sx < size; ++sx) {
-                                painter.putPixel(x + dx * size + sx, y + dy * size + sy, color);
+                                painter.putPixel(static_cast<unsigned int>(x + dx * size + sx), static_cast<unsigned int>(y + dy * size + sy), color);
                             }
                         }
                     }

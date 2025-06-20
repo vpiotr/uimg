@@ -12,14 +12,14 @@ public:
 
 protected:
     virtual void paint() {
-        srand(time(NULL));
+        srand(static_cast<unsigned int>(time(NULL)));
 
-        RgbImage &image_ = getImage();
+        RgbImage &image = getImage();
 
-        BackgroundPainterForRgbImage backPainter(image_);
+        BackgroundPainterForRgbImage backPainter(image);
         backPainter.paint({255, 255, 255});
 
-        PixelPainterForImageBase pixelPainter(image_);
+        PixelPainterForImageBase pixelPainter(image);
 
         // Line
         ThickLinePainterForPixels tlnPainter(pixelPainter, 3.0f);
@@ -30,7 +30,7 @@ protected:
         circlePainter.drawFull(140, 150, 80, {0, 250, 100});
 
         // Rectangle
-        RectPainterForRgbImage rectPainter(image_);
+        RectPainterForRgbImage rectPainter(image);
         rectPainter.drawEmpty(200, 100, 400, 200, {250, 0, 0});
 
         // Triangle
@@ -51,8 +51,8 @@ protected:
         std::vector<Point> points;
         Point p;
         for (int i = 0; i < 10; ++i) {
-            p.x = rand() % splineDx + 40;
-            p.y = rand() % splineDy + 200;
+            p.x = static_cast<int>(static_cast<unsigned int>(rand()) % static_cast<unsigned int>(splineDx)) + 40;
+            p.y = static_cast<int>(static_cast<unsigned int>(rand()) % static_cast<unsigned int>(splineDy)) + 200;
             points.push_back(p);
         }
 

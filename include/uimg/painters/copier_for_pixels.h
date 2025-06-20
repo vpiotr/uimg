@@ -140,7 +140,7 @@ public:
     }
 
 protected:
-    virtual void putBackgroundPixel(unsigned int x, unsigned int y) {}
+    virtual void putBackgroundPixel(unsigned int /*x*/, unsigned int /*y*/) {}
 
     virtual void getScalingRatios(double &rx, double &ry) = 0;
 
@@ -223,15 +223,15 @@ private:
 class RotationCopierBase : public BilinearSamplingCopier {
     using inherited = BilinearSamplingCopier;
 public:
-    RotationCopierBase(double angle, const Point &srcOffset) : initialized_(false), angle_(angle), ratioX_(1.0),
-                                                               ratioY_(1.0), srcOffset_(srcOffset) {}
+    RotationCopierBase(double angle, const Point &srcOffset) : initialized_(false), angle_(angle), srcOffset_(srcOffset), ratioX_(1.0),
+                                                               ratioY_(1.0) {}
 
     RotationCopierBase(double angle, double ratioX, double ratioY, const Point &srcOffset) :
             initialized_(false),
             angle_(angle),
+            srcOffset_(srcOffset),
             ratioX_(ratioX),
-            ratioY_(ratioY),
-            srcOffset_(srcOffset) {}
+            ratioY_(ratioY) {}
 
     virtual void copyFrom(const PixelSource &src, const Point &targetPos) {
         inherited::copyFrom(src, targetPos);
@@ -317,7 +317,7 @@ public:
             pixelPainter_(pixelPainter) {}
 
 protected:
-    virtual void putBackgroundPixel(unsigned int x, unsigned int y) {}
+    virtual void putBackgroundPixel(unsigned int /*x*/, unsigned int /*y*/) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
         pixelPainter_.putPixel(x, y, color);

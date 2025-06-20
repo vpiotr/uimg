@@ -15,7 +15,11 @@ public:
     void trace(const char* fmt, Args... args) const {
         if (enabled_) {
             printf("[CHART3D TRACE] ");
-            printf(fmt, args...);
+            if constexpr (sizeof...(args) == 0) {
+                printf("%s", fmt);
+            } else {
+                printf(fmt, args...);
+            }
             printf("\n");
         }
     }

@@ -36,9 +36,9 @@ protected:
         protected:
             virtual RgbColor getPlotColor(double x, double y, double z) {
                 RgbColor color;
-                color.red = std::max(70, std::min(255, 200+(int)floor(z * 200)));
-                color.green = std::min(255, 50+(int)math_utils::iabs(200.0*x/2520));
-                color.blue = std::min(255, 50+(int)math_utils::iabs(200.0*y/2520));
+                color.red = static_cast<unsigned char>(std::max(70, std::min(255, 200+(int)floor(z * 200))));
+                color.green = static_cast<unsigned char>(std::min(255, 50+(int)math_utils::iabs(200.0*x/2520)));
+                color.blue = static_cast<unsigned char>(std::min(255, 50+(int)math_utils::iabs(200.0*y/2520)));
                 return color;
             }
 
