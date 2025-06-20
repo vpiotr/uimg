@@ -3,6 +3,27 @@ project(uimg)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Enable comprehensive warning flags to match Windows behavior
+if(MSVC)
+    # Windows (MSVC) - Enable most warnings including conversion warnings
+    add_compile_options(/W4 /WX- /wd4996)
+else()
+    # Linux/GCC or Clang - Enable comprehensive warnings including conversion warnings
+    add_compile_options(
+        -Wall                    # Enable most warnings
+        -Wextra                  # Enable extra warnings
+        -Wconversion             # Warn about type conversions that may alter values
+        -Wsign-conversion        # Warn about sign conversions
+        -Wfloat-conversion       # Warn about float conversions
+        -Wcast-qual              # Warn about casts that remove qualifiers
+        -Wcast-align             # Warn about casts that increase alignment requirements
+        -Wshadow                 # Warn about variable shadowing
+        -Wpedantic               # Warn about non-standard C++
+        -Wunused                 # Warn about unused variables/functions
+        -Wuninitialized          # Warn about uninitialized variables
+    )
+endif()
+
 # Enable testing for CTest integration
 enable_testing()
 
@@ -162,14 +183,12 @@ add_executable(test_chart3d
         README.md
         demos/test_chart3d.cpp
         demos/include/samples/test_chart3d.h
-        demos/include/samples/test_logger.h
         demos/include/samples/chart3d/chart_z_fxy_3d.h
         demos/include/samples/chart3d/chart3d_renderer.h
         demos/include/samples/chart3d/chart3d_layout.h
         demos/include/samples/chart3d/multi_chart_3d.h
         demos/include/samples/chart3d/test_chart_z_fxy_3d_c.h
         demos/include/samples/test_painter_base.h
-        demos/include/samples/logger.h
         include/utest/utest.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
