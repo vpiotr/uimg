@@ -82,7 +82,7 @@ protected:
         unsigned int y2c = std::min(std::max(y1, y2), image_.height() - 1);
 
         size_t offset = 3 * (y1c * image_.width() + x);
-        char *dataPtr = static_cast<char *>(image_.data()) + offset;
+        unsigned char *dataPtr = static_cast<unsigned char *>(image_.data()) + offset;
         unsigned int step = 3 * image_.width() - 2;
 
         for (unsigned int y = y1c; y <= y2c; ++y) {
@@ -102,11 +102,11 @@ protected:
             return;
         }
 
-        int x1c = std::min(x1, image_.width() - 1);
-        int x2c = std::min(x2, image_.width() - 1);
+        int x1c = static_cast<int>(std::min(x1, image_.width() - 1));
+        int x2c = static_cast<int>(std::min(x2, image_.width() - 1));
 
-        size_t offset = 3 * (y * image_.width() + x1c);
-        char *dataPtr = static_cast<char *>(image_.data()) + offset;
+        size_t offset = 3 * (y * image_.width() + static_cast<unsigned int>(x1c));
+        unsigned char *dataPtr = static_cast<unsigned char *>(image_.data()) + offset;
 
         for (int x = x1c; x <= x2c; ++x) {
             *(dataPtr++) = color.red;
@@ -140,14 +140,14 @@ public:
         unsigned int ymin = std::min(y1, y2);
         unsigned int ymax = std::max(y1, y2);
 
-        int x1c = std::min(x1, image_.width() - 1);
-        int x2c = std::min(x2, image_.width() - 1);
+        int x1c = static_cast<int>(std::min(x1, image_.width() - 1));
+        int x2c = static_cast<int>(std::min(x2, image_.width() - 1));
 
-        size_t lnOffset = 3 * (ymin * image_.width() + x1c);
+        size_t lnOffset = 3 * (ymin * image_.width() + static_cast<unsigned int>(x1c));
         size_t lnStep = 3 * image_.width();
 
-        char *lnPtr = static_cast<char *>(image_.data()) + lnOffset;
-        char *pixelPtr;
+        unsigned char *lnPtr = static_cast<unsigned char *>(image_.data()) + lnOffset;
+        unsigned char *pixelPtr;
 
         for (unsigned int y = ymin; y <= ymax; ++y) {
             pixelPtr = lnPtr;

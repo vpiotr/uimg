@@ -604,14 +604,14 @@ public:
             cubic_spline_utils::bsp(points[offset], points[offset + 1], points[offset + 2], points[offset + 3],
                                     divisions, pixels);
 
-            for (int i = 0, epos = pixels.size(); i < epos; ++i) {
-                p = pixels[i];
+            for (int i = 0, epos = static_cast<int>(pixels.size()); i < epos; ++i) {
+                p = pixels[static_cast<std::vector<Point>::size_type>(i)];
 
                 if (!pixelSaved) {
                     pixelSaved = true;
-                    pixelPainter_.putPixel(p.x, p.y, color);
+                    pixelPainter_.putPixel(static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
                 } else {
-                    usedLinePainter_.drawLine(p1.x, p1.y, p.x, p.y, color);
+                    usedLinePainter_.drawLine(static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
                 }
 
                 p1 = p;
@@ -651,25 +651,25 @@ public:
 
         bool dash = true;
         size_t patternPos = 0;
-        int patternDist = pattern_[patternPos];
+        int patternDist = static_cast<int>(pattern_[patternPos]);
         float dashDist = 0.0f;
 
         while (ps >= offset + 4) {
             cubic_spline_utils::bsp(points[offset], points[offset + 1], points[offset + 2], points[offset + 3],
                                     divisions, pixels);
 
-            for (int i = 0, epos = pixels.size(); i < epos; ++i) {
-                p = pixels[i];
+            for (int i = 0, epos = static_cast<int>(pixels.size()); i < epos; ++i) {
+                p = pixels[static_cast<std::vector<Point>::size_type>(i)];
 
                 if (!pixelSaved) {
                     pixelSaved = true;
-                    pixelPainter_.putPixel(p.x, p.y, color);
+                    pixelPainter_.putPixel(static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
                 } else {
                     if (dash) {
-                        usedLinePainter_.drawLine(p1.x, p1.y, p.x, p.y, color);
+                        usedLinePainter_.drawLine(static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), color);
                     }
-                    dashDist += sqrt(math_utils::square(p.x - p1.x) + math_utils::square(p.y - p1.y));
-                    if (dashDist > patternDist) {
+                    dashDist += static_cast<float>(sqrt(math_utils::square(p.x - p1.x) + math_utils::square(p.y - p1.y)));
+                    if (dashDist > static_cast<float>(patternDist)) {
                         nextDash(dash, patternPos, patternDist);
                         dashDist = 0.0f;
                     }
@@ -696,7 +696,7 @@ protected:
             patternPos = 0;
             dash = true;
         }
-        patternDist = pattern_[patternPos];
+        patternDist = static_cast<int>(pattern_[patternPos]);
     }
 
 private:
@@ -714,8 +714,8 @@ public:
     virtual ~BackgroundPainterForPixelPainter() {}
 
     virtual void paint(const RgbColor &color) {
-        for (unsigned int y = 0, eposy = canvasSize_.y; y < eposy; ++y)
-            for (unsigned int x = 0, eposx = canvasSize_.x; x < eposx; ++x)
+        for (unsigned int y = 0, eposy = static_cast<unsigned int>(canvasSize_.y); y < eposy; ++y)
+            for (unsigned int x = 0, eposx = static_cast<unsigned int>(canvasSize_.x); x < eposx; ++x)
                 pixelPainter_->putPixel(x, y, color);
     }
 
@@ -771,7 +771,7 @@ public:
                 if (da12i >= 0 &&
                     da23i >= 0 &&
                     da31i >= 0) {
-                    pixelPainter_->putPixel(x, y, color);
+                    pixelPainter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
                 }
 
                 da12i -= dy12;
@@ -787,9 +787,9 @@ public:
     }
 
     virtual void drawEmpty(const Point &p1, const Point &p2, const Point &p3, const RgbColor &color) {
-        usedLinePainter_.drawLine(p1.x, p1.y, p2.x, p2.y, color);
-        usedLinePainter_.drawLine(p2.x, p2.y, p3.x, p3.y, color);
-        usedLinePainter_.drawLine(p3.x, p3.y, p1.x, p1.y, color);
+        usedLinePainter_.drawLine(static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), static_cast<unsigned int>(p2.x), static_cast<unsigned int>(p2.y), color);
+        usedLinePainter_.drawLine(static_cast<unsigned int>(p2.x), static_cast<unsigned int>(p2.y), static_cast<unsigned int>(p3.x), static_cast<unsigned int>(p3.y), color);
+        usedLinePainter_.drawLine(static_cast<unsigned int>(p3.x), static_cast<unsigned int>(p3.y), static_cast<unsigned int>(p1.x), static_cast<unsigned int>(p1.y), color);
     }
 
 private:
@@ -818,7 +818,7 @@ public:
 
     virtual void fill(const Point &p, const RgbColor &color) {
         RgbColor initialColor;
-        pixelPainter_->getPixel(p.x, p.y, initialColor);
+        pixelPainter_->getPixel(static_cast<unsigned int>(p.x), static_cast<unsigned int>(p.y), initialColor);
 
         fillFromPixel(p.x, p.y, color, initialColor);
     }
@@ -841,10 +841,10 @@ protected:
             s = pixels.back();
             pixels.pop_back();
 
-            pixelPainter_->getPixel(s.x, s.y, c);
+            pixelPainter_->getPixel(static_cast<unsigned int>(s.x), static_cast<unsigned int>(s.y), c);
 
             if (c == initialColor) {
-                pixelPainter_->putPixel(s.x, s.y, newColor);
+                pixelPainter_->putPixel(static_cast<unsigned int>(s.x), static_cast<unsigned int>(s.y), newColor);
 
                 if (((s.checkMask & CheckLeft) != 0) && (s.x >= 0)) {
                     s1.x = s.x - 1;
