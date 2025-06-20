@@ -24,7 +24,7 @@ public:
         int offsety = targetPos.y;
         for (int y = 0, eposy = src.getSize().y; y < eposy; ++y) {
             for (int x = 0, eposx = src.getSize().x; x < eposx; ++x) {
-                painter->putPixel(offsetx + x, offsety + y, src.getPixel(Point(x, y)));
+                painter->putPixel(static_cast<unsigned int>(offsetx + x), static_cast<unsigned int>(offsety + y), src.getPixel(Point(x, y)));
             }
         }
     }
@@ -35,7 +35,7 @@ public:
         int offsety = targetPos.y;
         for (int y = std::max(0, srcPart.y1), eposy = std::min(srcPart.y2 + 1, src.getSize().y); y < eposy; ++y) {
             for (int x = std::max(0, srcPart.x1), eposx = std::min(srcPart.x2 + 1, src.getSize().x); x < eposx; ++x) {
-                painter->putPixel(offsetx + x, offsety + y, src.getPixel(Point(x, y)));
+                painter->putPixel(static_cast<unsigned int>(offsetx + x), static_cast<unsigned int>(offsety + y), src.getPixel(Point(x, y)));
             }
         }
     }
@@ -75,7 +75,7 @@ public:
             for (int y = 0; y < targetSize.y; y++) {
 
                 if (!calcSourcePos(xf, yf, x, y, srcPart)) {
-                    putBackgroundPixel(targetPos.x + x, targetPos.y + y);
+                    putBackgroundPixel(static_cast<unsigned int>(targetPos.x + x), static_cast<unsigned int>(targetPos.y + y));
                     continue;
                 }
 
@@ -100,7 +100,7 @@ public:
                 addScaledColor(color, color01, (1.0f - dx) * dy);
                 addScaledColor(color, color11, dx * dy);
 
-                putPixel(targetPos.x + x, targetPos.y + y, color);
+                putPixel(static_cast<unsigned int>(targetPos.x + x), static_cast<unsigned int>(targetPos.y + y), color);
             }
         }
     }
@@ -116,12 +116,12 @@ protected:
     virtual void putBackgroundPixel(unsigned int x, unsigned int y) = 0;
 
     void addScaledColor(RgbColor &color, const RgbColor &newColor, double ratio) {
-        color.red = std::min(255, static_cast<int>(round(
-                static_cast<double>(color.red) + ratio * static_cast<double>(newColor.red))));
-        color.green = std::min(255, static_cast<int>(round(
-                static_cast<double>(color.green) + ratio * static_cast<double>(newColor.green))));
-        color.blue = std::min(255, static_cast<int>(round(
-                static_cast<double>(color.blue) + ratio * static_cast<double>(newColor.blue))));
+        color.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(
+                static_cast<double>(color.red) + ratio * static_cast<double>(newColor.red)))));
+        color.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(
+                static_cast<double>(color.green) + ratio * static_cast<double>(newColor.green)))));
+        color.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(
+                static_cast<double>(color.blue) + ratio * static_cast<double>(newColor.blue)))));
     }
 };
 

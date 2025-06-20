@@ -29,7 +29,7 @@ public:
           thickLinePainter_(pixelPainter_, thickness) {}
     
     void drawLine(int x1, int y1, int x2, int y2, const RgbColor& color) {
-        thickLinePainter_.drawLine(x1, y1, x2, y2, color);
+        thickLinePainter_.drawLine(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1), static_cast<unsigned int>(x2), static_cast<unsigned int>(y2), color);
     }
     
 private:
@@ -49,7 +49,7 @@ public:
           antiAliasedThickLinePainter_(pixelPainter_, thickness) {}
     
     void drawLine(int x1, int y1, int x2, int y2, const RgbColor& color) {
-        antiAliasedThickLinePainter_.drawLine(x1, y1, x2, y2, color);
+        antiAliasedThickLinePainter_.drawLine(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1), static_cast<unsigned int>(x2), static_cast<unsigned int>(y2), color);
     }
     
 private:
@@ -100,7 +100,7 @@ public:
      * @param useAntiAliasing Enable anti-aliased line rendering
      */
     ChartRenderer(int width, int height, const std::string& fontPath, bool useAntiAliasing = false) 
-        : image_(width, height),
+        : image_(static_cast<unsigned int>(width), static_cast<unsigned int>(height)),
           pixelPainter_(image_),
           linePainter_(image_),
           rectPainter_(image_),
@@ -121,7 +121,7 @@ public:
         textPainter_.setFont(&font_);
         
         // Initialize image with white background
-        rectPainter_.drawFull(0, 0, imageWidth_ - 1, imageHeight_ - 1, RgbColor{255, 255, 255});
+        rectPainter_.drawFull(0, 0, static_cast<unsigned int>(imageWidth_ - 1), static_cast<unsigned int>(imageHeight_ - 1), RgbColor{255, 255, 255});
     }
     
     /**
@@ -161,7 +161,7 @@ public:
      * @brief Set the background color for the entire image
      */
     void setBackgroundColor(const RgbColor& color) {
-        rectPainter_.drawFull(0, 0, imageWidth_ - 1, imageHeight_ - 1, color);
+        rectPainter_.drawFull(0, 0, static_cast<unsigned int>(imageWidth_ - 1), static_cast<unsigned int>(imageHeight_ - 1), color);
     }
     
     /**
@@ -245,8 +245,8 @@ private:
             return {static_cast<float>(plotArea.x1), static_cast<float>(plotArea.y1)};
         }
 
-        float screenX = plotArea.x1 + (x - xMin) / (xMax - xMin) * plotArea.width();
-        float screenY = plotArea.y2 - (y - yMin) / (yMax - yMin) * plotArea.height();
+        float screenX = static_cast<float>(plotArea.x1) + (x - xMin) / (xMax - xMin) * static_cast<float>(plotArea.width());
+        float screenY = static_cast<float>(plotArea.y2) - (y - yMin) / (yMax - yMin) * static_cast<float>(plotArea.height());
 
         return {screenX, screenY};
     }
