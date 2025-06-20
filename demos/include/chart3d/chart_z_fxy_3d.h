@@ -16,6 +16,7 @@
 #include "uimg/painters/antialiased_painter_for_pixels.h"
 #include "uimg/filters/pixel_tracing_filter.h"
 #include "uimg/utils/math_utils.h"
+#include "uimg/utils/cast.h"
 #include "chart3d/chart3d_tracer.h"
 #include "dlog/dlog.h"
 #include "uimg/painters/painter_utils.h"
@@ -388,7 +389,7 @@ public:
         int f1, f2;
 
         int e;
-        std::vector<int> h_up(static_cast<size_t>(sizeX)), h_down(static_cast<size_t>(sizeX));
+        std::vector<int> h_up(UNSIGNED_CAST(size_t, sizeX)), h_down(UNSIGNED_CAST(size_t, sizeX));
 
         // Assert: sizeX must be positive and finite for the loop to terminate
         assert(sizeX > 0 && sizeX < 1000000 && "sizeX must be positive and reasonable for finite loop");
@@ -398,8 +399,8 @@ public:
         assert(sampleStepX > 0 && sampleSpaceX > 0 && "sampleStepX and sampleSpaceX must be positive for finite loop");
 
         for (int i = 0; i < sizeX; ++i) {
-            h_up[static_cast<size_t>(i)] = INT_MIN;
-            h_down[static_cast<size_t>(i)] = INT_MAX;
+            h_up[UNSIGNED_CAST(size_t, i)] = INT_MIN;
+            h_down[UNSIGNED_CAST(size_t, i)] = INT_MAX;
         }
 
         // Assert: outer loop q will terminate
@@ -509,14 +510,14 @@ public:
                     f1 = 0;
                     e = static_cast<int>(round(xe / sampleStepX));
 
-                    if ((e < sizeX) && (ye >= h_up[static_cast<size_t>(e)])) {
+                    if ((e < sizeX) && (ye >= h_up[UNSIGNED_CAST(size_t, e)])) {
                         f1 = 1;
-                        h_up[static_cast<size_t>(e)] = static_cast<int>(round(ye));
+                        h_up[UNSIGNED_CAST(size_t, e)] = static_cast<int>(round(ye));
                     } 
                     
-                    if ((e < sizeX) && (ye <= h_down[static_cast<size_t>(e)])) {
+                    if ((e < sizeX) && (ye <= h_down[UNSIGNED_CAST(size_t, e)])) {
                         f1 = 1;
-                        h_down[static_cast<size_t>(e)] = static_cast<int>(round(ye));
+                        h_down[UNSIGNED_CAST(size_t, e)] = static_cast<int>(round(ye));
                     }
 
                     x1 = xe;
@@ -526,14 +527,14 @@ public:
                     f2 = 0;
                     e = static_cast<int>(round(xe / sampleStepX));
 
-                    if ((e < sizeX) && (ye >= h_up[static_cast<size_t>(e)])) {
+                    if ((e < sizeX) && (ye >= h_up[UNSIGNED_CAST(size_t, e)])) {
                         f2 = 1;
-                        h_up[static_cast<size_t>(e)] = static_cast<int>(round(ye));
+                        h_up[UNSIGNED_CAST(size_t, e)] = static_cast<int>(round(ye));
                     }
 
-                    if ((e < sizeX) && (ye <= h_down[static_cast<size_t>(e)])) {
+                    if ((e < sizeX) && (ye <= h_down[UNSIGNED_CAST(size_t, e)])) {
                         f2 = 1;
-                        h_down[static_cast<size_t>(e)] = static_cast<int>(round(ye));
+                        h_down[UNSIGNED_CAST(size_t, e)] = static_cast<int>(round(ye));
                     }
 
                     x2 = xe; y2 = ye;
@@ -554,8 +555,8 @@ public:
                         finalY2 = std::max(static_cast<double>(availableTop), std::min(static_cast<double>(availableBottom), finalY2));
 
                         // Draw pixel and line only if they're within bounds
-                        pixelPainter->putPixel(static_cast<unsigned int>(finalX1), static_cast<unsigned int>(finalY1), color);
-                        lnPainter->drawLine(static_cast<unsigned int>(finalX1), static_cast<unsigned int>(finalY1), static_cast<unsigned int>(finalX2), static_cast<unsigned int>(finalY2), color);
+                        pixelPainter->putPixel(UNSIGNED_CAST(unsigned int, finalX1), UNSIGNED_CAST(unsigned int, finalY1), color);
+                        lnPainter->drawLine(UNSIGNED_CAST(unsigned int, finalX1), UNSIGNED_CAST(unsigned int, finalY1), UNSIGNED_CAST(unsigned int, finalX2), UNSIGNED_CAST(unsigned int, finalY2), color);
                         
                         // Track pixel positions for line debugging if this is a tracked line
                         if (currentLineInfo != nullptr) {
@@ -665,10 +666,10 @@ protected:
         int bottom = canvasSize_.y - borderMargin - 1;
         
         // Draw rectangle border
-        linePainter->drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(top), borderColor);       // top edge
-        linePainter->drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), borderColor);   // right edge  
-        linePainter->drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), borderColor); // bottom edge
-        linePainter->drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(top), borderColor);     // left edge
+        linePainter->drawLine(UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, top), UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, top), borderColor);       // top edge
+        linePainter->drawLine(UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, top), UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, bottom), borderColor);   // right edge  
+        linePainter->drawLine(UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, bottom), UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, bottom), borderColor); // bottom edge
+        linePainter->drawLine(UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, bottom), UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, top), borderColor);     // left edge
     }
 
     /**
@@ -708,19 +709,19 @@ protected:
                     logger->warn("CHART BOUNDARY VIOLATION: Chart pixels drawn outside available space!");
                     if (static_cast<int>(usedMinX) < availableLeft) {
                         logger->warn("  Left overflow: chart used x=%d, available starts at x=%d (-%d pixels)", 
-                                   usedMinX, availableLeft, static_cast<unsigned int>(availableLeft - static_cast<int>(usedMinX)));
+                                   usedMinX, availableLeft, UNSIGNED_CAST(unsigned int, availableLeft - static_cast<int>(usedMinX)));
                     }
                     if (static_cast<int>(usedMaxX) > availableRight) {
                         logger->warn("  Right overflow: chart used x=%d, available ends at x=%d (+%d pixels)", 
-                                   usedMaxX, availableRight, static_cast<unsigned int>(static_cast<int>(usedMaxX) - availableRight));
+                                   usedMaxX, availableRight, UNSIGNED_CAST(unsigned int, static_cast<int>(usedMaxX) - availableRight));
                     }
                     if (static_cast<int>(usedMinY) < availableTop) {
                         logger->warn("  Top overflow: chart used y=%d, available starts at y=%d (-%d pixels)", 
-                                   usedMinY, availableTop, static_cast<unsigned int>(availableTop - static_cast<int>(usedMinY)));
+                                   usedMinY, availableTop, UNSIGNED_CAST(unsigned int, availableTop - static_cast<int>(usedMinY)));
                     }
                     if (static_cast<int>(usedMaxY) > availableBottom) {
                         logger->warn("  Bottom overflow: chart used y=%d, available ends at y=%d (+%d pixels)", 
-                                   usedMaxY, availableBottom, static_cast<unsigned int>(static_cast<int>(usedMaxY) - availableBottom));
+                                   usedMaxY, availableBottom, UNSIGNED_CAST(unsigned int, static_cast<int>(usedMaxY) - availableBottom));
                     }
                 } else {
                     logger->debug("SUCCESS: All chart pixels drawn within allowed area!");
@@ -757,10 +758,10 @@ private:
         int top = area.y1;
         int bottom = area.y2;
         LinePainterForPixels linePainter(*painter);
-        linePainter.drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(top), color);       // top edge
-        linePainter.drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), color);   // right edge
-        linePainter.drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), color); // bottom edge
-        linePainter.drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(top), color);     // left edge
+        linePainter.drawLine(UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, top), UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, top), color);       // top edge
+        linePainter.drawLine(UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, top), UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, bottom), color);   // right edge
+        linePainter.drawLine(UNSIGNED_CAST(unsigned int, right), UNSIGNED_CAST(unsigned int, bottom), UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, bottom), color); // bottom edge
+        linePainter.drawLine(UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, bottom), UNSIGNED_CAST(unsigned int, left), UNSIGNED_CAST(unsigned int, top), color);     // left edge
     }
 
     /**

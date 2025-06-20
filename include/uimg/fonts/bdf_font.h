@@ -351,14 +351,14 @@ public:
                 Point bbxOffset = { i3, i4 };
                 newGlyph.setBbxSize(bbxSize);
                 newGlyph.setBbxOffset(bbxOffset);
-                auto shiftA = 8 * (sizeof(BdfGlyph::pixel_line_t) - static_cast<size_t>((bbxSize.x + 7) / 8));
+                auto shiftA = 8 * (sizeof(BdfGlyph::pixel_line_t) - UNSIGNED_CAST(size_t, (bbxSize.x + 7) / 8));
                 auto shiftB = UNSIGNED_CAST(unsigned int, bbxOffset.x);
-                long shiftC = shiftA - shiftB;
+                long shiftC = (long)shiftA - (long)shiftB;
 
                 pixelShift = shiftC < 0 ? 0 : UNSIGNED_CAST(unsigned int, shiftC);
                 glyphLineNo = -1;
                 pixelLines.clear();
-                pixelLines.reserve(static_cast<size_t>(bbxSize.y));
+                pixelLines.reserve(UNSIGNED_CAST(size_t, bbxSize.y));
             }
             else if (strncmp(s.c_str(), "BITMAP", strlen("BITMAP")) == 0) {
                 glyphLineNo = 0;

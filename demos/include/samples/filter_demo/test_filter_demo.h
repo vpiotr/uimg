@@ -9,6 +9,7 @@
 #include "uimg/base/structs.h"
 #include "uimg/filters/filter_base.h"
 #include "uimg/filters/filter_for_pixels.h"
+#include "uimg/utils/cast.h"
 #include "samples/test_painter_base.h"
 
 namespace uimg {

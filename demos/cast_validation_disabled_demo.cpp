@@ -27,7 +27,7 @@ int main() {
     int negative_int = -42;
     
     try {
-        unsigned int result = unsigned_cast<unsigned int>(negative_int);
+        unsigned_cast<unsigned int>(negative_int);
         auto logger = dlog::Logger::getInstance();
         
 #if UIMG_ENABLE_CAST_VALIDATION

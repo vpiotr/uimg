@@ -11,6 +11,7 @@
 #include "uimg/images/rgb_image.h"
 #include "uimg/painters/painter_for_rgb_image.h"
 #include "uimg/images/ppm_image.h"
+#include "uimg/utils/cast.h"
 #include "dlog/dlog.h"
 
 struct test_args {
@@ -125,7 +126,7 @@ protected:
 
     virtual void init() {
         Point size = getImageSize();
-        image_.reset(new RgbImage(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y)));
+        image_.reset(new RgbImage(UNSIGNED_CAST(unsigned int, size.x), UNSIGNED_CAST(unsigned int, size.y)));
         painter_.reset(new PixelPainterForRgbImage(*image_));
     }
 
