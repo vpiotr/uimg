@@ -3,6 +3,9 @@ project(uimg)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Enable testing for CTest integration
+enable_testing()
+
 include_directories(apps/include)
 include_directories(apps/include/samples)
 include_directories(apps/include/samples/voronoi)
@@ -15,6 +18,7 @@ include_directories(include)
 include_directories(include/uimg)
 include_directories(include/uimg/painters)
 include_directories(include/uimg/utils)
+include_directories(include/ulog)
 
 add_executable(voronoi
         LICENSE
@@ -151,5 +155,61 @@ add_executable(text_demo
         include/uimg/utils/color_utils.h
         include/uimg/utils/math_utils.h
         include/uimg/utils/point_utils.h)
+
+# Test executable for comprehensive chart3d testing
+add_executable(test_chart3d
+        LICENSE
+        README.md
+        apps/test_chart3d.cpp
+        apps/include/samples/test_chart3d.h
+        apps/include/samples/test_logger.h
+        apps/include/samples/chart3d/chart_z_fxy_3d.h
+        apps/include/samples/chart3d/chart3d_renderer.h
+        apps/include/samples/chart3d/chart3d_layout.h
+        apps/include/samples/chart3d/multi_chart_3d.h
+        apps/include/samples/chart3d/test_chart_z_fxy_3d_c.h
+        apps/include/samples/test_painter_base.h
+        apps/include/samples/logger.h
+        include/utest/utest.h
+        include/uimg/base/structs.h
+        include/uimg/images/rgb_image.h
+        include/uimg/images/ppm_image.h
+        include/uimg/pixels/pixel_painter.h
+        include/uimg/painters/painter_base.h
+        include/uimg/painters/painter_for_pixels.h
+        include/uimg/painters/painter_for_rgb_image.h
+        include/uimg/painters/antialiased_painter_for_pixels.h
+        include/uimg/painters/rect_painter.h
+        include/uimg/filters/filter_base.h
+        include/uimg/filters/pixel_tracing_filter.h
+        include/uimg/utils/algorithm.h
+        include/uimg/utils/color_utils.h
+        include/uimg/utils/cubic_spline_utils.h
+        include/uimg/utils/math_utils.h
+        include/uimg/utils/point_utils.h)
+
+add_executable(observers_demo
+        LICENSE
+        README.md
+        apps/observers_demo.cpp
+        include/ulog/ulog.h
+        include/ulog/log_output.h)
+
+add_executable(basic_logging_demo
+        LICENSE
+        README.md
+        apps/basic_logging_demo.cpp
+        include/ulog/ulog.h
+        include/ulog/log_output.h)
+
+# Add tests for CTest integration
+add_test(NAME Chart3DComprehensiveTest 
+         COMMAND test_chart3d)
+
+# Set test properties
+set_tests_properties(Chart3DComprehensiveTest PROPERTIES
+    TIMEOUT 120
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 
