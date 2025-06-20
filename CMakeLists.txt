@@ -82,9 +82,7 @@ add_executable(mandelbrot
 add_executable(chart3d
         LICENSE
         README.md
-        demos/include/chart3d/test_chart_z_fxy_3d_c.h
         demos/include/chart3d/chart_z_fxy_3d.h
-        demos/include/samples/test_painter_base.h
         demos/chart3d.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
@@ -125,8 +123,9 @@ add_executable(draw_primitives
 add_executable(filter_demo
         LICENSE
         README.md
-        demos/include/samples/filter_demo/test_filter_demo.h
-        demos/include/samples/test_painter_base.h
+        demos/include/samples/filter_demo/filter_demo.h
+        demos/include/samples/filter_demo/filter_demo_args.h
+        demos/include/samples/demo_painter_base.h
         demos/filter_demo.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
@@ -141,7 +140,6 @@ add_executable(2d_line_chart_demo
         include/uimg/charts/chart.h
         include/uimg/charts/chart_styles.h
         include/uimg/charts/chart_renderer.h
-        demos/include/samples/test_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
         include/uimg/images/ppm_image.h
@@ -161,8 +159,9 @@ add_executable(text_demo
         LICENSE
         README.md
         demos/text_demo.cpp
-        demos/include/samples/text_demo/test_text_demo.h
-        demos/include/samples/test_painter_base.h
+        demos/include/samples/text_demo/text_demo.h
+        demos/include/samples/text_demo/text_demo_args.h
+        demos/include/samples/demo_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
         include/uimg/images/ppm_image.h
