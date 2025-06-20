@@ -16,7 +16,7 @@
 #include "uimg/painters/antialiased_painter_for_pixels.h"
 #include "uimg/filters/pixel_tracing_filter.h"
 #include "uimg/utils/math_utils.h"
-#include "samples/chart3d/chart3d_tracer.h"
+#include "chart3d/chart3d_tracer.h"
 #include "dlog/dlog.h"
 #include "uimg/painters/painter_utils.h"
 

@@ -9,6 +9,7 @@
 #include "uimg/utils/math_utils.h"
 #include "uimg/utils/cubic_spline_utils.h"
 #include "uimg/painters/painter_base.h"
+#include "uimg/utils/cast.h"
 
 using LineDashPattern = std::vector<unsigned int>;
 
@@ -46,10 +47,10 @@ public:
         int sign = (ye - static_cast<int>(y1) > 0) ? 1 : -1;
 
         for (; x <= xe; ++x) {
-            pixelPainter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+            pixelPainter_->putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
             error += deltaerr;
             while (error >= 0.5f) {
-                pixelPainter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                pixelPainter_->putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
                 y += sign;
                 error -= 1.0f;
             }
@@ -136,13 +137,13 @@ public:
             }
 
             if (dash)
-                pixelPainter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                pixelPainter_->putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
 
             error += deltaerr;
 
             while (error >= 0.5f) {
                 if (dash)
-                    pixelPainter_->putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
+                    pixelPainter_->putPixel(UNSIGNED_CAST(unsigned int, x), UNSIGNED_CAST(unsigned int, y), color);
 
                 y += sign;
 
@@ -279,7 +280,7 @@ public:
             int yc = r2 - yi2;
             for (int xi = -ir; xi <= ir; xi++)
                 if (xi * xi <= yc)
-                    pixelPainter_.putPixel(static_cast<unsigned int>(static_cast<int>(x) + xi), static_cast<unsigned int>(static_cast<int>(y) + yi), color);
+                    pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, static_cast<int>(x) + xi), UNSIGNED_CAST(unsigned int, static_cast<int>(y) + yi), color);
         }
     }
 
@@ -290,14 +291,14 @@ public:
         int decisionOver2 = 1 - x;
 
         while (y <= x) {
-            pixelPainter_.putPixel(static_cast<unsigned int>(x + static_cast<int>(x0)), static_cast<unsigned int>(y + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(y + static_cast<int>(x0)), static_cast<unsigned int>(x + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(-x + static_cast<int>(x0)), static_cast<unsigned int>(y + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(-y + static_cast<int>(x0)), static_cast<unsigned int>(x + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(-x + static_cast<int>(x0)), static_cast<unsigned int>(-y + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(-y + static_cast<int>(x0)), static_cast<unsigned int>(-x + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(x + static_cast<int>(x0)), static_cast<unsigned int>(-y + static_cast<int>(y0)), color);
-            pixelPainter_.putPixel(static_cast<unsigned int>(y + static_cast<int>(x0)), static_cast<unsigned int>(-x + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, x + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, y + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, y + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, x + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, -x + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, y + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, -y + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, x + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, -x + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, -y + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, -y + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, -x + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, x + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, -y + static_cast<int>(y0)), color);
+            pixelPainter_.putPixel(UNSIGNED_CAST(unsigned int, y + static_cast<int>(x0)), UNSIGNED_CAST(unsigned int, -x + static_cast<int>(y0)), color);
             y++;
 
             if (decisionOver2 <= 0) {
@@ -341,7 +342,7 @@ public:
         int dx = static_cast<int>(x2) - static_cast<int>(x1);
         int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
-        unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidth_ / 2));
+        unsigned int lineWidthD2 = UNSIGNED_CAST(unsigned int, round(lineWidth_ / 2));
 
         int cnt = calcPointCount(x1, y1, x2, y2);
 
@@ -352,7 +353,7 @@ public:
         float y = static_cast<float>(y1);
 
         for (int i = 0, epos = cnt; i < epos; ++i) {
-            usedCirclePainter_.drawFull(static_cast<unsigned int>(round(x)), static_cast<unsigned int>(round(y)),
+            usedCirclePainter_.drawFull(UNSIGNED_CAST(unsigned int, round(x)), UNSIGNED_CAST(unsigned int, round(y)),
                                         lineWidthD2, color);
             x += fdx;
             y += fdy;

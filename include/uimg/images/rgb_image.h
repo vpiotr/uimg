@@ -6,6 +6,7 @@
 
 #include "uimg/base/structs.h"
 #include "uimg/images/pixel_image.h"
+#include "uimg/utils/cast.h"
 
 // RGB in-memory image container.
 // Each pixel is represented as three bytes (red, green, blue), from top left to bottom right, (0,0) = top, left
@@ -31,9 +32,9 @@ public:
     virtual RgbColor getPixel(const Point &pos) const {
         RgbColor r;
         if (pos.x >= 0 && pos.y >= 0 && 
-            static_cast<unsigned int>(pos.x) < width_ && 
-            static_cast<unsigned int>(pos.y) < height_) {
-            unsigned int offset = (static_cast<unsigned int>(pos.y) * width_ + static_cast<unsigned int>(pos.x)) * 3;
+            UNSIGNED_CAST(unsigned int, pos.x) < width_ && 
+            UNSIGNED_CAST(unsigned int, pos.y) < height_) {
+            unsigned int offset = (UNSIGNED_CAST(unsigned int, pos.y) * width_ + UNSIGNED_CAST(unsigned int, pos.x)) * 3;
             r.red = data_[offset];
             r.green = data_[offset + 1];
             r.blue = data_[offset + 2];
@@ -60,9 +61,9 @@ public:
 
     virtual void setPixel(const Point &pos, const RgbColor &color) {
         if (pos.x >= 0 && pos.y >= 0 && 
-            static_cast<unsigned int>(pos.x) < width_ && 
-            static_cast<unsigned int>(pos.y) < height_) {
-            unsigned int offset = (static_cast<unsigned int>(pos.y) * width_ + static_cast<unsigned int>(pos.x)) * 3;
+            UNSIGNED_CAST(unsigned int, pos.x) < width_ && 
+            UNSIGNED_CAST(unsigned int, pos.y) < height_) {
+            unsigned int offset = (UNSIGNED_CAST(unsigned int, pos.y) * width_ + UNSIGNED_CAST(unsigned int, pos.x)) * 3;
             data_[offset] = color.red;
             data_[offset + 1] = color.green;
             data_[offset + 2] = color.blue;

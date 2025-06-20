@@ -11,6 +11,7 @@
 
 #include "uimg/base/structs.h"
 #include "uimg/text/text_base.h"
+#include "uimg/utils/cast.h"
 
 namespace uimg {
 
@@ -179,7 +180,7 @@ public:
      * @param glyph Glyph to add
      */
     void addGlyph(const BdfGlyph &glyph) {
-        unsigned int newPos = static_cast<unsigned int>(glyphs_.size());
+        unsigned int newPos = UNSIGNED_CAST(unsigned int, glyphs_.size());
         glyphs_.push_back(glyph);
         codeMap_.emplace(glyph.encoding(), newPos);
         nameMap_.emplace(glyph.name(), newPos);
@@ -350,7 +351,11 @@ public:
                 Point bbxOffset = { i3, i4 };
                 newGlyph.setBbxSize(bbxSize);
                 newGlyph.setBbxOffset(bbxOffset);
-                pixelShift = static_cast<unsigned int>(8 * (sizeof(BdfGlyph::pixel_line_t) - static_cast<size_t>((bbxSize.x + 7) / 8))) - static_cast<unsigned int>(bbxOffset.x);
+                auto shiftA = 8 * (sizeof(BdfGlyph::pixel_line_t) - static_cast<size_t>((bbxSize.x + 7) / 8));
+                auto shiftB = bbxOffset.x;
+                auto shiftC = shiftA - shiftB;
+
+                pixelShift = shiftC < 0 ? 0 : UNSIGNED_CAST(unsigned int, shiftC);
                 glyphLineNo = -1;
                 pixelLines.clear();
                 pixelLines.reserve(static_cast<size_t>(bbxSize.y));

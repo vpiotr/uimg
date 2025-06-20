@@ -6,6 +6,7 @@
 #include "uimg/filters/filter_base.h"
 #include "uimg/painters/painter_base.h"
 #include "uimg/utils/math_utils.h"
+#include "uimg/utils/cast.h"
 
 // Utility class for flip operations
 class FlipUtils {
@@ -59,27 +60,26 @@ public:
         getTarget().getPixel(x, y, output);
     }
 protected:
-    void recalculatePos(unsigned int &x, unsigned int &y) {
-        switch (rotationValue_)
+    void recalculatePos(unsigned int &x, unsigned int &y) {        switch (rotationValue_)
         {            case -90: {
                 int xv = static_cast<int>(x) - offset_.x;
                 int yv = static_cast<int>(y) - offset_.y;
-                x = static_cast<unsigned int>(offset_.x + yv);
-                y = static_cast<unsigned int>(offset_.y - xv);
+                x = UNSIGNED_CAST(unsigned int, offset_.x + yv);
+                y = UNSIGNED_CAST(unsigned int, offset_.y - xv);
                 break;
             }            case 90: {
                 int xv = static_cast<int>(x) - offset_.x;
                 int yv = static_cast<int>(y) - offset_.y;
-                x = static_cast<unsigned int>(offset_.x - yv);
-                y = static_cast<unsigned int>(offset_.y + xv);
+                x = UNSIGNED_CAST(unsigned int, offset_.x - yv);
+                y = UNSIGNED_CAST(unsigned int, offset_.y + xv);
                 break;
             }            case -180:
             case 180:
             {
                 int xv = static_cast<int>(x) - offset_.x;
                 int yv = static_cast<int>(y) - offset_.y;
-                x = static_cast<unsigned int>(offset_.x - xv);
-                y = static_cast<unsigned int>(offset_.y - yv);
+                x = UNSIGNED_CAST(unsigned int, offset_.x - xv);
+                y = UNSIGNED_CAST(unsigned int, offset_.y - yv);
                 break;
             }
             default: {
@@ -114,7 +114,7 @@ public:
 
 protected:    
     void recalculatePos(unsigned int &x, [[maybe_unused]] unsigned int &y) {
-        x = static_cast<unsigned int>(FlipUtils::flipPos(x, static_cast<unsigned int>(offset_.x), evenFlip_));
+        x = UNSIGNED_CAST(unsigned int, FlipUtils::flipPos(x, UNSIGNED_CAST(unsigned int, offset_.x), evenFlip_));
     }
 
 private:
@@ -138,7 +138,7 @@ public:
     }
 
 protected:    void recalculatePos([[maybe_unused]] unsigned int &x, unsigned int &y) {
-        y = static_cast<unsigned int>(FlipUtils::flipPos(y, static_cast<unsigned int>(offset_.y), evenFlip_));
+        y = UNSIGNED_CAST(unsigned int, FlipUtils::flipPos(y, UNSIGNED_CAST(unsigned int, offset_.y), evenFlip_));
     }
 private:
     Point offset_;
@@ -209,9 +209,9 @@ public:
     AlphaFilter(PixelPainter &target, float alpha) : PixelFilter(target), alpha_(std::min(1.0f, std::max(0.0f, alpha))) {}    virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
         RgbColor calcColor;
         getTarget().getPixel(x, y, calcColor);
-        calcColor.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha_ * color.red + (1.0f - alpha_) * calcColor.red))));
-        calcColor.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha_ * color.green + (1.0f - alpha_) * calcColor.green))));
-        calcColor.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha_ * color.blue + (1.0f - alpha_) * calcColor.blue))));
+        calcColor.red = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha_ * color.red + (1.0f - alpha_) * calcColor.red))));
+        calcColor.green = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha_ * color.green + (1.0f - alpha_) * calcColor.green))));
+        calcColor.blue = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(alpha_ * color.blue + (1.0f - alpha_) * calcColor.blue))));
         getTarget().putPixel(x, y, calcColor);
     }
 
@@ -243,23 +243,23 @@ public:
 protected:    bool recalculatePos(unsigned int &x, unsigned int &y) {
         // handle shift below zero
         if (offset_.x < 0) {
-            if (static_cast<unsigned int>(-offset_.x) > x) {
+            if (UNSIGNED_CAST(unsigned int, -offset_.x) > x) {
                 x = 0;
                 return false;
             }
         }
 
-        x = static_cast<unsigned int>(static_cast<int>(x) + offset_.x);
+        x = UNSIGNED_CAST(unsigned int, static_cast<int>(x) + offset_.x);
 
         // handle shift below zero
         if (offset_.y < 0) {
-            if (static_cast<unsigned int>(-offset_.y) > y) {
+            if (UNSIGNED_CAST(unsigned int, -offset_.y) > y) {
                 y = 0;
                 return false;
             }
         }
 
-        y = static_cast<unsigned int>(static_cast<int>(y) + offset_.y);
+        y = UNSIGNED_CAST(unsigned int, static_cast<int>(y) + offset_.y);
         return true;
     }
 
@@ -311,12 +311,11 @@ public:
         getTarget().getPixel(x, y, output);
     }
 
-protected:
-    void recalculatePos(unsigned int &x, unsigned int &y) {
+protected:    void recalculatePos(unsigned int &x, unsigned int &y) {
         int dx = static_cast<int>(x) - offset_.x;
         int dy = static_cast<int>(y) - offset_.y;
-        x = static_cast<unsigned int>(offset_.x + dx / zoom_.x);
-        y = static_cast<unsigned int>(offset_.y + dy / zoom_.y);
+        x = UNSIGNED_CAST(unsigned int, offset_.x + dx / zoom_.x);
+        y = UNSIGNED_CAST(unsigned int, offset_.y + dy / zoom_.y);
     }
 private:
     Point offset_;
@@ -343,12 +342,11 @@ public:
         getTarget().getPixel(x, y, output);
     }
 
-protected:
-    void recalculatePos(unsigned int &x, unsigned int &y) {
+protected:    void recalculatePos(unsigned int &x, unsigned int &y) {
         int dx = static_cast<int>(x) - offset_.x;
         int dy = static_cast<int>(y) - offset_.y;
-        x = static_cast<unsigned int>(offset_.x + zoom_.x * dx);
-        y = static_cast<unsigned int>(offset_.y + zoom_.y * dy);
+        x = UNSIGNED_CAST(unsigned int, offset_.x + zoom_.x * dx);
+        y = UNSIGNED_CAST(unsigned int, offset_.y + zoom_.y * dy);
     }
 private:
     Point offset_;
@@ -409,9 +407,9 @@ public:    GradientFilter2C(PixelPainter &target, const Point &startPoint, const
     }
 protected:    RgbColor mixColors(const RgbColor &color1, double r1, const RgbColor &color2, double r2) {
         RgbColor result;
-        result.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(static_cast<float>(color1.red) * r1 + static_cast<float>(color2.red) * r2))));
-        result.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(static_cast<float>(color1.green) * r1 + static_cast<float>(color2.green) * r2))));
-        result.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(static_cast<float>(color1.blue) * r1 + static_cast<float>(color2.blue) * r2))));
+        result.red = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(static_cast<float>(color1.red) * r1 + static_cast<float>(color2.red) * r2))));
+        result.green = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(static_cast<float>(color1.green) * r1 + static_cast<float>(color2.green) * r2))));
+        result.blue = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(static_cast<float>(color1.blue) * r1 + static_cast<float>(color2.blue) * r2))));
         return result;
     }
 

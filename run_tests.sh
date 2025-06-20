@@ -24,9 +24,9 @@ ctest --verbose
 
 MAIN_TEST_RESULT=$?
 
-# Run dlog tests
+# Run additional tests (dlog, unsigned_cast, etc.)
 echo ""
-echo "Running dlog tests..."
+echo "Running additional tests..."
 cd "$TESTS_DIR"
 
 # Clean any existing CMake files from tests directory
@@ -57,28 +57,28 @@ if [ $? -ne 0 ]; then
 fi
 
 # Run the test script (skip the old one and run tests manually)
-echo "Running dlog tests manually..."
+echo "Running individual test executables manually..."
 
 # Run individual test executables from the main build/tests directory
-DLOG_TEST_RESULT=0
+ADDITIONAL_TEST_RESULT=0
 TESTS_OUTPUT_DIR="$PROJECT_ROOT/build/tests"
 
 if [ -d "$TESTS_OUTPUT_DIR" ]; then
     cd "$TESTS_OUTPUT_DIR"
     echo "Running tests from $TESTS_OUTPUT_DIR..."
     
-    for test_exec in test_dlog_*; do
+    for test_exec in test_*; do
         if [ -x "$test_exec" ]; then
             echo "Running $test_exec..."
             ./"$test_exec"
             if [ $? -ne 0 ]; then
-                DLOG_TEST_RESULT=1
+                ADDITIONAL_TEST_RESULT=1
             fi
         fi
     done
 else
     echo "No tests output directory found at $TESTS_OUTPUT_DIR"
-    DLOG_TEST_RESULT=1
+    ADDITIONAL_TEST_RESULT=1
 fi
 
 # Summary
@@ -90,14 +90,14 @@ else
     echo "✗ Main project tests: FAILED"
 fi
 
-if [ $DLOG_TEST_RESULT -eq 0 ]; then
-    echo "✓ Dlog tests: PASSED"
+if [ $ADDITIONAL_TEST_RESULT -eq 0 ]; then
+    echo "✓ Additional tests: PASSED"
 else
-    echo "✗ Dlog tests: FAILED"
+    echo "✗ Additional tests: FAILED"
 fi
 
 # Exit with error if any tests failed
-if [ $MAIN_TEST_RESULT -ne 0 ] || [ $DLOG_TEST_RESULT -ne 0 ]; then
+if [ $MAIN_TEST_RESULT -ne 0 ] || [ $ADDITIONAL_TEST_RESULT -ne 0 ]; then
     echo ""
     echo "Some tests failed!"
     exit 1

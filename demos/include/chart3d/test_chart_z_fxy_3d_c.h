@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "samples/test_painter_base.h"
-#include "samples/chart3d/chart_z_fxy_3d.h"
+#include "chart_z_fxy_3d.h"
 #include "dlog/dlog.h"
 #include "uimg/filters/pixel_tracing_filter.h"
 

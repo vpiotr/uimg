@@ -7,6 +7,7 @@
 
 #include "uimg/base/structs.h"
 #include "uimg/images/pixel_image.h"
+#include "uimg/utils/cast.h"
 
 // class which writes RGB image as PPM file (Netpbm / P6)
 class PpmImageWriter : public PixelImageWriter {
@@ -166,9 +167,9 @@ protected:
                 }
 
                 if (x >= srcFragment.x1 && x <= srcFragment.x2 && y >= srcFragment.y1 && y <= srcFragment.y2) {
-                    color.red = static_cast<unsigned char>(colorBytes[0]);
-                    color.green = static_cast<unsigned char>(colorBytes[1]);
-                    color.blue = static_cast<unsigned char>(colorBytes[2]);
+                    color.red = UNSIGNED_CAST(unsigned char, colorBytes[0]);
+                    color.green = UNSIGNED_CAST(unsigned char, colorBytes[1]);
+                    color.blue = UNSIGNED_CAST(unsigned char, colorBytes[2]);
 
                     xd = x - srcFragment.x1 + destOffset.x;
                     yd = x - srcFragment.y1 + destOffset.y;
@@ -235,7 +236,7 @@ class PpmImageLoaderForRgbImage : public PpmImageLoader {
     using inherited = PpmImageLoader;
 protected:
     virtual PixelImageBase *newImage(const PixelImageMetaInfo &meta) {
-        return new RgbImage(static_cast<unsigned int>(meta.getSize().x), static_cast<unsigned int>(meta.getSize().y));
+        return new RgbImage(UNSIGNED_CAST(unsigned int, meta.getSize().x), UNSIGNED_CAST(unsigned int, meta.getSize().y));
     }
 
     virtual bool loadPixelDataNew(PixelImageBase &outputImage) {

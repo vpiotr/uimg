@@ -1,8 +1,8 @@
 #include <iostream>
 #include "samples/test_painter_base.h"
-#include "samples/chart3d/test_chart_z_fxy_3d_c.h"
-#include "samples/chart3d/chart_z_fxy_3d.h"
-#include "samples/chart3d/chart3d_renderer.h"
+#include "chart3d/test_chart_z_fxy_3d_c.h"
+#include "chart3d/chart_z_fxy_3d.h"
+#include "chart3d/chart3d_renderer.h"
 #include "dlog/dlog.h"
 
 int main(int argc, const char *argv[]) {

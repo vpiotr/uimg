@@ -28,9 +28,10 @@ DEMOS=(
     "filter_demo"
     "2d_line_chart_demo"
     "text_demo"
-    "test_chart3d"
     "observers_demo"
     "basic_logging_demo"
+    "cast_demo"
+    "cast_validation_disabled_demo"
 )
 
 echo "Available demos: ${DEMOS[*]}"
@@ -42,7 +43,20 @@ run_demo() {
     
     if [ -x "./$demo_name" ]; then
         echo "--- Running $demo_name ---"
-        "./$demo_name"
+        
+        # Handle demos that require specific arguments
+        case "$demo_name" in
+            "2d_line_chart_demo")
+                "./$demo_name" -font ../fonts/courR12.bdf
+                ;;
+            "text_demo")
+                "./$demo_name" -font ../fonts/courR12.bdf
+                ;;
+            *)
+                "./$demo_name"
+                ;;
+        esac
+        
         local result=$?
         if [ $result -eq 0 ]; then
             echo "✓ $demo_name completed successfully"

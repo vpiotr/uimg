@@ -6,6 +6,7 @@
 #include "uimg/painters/painter_base.h"
 #include "uimg/painters/painter_for_pixels.h"
 #include "uimg/images/rgb_image.h"
+#include "uimg/utils/cast.h"
 
 // pixel painter using standard PixelImageBase as a target
 class PixelPainterForImageBase : public PixelPainter {
@@ -105,7 +106,7 @@ protected:
         int x1c = static_cast<int>(std::min(x1, image_.width() - 1));
         int x2c = static_cast<int>(std::min(x2, image_.width() - 1));
 
-        size_t offset = 3 * (y * image_.width() + static_cast<unsigned int>(x1c));
+        size_t offset = 3 * (y * image_.width() + UNSIGNED_CAST(unsigned int, x1c));
         unsigned char *dataPtr = static_cast<unsigned char *>(image_.data()) + offset;
 
         for (int x = x1c; x <= x2c; ++x) {
@@ -143,7 +144,7 @@ public:
         int x1c = static_cast<int>(std::min(x1, image_.width() - 1));
         int x2c = static_cast<int>(std::min(x2, image_.width() - 1));
 
-        size_t lnOffset = 3 * (ymin * image_.width() + static_cast<unsigned int>(x1c));
+        size_t lnOffset = 3 * (ymin * image_.width() + UNSIGNED_CAST(unsigned int, x1c));
         size_t lnStep = 3 * image_.width();
 
         unsigned char *lnPtr = static_cast<unsigned char *>(image_.data()) + lnOffset;

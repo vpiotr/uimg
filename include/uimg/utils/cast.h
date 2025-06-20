@@ -53,6 +53,20 @@ namespace utils {
  * @brief Exception thrown when an unsafe cast is attempted
  */
 class UnsafeCastException : public std::runtime_error {
+private:
+    /**
+     * @brief Helper function to format the error message with location info
+     * @return Formatted error message
+     */
+    std::string format_message() const {
+        std::ostringstream ss;
+        ss << "Unsafe cast error: " << message_
+           << " (File: " << file_ 
+           << ", Line: " << line_ 
+           << ", Function: " << function_ << ")";
+        return ss.str();
+    }
+
 public:
     /**
      * @brief Construct with full location information
@@ -64,9 +78,12 @@ public:
     UnsafeCastException(const std::string& message, const std::string& file, 
                        int line, const std::string& function)
         : std::runtime_error(message), 
+          message_(message),
           file_(file), 
           line_(line), 
-          function_(function) {}
+          function_(function) {
+            formatted_message_ = format_message();
+          }
     
     virtual ~UnsafeCastException() = default;
     
@@ -88,7 +105,24 @@ public:
      */
     const std::string& getFunction() const { return function_; }
 
+
+    /**
+     * @brief Get the formatted error message
+     * @return Formatted error message
+     */
+    const std::string& getFormattedMessage() const { return formatted_message_; }
+          
+    /**
+     * @brief Override what() to include location information
+     * @return Formatted error message
+     */
+    virtual const char* what() const noexcept override {
+        return formatted_message_.c_str();
+    }
+
 private:
+    std::string message_;
+    std::string formatted_message_;
     std::string file_;
     int line_;
     std::string function_;

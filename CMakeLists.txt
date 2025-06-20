@@ -82,8 +82,8 @@ add_executable(mandelbrot
 add_executable(chart3d
         LICENSE
         README.md
-        demos/include/samples/chart3d/test_chart_z_fxy_3d_c.h
-        demos/include/samples/chart3d/chart_z_fxy_3d.h
+        demos/include/chart3d/test_chart_z_fxy_3d_c.h
+        demos/include/chart3d/chart_z_fxy_3d.h
         demos/include/samples/test_painter_base.h
         demos/chart3d.cpp
         include/uimg/painters/copier_for_pixels.h
@@ -177,36 +177,6 @@ add_executable(text_demo
         include/uimg/utils/math_utils.h
         include/uimg/utils/point_utils.h)
 
-# Test executable for comprehensive chart3d testing
-add_executable(test_chart3d
-        LICENSE
-        README.md
-        demos/test_chart3d.cpp
-        demos/include/samples/test_chart3d.h
-        demos/include/samples/chart3d/chart_z_fxy_3d.h
-        demos/include/samples/chart3d/chart3d_renderer.h
-        demos/include/samples/chart3d/chart3d_layout.h
-        demos/include/samples/chart3d/multi_chart_3d.h
-        demos/include/samples/chart3d/test_chart_z_fxy_3d_c.h
-        demos/include/samples/test_painter_base.h
-        include/utest/utest.h
-        include/uimg/base/structs.h
-        include/uimg/images/rgb_image.h
-        include/uimg/images/ppm_image.h
-        include/uimg/pixels/pixel_painter.h
-        include/uimg/painters/painter_base.h
-        include/uimg/painters/painter_for_pixels.h
-        include/uimg/painters/painter_for_rgb_image.h
-        include/uimg/painters/antialiased_painter_for_pixels.h
-        include/uimg/painters/rect_painter.h
-        include/uimg/filters/filter_base.h
-        include/uimg/filters/pixel_tracing_filter.h
-        include/uimg/utils/algorithm.h
-        include/uimg/utils/color_utils.h
-        include/uimg/utils/cubic_spline_utils.h
-        include/uimg/utils/math_utils.h
-        include/uimg/utils/point_utils.h)
-
 add_executable(observers_demo
         LICENSE
         README.md
@@ -232,15 +202,4 @@ add_executable(cast_validation_disabled_demo
         demos/cast_validation_disabled_demo.cpp
         include/dlog/dlog.h
         include/uimg/utils/cast.h)
-
-# Add tests for CTest integration
-add_test(NAME Chart3DComprehensiveTest 
-         COMMAND test_chart3d)
-
-# Set test properties
-set_tests_properties(Chart3DComprehensiveTest PROPERTIES
-    TIMEOUT 120
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 
