@@ -52,6 +52,9 @@ run_demo() {
             "text_demo")
                 "./$demo_name" -font ../fonts/courR12.bdf
                 ;;
+            "chart3d")
+                "./$demo_name" "chart3d.ppm"
+                ;;
             *)
                 "./$demo_name"
                 ;;
