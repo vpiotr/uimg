@@ -24,7 +24,7 @@
 class chart_z_fxy_3d {
 public:
     chart_z_fxy_3d(const Point &canvasSize, PixelPainter &pixelPainter, bool useAntiAliasing = false, bool drawBorders = false) 
-        : canvasSize_(canvasSize), pixelPainter_(pixelPainter), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders) {}
+        : pixelPainter_(pixelPainter), canvasSize_(canvasSize), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders) {}
 
     virtual Point getChartSize() {
         if (drawBorders_) {
@@ -194,7 +194,7 @@ public:
         RgbColor color;
 
         // screen size
-        Point canvasSize = getCanvasSize();
+        [[maybe_unused]] Point canvasSize = getCanvasSize();
         Point chartSize = getChartSize();
         Point screenOffset = getScreenOffset();
 
@@ -331,8 +331,8 @@ public:
         logger->debug("Target area: ({0},{1}) to ({2},{3})", targetLeft, targetTop, targetRight, targetBottom);
 
         // Original centering calculation (for reference)
-        double xe0_old = midSampleSpaceX + sampleScaleForX * midSampleSpaceY + screenOffsetX;
-        double ye0_old = sampleScaleForY * midSampleSpaceY + screenOffsetY;
+        [[maybe_unused]] double xe0_old = midSampleSpaceX + sampleScaleForX * midSampleSpaceY + screenOffsetX;
+        [[maybe_unused]] double ye0_old = sampleScaleForY * midSampleSpaceY + screenOffsetY;
         
         // New centering calculation: position the middle of the chart (input x=0, y=0) 
         // at the center of the available space
@@ -387,8 +387,8 @@ public:
         double xe, ye, x1, y1, x2, y2;
         int f1, f2;
 
-        unsigned int e;
-        std::vector<int> h_up(sizeX), h_down(sizeX);
+        int e;
+        std::vector<int> h_up(static_cast<size_t>(sizeX)), h_down(static_cast<size_t>(sizeX));
 
         // Assert: sizeX must be positive and finite for the loop to terminate
         assert(sizeX > 0 && sizeX < 1000000 && "sizeX must be positive and reasonable for finite loop");
@@ -398,8 +398,8 @@ public:
         assert(sampleStepX > 0 && sampleSpaceX > 0 && "sampleStepX and sampleSpaceX must be positive for finite loop");
 
         for (int i = 0; i < sizeX; ++i) {
-            h_up[i] = INT_MIN;
-            h_down[i] = INT_MAX;
+            h_up[static_cast<size_t>(i)] = INT_MIN;
+            h_down[static_cast<size_t>(i)] = INT_MAX;
         }
 
         // Assert: outer loop q will terminate
@@ -488,35 +488,35 @@ public:
 
                 // Debug: Check point closest to center (m and q closest to 0)
                 if (abs(m) <= 3 && abs(q) <= 5) {
-                    auto logger = dlog::Logger::getInstance();
-                    logger->debug("NEAR CENTER: m=%d,q=%d input(%.3f,%.3f) -> z=%.3f -> screen(%.1f,%.1f) -> final_pixel(%.1f,%.1f)", 
+                    auto debugLogger = dlog::Logger::getInstance();
+                    debugLogger->debug("NEAR CENTER: m=%d,q=%d input(%.3f,%.3f) -> z=%.3f -> screen(%.1f,%.1f) -> final_pixel(%.1f,%.1f)", 
                                  m, q, x, y, z/resultScale, xe, ye, xe, maxY - ye);
                 }
                 
                 // Special debug for exact mathematical center
                 if (m == 0 && q == 0) {
-                    auto logger = dlog::Logger::getInstance();
-                    logger->debug("=== EXACT MATHEMATICAL CENTER ===");
-                    logger->debug("Input coordinates: x=%.6f, y=%.6f", x, y);
-                    logger->debug("Function value: z=%.6f (scaled: %.2f)", z/resultScale, z);
-                    logger->debug("Screen coordinates: xe=%.2f, ye=%.2f", xe, ye);
-                    logger->debug("Final pixel: (%.1f, %.1f)", xe, maxY - ye);
-                    logger->debug("Expected center: (%.1f, %.1f)", availableCenterX, availableCenterY);
-                    logger->debug("Center offset: X=%.1f, Y=%.1f", xe - availableCenterX, (maxY - ye) - availableCenterY);
+                    auto centerLogger = dlog::Logger::getInstance();
+                    centerLogger->debug("=== EXACT MATHEMATICAL CENTER ===");
+                    centerLogger->debug("Input coordinates: x=%.6f, y=%.6f", x, y);
+                    centerLogger->debug("Function value: z=%.6f (scaled: %.2f)", z/resultScale, z);
+                    centerLogger->debug("Screen coordinates: xe=%.2f, ye=%.2f", xe, ye);
+                    centerLogger->debug("Final pixel: (%.1f, %.1f)", xe, maxY - ye);
+                    centerLogger->debug("Expected center: (%.1f, %.1f)", availableCenterX, availableCenterY);
+                    centerLogger->debug("Center offset: X=%.1f, Y=%.1f", xe - availableCenterX, (maxY - ye) - availableCenterY);
                 }
 
                 if (m <= -midSampleSpaceX) {
                     f1 = 0;
-                    e = round(xe / sampleStepX);
+                    e = static_cast<int>(round(xe / sampleStepX));
 
-                    if ((e < sizeX) && (ye >= h_up[e])) {
+                    if ((e < sizeX) && (ye >= h_up[static_cast<size_t>(e)])) {
                         f1 = 1;
-                        h_up[e] = ye;
+                        h_up[static_cast<size_t>(e)] = static_cast<int>(round(ye));
                     } 
                     
-                    if ((e < sizeX) && (ye <= h_down[e])) {
+                    if ((e < sizeX) && (ye <= h_down[static_cast<size_t>(e)])) {
                         f1 = 1;
-                        h_down[e] = ye;
+                        h_down[static_cast<size_t>(e)] = static_cast<int>(round(ye));
                     }
 
                     x1 = xe;
@@ -524,16 +524,16 @@ public:
                 }
                 else {
                     f2 = 0;
-                    e = round(xe / sampleStepX);
+                    e = static_cast<int>(round(xe / sampleStepX));
 
-                    if ((e < sizeX) && (ye >= h_up[e])) {
+                    if ((e < sizeX) && (ye >= h_up[static_cast<size_t>(e)])) {
                         f2 = 1;
-                        h_up[e] = ye;
+                        h_up[static_cast<size_t>(e)] = static_cast<int>(round(ye));
                     }
 
-                    if ((e < sizeX) && (ye <= h_down[e])) {
+                    if ((e < sizeX) && (ye <= h_down[static_cast<size_t>(e)])) {
                         f2 = 1;
-                        h_down[e] = ye;
+                        h_down[static_cast<size_t>(e)] = static_cast<int>(round(ye));
                     }
 
                     x2 = xe; y2 = ye;
@@ -554,8 +554,8 @@ public:
                         finalY2 = std::max(static_cast<double>(availableTop), std::min(static_cast<double>(availableBottom), finalY2));
 
                         // Draw pixel and line only if they're within bounds
-                        pixelPainter->putPixel(finalX1, finalY1, color);
-                        lnPainter->drawLine(finalX1, finalY1, finalX2, finalY2, color);
+                        pixelPainter->putPixel(static_cast<unsigned int>(finalX1), static_cast<unsigned int>(finalY1), color);
+                        lnPainter->drawLine(static_cast<unsigned int>(finalX1), static_cast<unsigned int>(finalY1), static_cast<unsigned int>(finalX2), static_cast<unsigned int>(finalY2), color);
                         
                         // Track pixel positions for line debugging if this is a tracked line
                         if (currentLineInfo != nullptr) {
@@ -642,7 +642,7 @@ public:
     }
 
 protected:
-    virtual RgbColor getPlotColor(double x, double y, double z) {
+    virtual RgbColor getPlotColor([[maybe_unused]] double x, [[maybe_unused]] double y, [[maybe_unused]] double z) {
         return{ 255, 255, 255 };
     }
 
@@ -650,7 +650,7 @@ protected:
     virtual double getFunValue(double x, double y) = 0;
 
     // Draw border around the chart area
-    virtual void drawChartBorder(LinePainterForPixels* linePainter, int offsetX, int offsetY, int sizeX, int sizeY, int maxY) {
+    virtual void drawChartBorder(LinePainterForPixels* linePainter, [[maybe_unused]] int offsetX, [[maybe_unused]] int offsetY, [[maybe_unused]] int sizeX, [[maybe_unused]] int sizeY, [[maybe_unused]] int maxY) {
         if (!linePainter) return;
         
         RgbColor borderColor = getBorderColor();
@@ -665,10 +665,10 @@ protected:
         int bottom = canvasSize_.y - borderMargin - 1;
         
         // Draw rectangle border
-        linePainter->drawLine(left, top, right, top, borderColor);       // top edge
-        linePainter->drawLine(right, top, right, bottom, borderColor);   // right edge  
-        linePainter->drawLine(right, bottom, left, bottom, borderColor); // bottom edge
-        linePainter->drawLine(left, bottom, left, top, borderColor);     // left edge
+        linePainter->drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(top), borderColor);       // top edge
+        linePainter->drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(top), static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), borderColor);   // right edge  
+        linePainter->drawLine(static_cast<unsigned int>(right), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), borderColor); // bottom edge
+        linePainter->drawLine(static_cast<unsigned int>(left), static_cast<unsigned int>(bottom), static_cast<unsigned int>(left), static_cast<unsigned int>(top), borderColor);     // left edge
     }
 
     /**

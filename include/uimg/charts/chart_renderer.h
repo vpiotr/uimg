@@ -252,7 +252,7 @@ private:
     }
     
     // Draw the chart legend
-    void drawLegend(const Chart& chart, const Rect& chartRect, const Rect& legendArea) {
+    void drawLegend(const Chart& chart, [[maybe_unused]] const Rect& chartRect, const Rect& legendArea) {
         const ChartStyle& style = chart.getStyle();
         const std::vector<Series>& seriesSet = chart.getSeries();
         
@@ -265,18 +265,18 @@ private:
         
         for (size_t i = 0; i < seriesSet.size(); ++i) {
             const auto& series = seriesSet[i];
-            int currentY = legendArea.y1 + i * itemHeight;
+            int currentY = legendArea.y1 + static_cast<int>(i) * itemHeight;
             
             // Calculate vertical positions for perfect alignment
             int colorBoxY = currentY + (itemHeight - colorBoxSize) / 2;
             int textY = colorBoxY + (colorBoxSize / 2) - (fontHeight / 2) + fontBaseline;
             
             // Draw color box
-            rectPainter_.drawFull(legendArea.x1, colorBoxY,
-                                legendArea.x1 + colorBoxSize, colorBoxY + colorBoxSize,
+            rectPainter_.drawFull(static_cast<unsigned int>(legendArea.x1), static_cast<unsigned int>(colorBoxY),
+                                static_cast<unsigned int>(legendArea.x1 + colorBoxSize), static_cast<unsigned int>(colorBoxY + colorBoxSize),
                                 series.getStyle().color);
             // Draw series name
-            textPainter_.drawText(legendArea.x1 + colorBoxSize + textPadding, textY,
+            textPainter_.drawText(static_cast<unsigned int>(legendArea.x1 + colorBoxSize + textPadding), static_cast<unsigned int>(textY),
                                 series.getStyle().name, style.textColor);
         }
     }
@@ -293,8 +293,8 @@ private:
         float yMax = yAxis.max;
         
         // Draw axes lines
-        linePainter_.drawLine(plotArea.x1, plotArea.y2, plotArea.x2, plotArea.y2, style.axisColor); // X-axis
-        linePainter_.drawLine(plotArea.x1, plotArea.y1, plotArea.x1, plotArea.y2, style.axisColor); // Y-axis
+        linePainter_.drawLine(static_cast<unsigned int>(plotArea.x1), static_cast<unsigned int>(plotArea.y2), static_cast<unsigned int>(plotArea.x2), static_cast<unsigned int>(plotArea.y2), style.axisColor); // X-axis
+        linePainter_.drawLine(static_cast<unsigned int>(plotArea.x1), static_cast<unsigned int>(plotArea.y1), static_cast<unsigned int>(plotArea.x1), static_cast<unsigned int>(plotArea.y2), style.axisColor); // Y-axis
 
         // Draw X-axis ticks and grid
         for (int i = 0; i <= style.numXTicks; ++i) {
