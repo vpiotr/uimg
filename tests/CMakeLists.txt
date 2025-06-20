@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include directories
 include_directories(../include)
+include_directories(../demos/include)
 
 # Set output directory for test executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../build/tests)
@@ -20,6 +21,7 @@ set(TEST_SOURCES
     dlog/test_dlog_features.cpp
     utils/test_unsigned_cast_basic.cpp
     utils/test_unsigned_cast_failures.cpp
+    chart3d/test_multi_chart3d_boundaries_simple.cpp
 )
 
 # Create test executables
