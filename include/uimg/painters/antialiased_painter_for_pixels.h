@@ -83,9 +83,9 @@ public:
         float intery = yend + gradient;
 
         // Handle second endpoint
-        xend = std::round(ix2);
-        yend = iy2 + gradient * (xend - ix2);
-        xgap = fractionalPart(ix2 + 0.5f);
+        xend = static_cast<int>(std::round(ix2));
+        yend = static_cast<float>(iy2) + gradient * (static_cast<float>(xend) - static_cast<float>(ix2));
+        xgap = fractionalPart(static_cast<float>(ix2) + 0.5f);
         int xpxl2 = xend;
         int ypxl2 = static_cast<int>(yend);
 
@@ -95,11 +95,11 @@ public:
         
         // Second endpoint
         if (steep) {
-            plotPixel(ypxl2, xpxl2, color, rfpart_yend2 * xgap);
-            plotPixel(ypxl2 + 1, xpxl2, color, fpart_yend2 * xgap);
+            plotPixel(static_cast<unsigned int>(ypxl2), static_cast<unsigned int>(xpxl2), color, rfpart_yend2 * xgap);
+            plotPixel(static_cast<unsigned int>(ypxl2 + 1), static_cast<unsigned int>(xpxl2), color, fpart_yend2 * xgap);
         } else {
-            plotPixel(xpxl2, ypxl2, color, rfpart_yend2 * xgap);
-            plotPixel(xpxl2, ypxl2 + 1, color, fpart_yend2 * xgap);
+            plotPixel(static_cast<unsigned int>(xpxl2), static_cast<unsigned int>(ypxl2), color, rfpart_yend2 * xgap);
+            plotPixel(static_cast<unsigned int>(xpxl2), static_cast<unsigned int>(ypxl2 + 1), color, fpart_yend2 * xgap);
         }
 
         // Main loop for drawing the line
@@ -111,8 +111,8 @@ public:
                 float rfpart = 1.0f - fpart;
                 
                 // Draw two neighboring pixels with appropriate weights
-                plotPixel(y_base, x, color, rfpart);
-                plotPixel(y_base + 1, x, color, fpart);
+                plotPixel(static_cast<unsigned int>(y_base), static_cast<unsigned int>(x), color, rfpart);
+                plotPixel(static_cast<unsigned int>(y_base + 1), static_cast<unsigned int>(x), color, fpart);
                 
                 // Increment y-coordinate by gradient
                 intery += gradient;
@@ -125,8 +125,8 @@ public:
                 float rfpart = 1.0f - fpart;
                 
                 // Draw two neighboring pixels with appropriate weights
-                plotPixel(x, y_base, color, rfpart);
-                plotPixel(x, y_base + 1, color, fpart);
+                plotPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y_base), color, rfpart);
+                plotPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y_base + 1), color, fpart);
                 
                 // Increment y-coordinate by gradient
                 intery += gradient;
@@ -156,9 +156,9 @@ protected:
         
         // Blend the colors with enhanced contrast
         RgbColor blendedColor;
-        blendedColor.red = std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red)));
-        blendedColor.green = std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green)));
-        blendedColor.blue = std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue)));
+        blendedColor.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red))));
+        blendedColor.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green))));
+        blendedColor.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue))));
         
         // Put the blended pixel
         pixelPainter_->putPixel(x, y, blendedColor);
@@ -194,16 +194,16 @@ public:
     virtual void drawLine(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, const RgbColor &color) {
         // For thick lines, we'll use the same approach as ThickLinePainterForPixels
         // but with anti-aliasing applied at the circle edges
-        int dx = x2 - x1;
-        int dy = y2 - y1;
+        int dx = static_cast<int>(x2) - static_cast<int>(x1);
+        int dy = static_cast<int>(y2) - static_cast<int>(y1);
 
         float lineWidthD2f = lineWidth_ / 2.0f;
         unsigned int lineWidthD2 = static_cast<unsigned>(round(lineWidthD2f));
 
         int cnt = calcPointCount(x1, y1, x2, y2);
 
-        float fdx = static_cast<float>(dx) / cnt;
-        float fdy = static_cast<float>(dy) / cnt;
+        float fdx = static_cast<float>(dx) / static_cast<float>(cnt);
+        float fdy = static_cast<float>(dy) / static_cast<float>(cnt);
 
         float x = static_cast<float>(x1);
         float y = static_cast<float>(y1);
@@ -243,7 +243,7 @@ protected:
         for (int yi = -static_cast<int>(radius); yi <= static_cast<int>(radius); yi++) {
             for (int xi = -static_cast<int>(radius); xi <= static_cast<int>(radius); xi++) {
                 // Calculate the exact distance from center
-                float distF = std::sqrt(xi*xi + yi*yi);
+                float distF = static_cast<float>(std::sqrt(xi*xi + yi*yi));
                 
                 // Skip pixels clearly inside or outside the circle
                 if (distF < radiusInnerF || distF > radiusF + 0.5f) 
@@ -269,16 +269,16 @@ protected:
                     continue;
                     
                 // Get existing color for blending
-                unsigned int px = x + xi;
-                unsigned int py = y + yi;
+                unsigned int px = static_cast<unsigned int>(static_cast<int>(x) + xi);
+                unsigned int py = static_cast<unsigned int>(static_cast<int>(y) + yi);
                 
                 RgbColor existingColor;
                 pixelPainter_.getPixel(px, py, existingColor);
                 
                 RgbColor blendedColor;
-                blendedColor.red = std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red)));
-                blendedColor.green = std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green)));
-                blendedColor.blue = std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue)));
+                blendedColor.red = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.red + (1.0f - alpha) * existingColor.red))));
+                blendedColor.green = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.green + (1.0f - alpha) * existingColor.green))));
+                blendedColor.blue = static_cast<unsigned char>(std::min(255, static_cast<int>(round(alpha * color.blue + (1.0f - alpha) * existingColor.blue))));
                 
                 pixelPainter_.putPixel(px, py, blendedColor);
             }

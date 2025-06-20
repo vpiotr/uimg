@@ -212,8 +212,8 @@ private:
         HorizontalFlipFilter hFlipFilter(hFlipClip, flipCenter, evenFlip);
         Point leftTopTarget = {HFLIP_WINDOW.x1, HFLIP_WINDOW.y1};
         Point rightTopTarget = {HFLIP_WINDOW.x2, HFLIP_WINDOW.y1};
-        [[maybe_unused]] Point leftTopSource = hFlipFilter.getPixelPos(leftTopTarget.x, leftTopTarget.y);
-        [[maybe_unused]] Point rightTopSource = hFlipFilter.getPixelPos(rightTopTarget.x, rightTopTarget.y);
+        [[maybe_unused]] Point leftTopSource = hFlipFilter.getPixelPos(static_cast<unsigned int>(leftTopTarget.x), static_cast<unsigned int>(leftTopTarget.y));
+        [[maybe_unused]] Point rightTopSource = hFlipFilter.getPixelPos(static_cast<unsigned int>(rightTopTarget.x), static_cast<unsigned int>(rightTopTarget.y));
 
         
         for (int y = HFLIP_WINDOW.y1; y <= HFLIP_WINDOW.y2; ++y) {
@@ -285,7 +285,7 @@ private:
                 int sourceX = x - TRANSPARENCY_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - TRANSPARENCY_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                transFilter.putPixel(x, y, color);
+                transFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
         
@@ -296,9 +296,9 @@ private:
             for (int x = ALPHA_WINDOW.x1; x <= ALPHA_WINDOW.x2; ++x) {
                 // Checkered pattern
                 if (((x / 20) + (y / 20)) % 2 == 0) {
-                    alphaClip.putPixel(x, y, RgbColor{200, 200, 200});
+                    alphaClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{200, 200, 200});
                 } else {
-                    alphaClip.putPixel(x, y, RgbColor{150, 150, 150});
+                    alphaClip.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), RgbColor{150, 150, 150});
                 }
             }
         }
@@ -310,7 +310,7 @@ private:
                 int sourceX = x - ALPHA_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ALPHA_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                alphaFilter.putPixel(x, y, color);
+                alphaFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
     }
@@ -334,7 +334,7 @@ private:
                 int sourceX = x - ZOOM_OUT_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ZOOM_OUT_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                spreadFilter.putPixel(x, y, color);
+                spreadFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
         
@@ -349,7 +349,7 @@ private:
                 int sourceX = x - ZOOM_IN_WINDOW.x1 + ORIGINAL_WINDOW.x1; // Adjust source x-coordinate
                 int sourceY = y - ZOOM_IN_WINDOW.y1 + ORIGINAL_WINDOW.y1; // Adjust source y-coordinate
                 RgbColor color = img.getPixel(Point(sourceX, sourceY)); // Copy from source area
-                zoomFilter.putPixel(x, y, color);
+                zoomFilter.putPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), color);
             }
         }
     }

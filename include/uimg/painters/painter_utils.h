@@ -20,8 +20,8 @@ public:
 
 private:
     bool isValidCoordinates(unsigned int x, unsigned int y) const {
-        return (x >= clippingWindow_.x1 && x <= clippingWindow_.x2 &&
-                y >= clippingWindow_.y1 && y <= clippingWindow_.y2);
+        return (static_cast<int>(x) >= clippingWindow_.x1 && static_cast<int>(x) <= clippingWindow_.x2 &&
+                static_cast<int>(y) >= clippingWindow_.y1 && static_cast<int>(y) <= clippingWindow_.y2);
     }
 
     LinePainter &basePainter_;
