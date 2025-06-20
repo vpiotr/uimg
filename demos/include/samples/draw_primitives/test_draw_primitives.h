@@ -52,8 +52,8 @@ protected:
         std::vector<Point> points;
         Point p;
         for (int i = 0; i < 10; ++i) {
-            p.x = UNSIGNED_CAST(int, UNSIGNED_CAST(unsigned int, rand()) % UNSIGNED_CAST(unsigned int, splineDx)) + 40;
-            p.y = UNSIGNED_CAST(int, UNSIGNED_CAST(unsigned int, rand()) % UNSIGNED_CAST(unsigned int, splineDy)) + 200;
+            p.x = static_cast<int>(UNSIGNED_CAST(unsigned int, rand()) % UNSIGNED_CAST(unsigned int, splineDx)) + 40;
+            p.y = static_cast<int>(UNSIGNED_CAST(unsigned int, rand()) % UNSIGNED_CAST(unsigned int, splineDy)) + 200;
             points.push_back(p);
         }
 
