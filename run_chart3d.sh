@@ -84,6 +84,30 @@ echo ""
 
 echo "=== All multi-chart examples generated successfully! ==="
 echo ""
+
+echo "=== Testing new multi_chart3d demo ==="
+echo ""
+
+echo "Generating single chart with multi_chart3d demo..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/multi_chart3d -charts 1 build/multi_chart3d_single.ppm
+echo "Created: build/multi_chart3d_single.ppm"
+echo ""
+
+echo "Generating dual charts with multi_chart3d demo..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/multi_chart3d -charts 2 -layout horizontal build/multi_chart3d_dual_horizontal.ppm
+echo "Created: build/multi_chart3d_dual_horizontal.ppm"
+echo ""
+
+echo "Generating triple charts with anti-aliasing..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/multi_chart3d -charts 3 -aa build/multi_chart3d_triple_aa.ppm
+echo "Created: build/multi_chart3d_triple_aa.ppm"
+echo ""
+
+echo "Generating quad charts with borders and anti-aliasing..."
+cd /home/piotr/progs/oss_projects/uimg && ./build/multi_chart3d -charts 4 -borders -aa -layout 2x2 build/multi_chart3d_quad_2x2.ppm
+echo "Created: build/multi_chart3d_quad_2x2.ppm"
+echo ""
+
 echo "Usage examples:"
 echo "  Single chart:  ./build/chart3d -charts 1 -out output.ppm"
 echo "  Dual charts:   ./build/chart3d -charts 2 -out output.ppm"

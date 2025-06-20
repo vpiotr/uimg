@@ -24,6 +24,7 @@ DEMOS=(
     "voronoi"
     "mandelbrot" 
     "chart3d"
+    "multi_chart3d"
     "draw_primitives"
     "filter_demo"
     "2d_line_chart_demo"
@@ -54,6 +55,9 @@ run_demo() {
                 ;;
             "chart3d")
                 "./$demo_name" "chart3d.ppm"
+                ;;
+            "multi_chart3d")
+                "./$demo_name" -charts 4 -borders "multi_chart3d.ppm"
                 ;;
             "draw_primitives")
                 "./$demo_name" "primitives.ppm"

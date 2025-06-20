@@ -101,7 +101,37 @@ add_executable(chart3d
         include/uimg/pixels/pixel_source.h
         include/uimg/base/structs.h
         include/uimg/images/pixel_image.h)
-        
+
+add_executable(multi_chart3d
+        LICENSE
+        README.md
+        demos/include/chart3d/multi_chart_3d_demo.h
+        demos/include/chart3d/chart3d_renderer.h
+        demos/include/chart3d/chart3d_z_fxy.h
+        demos/include/chart3d/chart_z_fxy_3d.h
+        demos/include/chart3d/chart3d_tracer.h
+        demos/include/samples/demo_painter_base.h
+        demos/multi_chart3d.cpp
+        include/uimg/painters/copier_for_pixels.h
+        include/uimg/painters/painter_base.h
+        include/uimg/painters/painter_for_pixels.h
+        include/uimg/painters/painter_for_rgb_image.h
+        include/uimg/painters/rect_painter.h
+        include/uimg/painters/antialiased_painter_for_pixels.h
+        include/uimg/images/ppm_image.h
+        include/uimg/images/rgb_image.h
+        include/uimg/utils/algorithm.h
+        include/uimg/utils/color_utils.h
+        include/uimg/utils/cubic_spline_utils.h
+        include/uimg/utils/math_utils.h
+        include/uimg/utils/point_utils.h
+        include/uimg/pixels/pixel_painter.h
+        include/uimg/pixels/pixel_source.h
+        include/uimg/base/structs.h
+        include/uimg/images/pixel_image.h
+        include/uimg/filters/anti_aliasing_filter.h
+        include/dlog/dlog.h)
+
 add_executable(draw_primitives
         LICENSE
         README.md

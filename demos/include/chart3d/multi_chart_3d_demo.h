@@ -33,12 +33,17 @@ protected:
         BackgroundPainterForRgbImage backPainter(getImage());
         backPainter.paint(RGB_WHITE);
         
+        // Initialize pixel painter
+        if (!pixelPainter_) {
+            pixelPainter_ = std::make_unique<PixelPainterForImageBase>(getImage());
+        }
+        
         PixelPainter *pixelPainter = nullptr;
         if (useAntiAliasing_) {
             aaFilter_ = std::make_unique<AntiAliasingFilter>(getImage());
             pixelPainter = &aaFilter_->getFilteredPainter();
         } else {
-            pixelPainter = &pixelPainter_;
+            pixelPainter = pixelPainter_.get();
         }
         
         // Render each chart
@@ -186,7 +191,7 @@ private:
     bool useAntiAliasing_;
     bool drawBorders_;
     std::string layout_;
-    PixelPainterForImageBase pixelPainter_{getImage()};
+    std::unique_ptr<PixelPainterForImageBase> pixelPainter_;
     std::unique_ptr<AntiAliasingFilter> aaFilter_;
 };
 
