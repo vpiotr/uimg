@@ -8,6 +8,8 @@
 #include "samples/demo_painter_base.h"
 #include "chart_z_fxy_3d.h"
 #include "chart3d_renderer.h"
+#include "chart3d_z_fxy.h"
+#include "uimg/filters/anti_aliasing_filter.h"
 
 class multi_chart_3d_demo : public demo_painter_base {
 public:
@@ -31,7 +33,7 @@ protected:
         BackgroundPainterForRgbImage backPainter(getImage());
         backPainter.paint(RGB_WHITE);
         
-        PixelPainterForImageBase *pixelPainter = nullptr;
+        PixelPainter *pixelPainter = nullptr;
         if (useAntiAliasing_) {
             aaFilter_ = std::make_unique<AntiAliasingFilter>(getImage());
             pixelPainter = &aaFilter_->getFilteredPainter();

@@ -38,7 +38,7 @@ protected:
         }
         
         // Initialize the font painter
-        textPainter_ = std::make_unique<uimg::TextPainterForBdfFont>(getPainter(), getImageSize());
+        textPainter_ = std::make_unique<uimg::TextPainterForBdfFontEx>(getPainter(), getImageSize());
         textPainter_->setFont(font_.get());
     }
 
@@ -106,7 +106,7 @@ protected:
 private:
     std::string fontPath_;
     std::unique_ptr<uimg::BdfFont> font_;
-    std::unique_ptr<uimg::TextPainterForBdfFont> textPainter_;
+    std::unique_ptr<uimg::TextPainterForBdfFontEx> textPainter_;
     
     PixelPainterForImageBase& getPainter() {
         static PixelPainterForImageBase painter(getImage());

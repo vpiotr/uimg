@@ -14,6 +14,13 @@
 #include "uimg/utils/cast.h"
 #include "dlog/dlog.h"
 
+// Common color constants
+const RgbColor RGB_WHITE = {255, 255, 255};
+const RgbColor RGB_BLACK = {0, 0, 0};
+const RgbColor RGB_RED = {255, 0, 0};
+const RgbColor RGB_GREEN = {0, 255, 0};
+const RgbColor RGB_BLUE = {0, 0, 255};
+
 struct demo_args {
     const std::string demoName;
     const std::string outFileName;

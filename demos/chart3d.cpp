@@ -1,6 +1,7 @@
 #include <iostream>
 #include "samples/demo_painter_base.h"
 #include "chart3d/chart_z_fxy_3d_demo.h"
+#include "chart3d/multi_chart_3d_demo.h"
 #include "chart3d/chart_z_fxy_3d.h"
 #include "chart3d/chart3d_renderer.h"
 #include "dlog/dlog.h"
@@ -28,11 +29,9 @@ int main(int argc, const char *argv[]) {
         demo.setDrawBorders(demoInfo.drawBorders);
         demo.run();
     } else {
-        // For multi-chart, use the same single chart implementation but indicate it's not supported yet
-        std::cerr << "Warning: Multi-chart support is not fully implemented. Using single chart." << std::endl;
-        chart_z_fxy_3d_demo demo(demoInfo.outFileName);
-        demo.setUseAntiAliasing(demoInfo.useAntiAliasing);
-        demo.setDrawBorders(demoInfo.drawBorders);
+        // Multi-chart support
+        multi_chart_3d_demo demo(demoInfo.outFileName, demoInfo.numCharts, 
+                               demoInfo.useAntiAliasing, demoInfo.drawBorders, demoInfo.layout);
         demo.run();
     }
     

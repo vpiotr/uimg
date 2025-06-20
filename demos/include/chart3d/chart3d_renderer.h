@@ -6,6 +6,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "chart_z_fxy_3d.h"
+#include "chart3d_z_fxy.h"
 #include "dlog/dlog.h"
 #include "uimg/filters/pixel_tracing_filter.h"
 #include "uimg/utils/cast.h"
@@ -18,8 +19,31 @@
 class Chart3DRenderer {
 public:
     Chart3DRenderer(RgbImage& image, PixelPainter& painter, bool useAntiAliasing = false, bool drawBorders = false) 
-        : image_(image), painter_(painter), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders),
+        : image_(&image), painter_(painter), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders),
           layoutManager_(image.getSize().x, image.getSize().y) {}
+    
+    // Simple constructor for single chart rendering
+    Chart3DRenderer(PixelPainter& painter) 
+        : image_(nullptr), painter_(painter), useAntiAliasing_(false), drawBorders_(false),
+          layoutManager_(800, 600) {}
+    
+    /**
+     * @brief Render a single Chart3D_Z_FXY chart
+     * @param chart The chart to render
+     */
+    void render(const Chart3D_Z_FXY& chart) {
+        // Create offset painter for chart position
+        Point offset = chart.getOffset();
+        OffsetPixelPainter offsetPainter(painter_, offset);
+        
+        // Create the internal chart implementation
+        auto internalChart = chart.createInternalChart(offsetPainter, useAntiAliasing_);
+        
+        // Paint the chart
+        if (internalChart) {
+            internalChart->paint();
+        }
+    }
     
     /**
      * @brief Render multiple 3D charts
@@ -31,7 +55,7 @@ public:
         
         auto logger = dlog::Logger::getInstance();
         logger->debug("=== Multi-Chart 3D Renderer Debug Information ===");
-        logger->debug("Total image size: {0}x{1}", image_.getSize().x, image_.getSize().y);
+        logger->debug("Total image size: {0}x{1}", image_->getSize().x, image_->getSize().y);
         logger->debug("Number of charts to render: {0}", numCharts);
         
         // Calculate layout
@@ -125,7 +149,7 @@ private:
         Point offset_;
     };
     
-    RgbImage& image_;
+    RgbImage* image_;  // Changed to pointer to allow null for simple constructor
     PixelPainter& painter_;
     bool useAntiAliasing_;
     bool drawBorders_;
