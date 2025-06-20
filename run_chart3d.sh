@@ -107,7 +107,6 @@ echo "Generating quad charts with borders and anti-aliasing..."
 cd /home/piotr/progs/oss_projects/uimg && ./build/multi_chart3d -charts 4 -borders -aa -layout 2x2 build/multi_chart3d_quad_2x2.ppm
 echo "Created: build/multi_chart3d_quad_2x2.ppm"
 echo ""
-
 echo "Usage examples:"
 echo "  Single chart:  ./build/chart3d -charts 1 -out output.ppm"
 echo "  Dual charts:   ./build/chart3d -charts 2 -out output.ppm"
