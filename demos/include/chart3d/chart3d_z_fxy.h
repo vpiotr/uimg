@@ -2,6 +2,8 @@
 #define __UIMG_CHART3D_Z_FXY_H__
 
 #include <functional>
+#include <cmath>
+#include <limits>
 #include "uimg/base/structs.h"
 #include "uimg/painters/painter_for_pixels.h"
 #include "chart_z_fxy_3d.h"
@@ -19,7 +21,7 @@ public:
           showAxis_(true), showGrid_(true),
           backColor_(RGB_WHITE), gridColor_({200, 200, 200}), 
           axisColor_({0, 0, 0}), borderColor_({128, 128, 128}),
-          drawBorders_(false) {}
+          drawBorders_(false), chartIndex_(0), darkMode_(false) {}
 
     // Size and position
     void setSize(int width, int height) {
@@ -54,6 +56,12 @@ public:
     void setDrawBorders(bool draw) { drawBorders_ = draw; }
     bool getDrawBorders() const { return drawBorders_; }
 
+    // Color scheme configuration
+    void setChartIndex(int index) { chartIndex_ = index; }
+    void setDarkMode(bool dark) { darkMode_ = dark; }
+    int getChartIndex() const { return chartIndex_; }
+    bool getDarkMode() const { return darkMode_; }
+
     // Range
     void setRange(float minX, float maxX, float minY, float maxY) {
         rangeX_ = std::make_pair(minX, maxX);
@@ -86,29 +94,120 @@ public:
                              bool useAntiAliasing, bool drawBorders,
                              const Chart3D_Z_FXY& config)
                 : chart_z_fxy_3d(canvasSize, pixelPainter, useAntiAliasing, drawBorders),
-                  config_(config) {}
+                  config_(config), zMin_(0.0), zMax_(1.0), rangeSampled_(false) {}
 
         protected:
             virtual RgbColor getPlotColor(double x, double y, double z) override {
-                // Create a colorful gradient based on z-value
-                RgbColor color;
-                double normalizedZ = std::max(-1.0, std::min(1.0, z / 3.0)); // Normalize to [-1, 1]
+                // Sample Z range on first call if not done yet
+                if (!rangeSampled_) {
+                    sampleZRange();
+                    rangeSampled_ = true;
+                }
                 
-                if (normalizedZ >= 0) {
-                    // Positive values: blue to red gradient
-                    color.red = static_cast<unsigned char>(255 * normalizedZ);
-                    color.green = static_cast<unsigned char>(100 * (1.0 - normalizedZ));
-                    color.blue = static_cast<unsigned char>(255 * (1.0 - normalizedZ));
-                } else {
-                    // Negative values: green to blue gradient
-                    double absZ = -normalizedZ;
-                    color.red = static_cast<unsigned char>(50 * (1.0 - absZ));
-                    color.green = static_cast<unsigned char>(255 * absZ);
-                    color.blue = static_cast<unsigned char>(150 + 105 * absZ);
+                // Update the Z range dynamically as we see new values
+                if (z < zMin_) zMin_ = z;
+                if (z > zMax_) zMax_ = z;
+                
+                // Normalize z to 0-1 range using actual sampled range
+                double normalizedZ = 0.5; // Default to middle if range is invalid
+                if (zMax_ > zMin_) {
+                    normalizedZ = (z - zMin_) / (zMax_ - zMin_);
+                    normalizedZ = std::max(0.0, std::min(1.0, normalizedZ));
+                }
+                
+                // Simple linear color interpolation based on chart index
+                RgbColor color = getChartColorScheme(normalizedZ);
+                
+                // Adjust brightness for dark mode
+                if (config_.getDarkMode()) {
+                    color = brightenForDarkMode(color);
                 }
                 
                 return color;
             }
+
+        private:
+            mutable double zMin_, zMax_;
+            mutable bool rangeSampled_;
+            
+            // Sample the actual Z range of the function to get proper color mapping
+            void sampleZRange() const {
+                if (!config_.getFunction()) {
+                    zMin_ = -1.0;
+                    zMax_ = 1.0;
+                    return;
+                }
+                
+                auto rangeX = config_.getRangeX();
+                auto rangeY = config_.getRangeY();
+                
+                // Sample the function at multiple points to find min/max Z values
+                const int samples = 50; // 50x50 = 2500 sample points
+                double minZ = std::numeric_limits<double>::max();
+                double maxZ = std::numeric_limits<double>::lowest();
+                
+                for (int i = 0; i < samples; i++) {
+                    for (int j = 0; j < samples; j++) {
+                        float x = rangeX.first + (rangeX.second - rangeX.first) * i / (samples - 1);
+                        float y = rangeY.first + (rangeY.second - rangeY.first) * j / (samples - 1);
+                        float z = config_.getFunction()(x, y);
+                        
+                        minZ = std::min(minZ, static_cast<double>(z));
+                        maxZ = std::max(maxZ, static_cast<double>(z));
+                    }
+                }
+                
+                zMin_ = minZ;
+                zMax_ = maxZ;
+                
+                // Add small margin to avoid edge cases
+                double margin = (zMax_ - zMin_) * 0.05;
+                zMin_ -= margin;
+                zMax_ += margin;
+            }
+            
+            // Simple linear color interpolation between two colors
+            RgbColor linearColorInterpolation(const RgbColor& color1, const RgbColor& color2, double t) const {
+                double red = color1.red + (color2.red - color1.red) * t;
+                double green = color1.green + (color2.green - color1.green) * t;
+                double blue = color1.blue + (color2.blue - color1.blue) * t;
+                
+                return {
+                    static_cast<unsigned char>(std::max(0.0, std::min(255.0, red))),
+                    static_cast<unsigned char>(std::max(0.0, std::min(255.0, green))),
+                    static_cast<unsigned char>(std::max(0.0, std::min(255.0, blue)))
+                };
+            }
+            
+            // Get color scheme for each chart with simple linear gradients
+            RgbColor getChartColorScheme(double t) const {
+                switch (config_.getChartIndex() % 4) {
+                    case 0: // Deep Blue to Bright Red (cold to hot) - very vibrant
+                        return linearColorInterpolation({20, 20, 200}, {220, 20, 20}, t);
+                    case 1: // Dark Purple to Bright Orange (mystical to warm) - very vibrant
+                        return linearColorInterpolation({120, 20, 160}, {220, 140, 20}, t);
+                    case 2: // Deep Navy to Bright Cyan (ocean depths to sky) - very vibrant, no green
+                        return linearColorInterpolation({20, 20, 140}, {20, 200, 220}, t);
+                    case 3: // Dark Maroon to Bright Pink (wine to rose) - very vibrant, no green
+                        return linearColorInterpolation({140, 20, 40}, {220, 20, 140}, t);
+                    default:
+                        return linearColorInterpolation({60, 60, 60}, {180, 180, 180}, t);
+                }
+            }
+            
+            RgbColor brightenForDarkMode(const RgbColor& color) {
+                // Significantly increase brightness and saturation for better visibility on dark background
+                const double brightnessFactor = 1.8;  // Much brighter for dark mode
+                const double saturationBoost = 50;    // Add saturation boost
+                
+                return {
+                    static_cast<unsigned char>(std::min(255.0, static_cast<double>(color.red) * brightnessFactor + saturationBoost)),
+                    static_cast<unsigned char>(std::min(255.0, static_cast<double>(color.green) * brightnessFactor + saturationBoost)),
+                    static_cast<unsigned char>(std::min(255.0, static_cast<double>(color.blue) * brightnessFactor + saturationBoost))
+                };
+            }
+
+        protected:
 
             virtual double getFunValue(double x, double y) override {
                 if (config_.getFunction()) {
@@ -159,6 +258,8 @@ private:
     RgbColor borderColor_;
     
     bool drawBorders_;
+    int chartIndex_;
+    bool darkMode_;
 };
 
 #endif // __UIMG_CHART3D_Z_FXY_H__

@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <algorithm>
 
 #include "samples/demo_painter_base.h"
 #include "chart3d/chart_z_fxy_3d.h"
@@ -24,9 +25,9 @@
  */
 class multi_chart_3d_demo : public demo_painter_base {
 public:
-    multi_chart_3d_demo(const std::string &fname, int numCharts, bool useAntiAliasing, bool drawBorders, const std::string &layout = "auto") 
+    multi_chart_3d_demo(const std::string &fname, int numCharts, bool useAntiAliasing, bool drawBorders, const std::string &layout = "auto", bool darkMode = false) 
         : demo_painter_base(fname), numCharts_(numCharts), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders), layout_(layout),
-          margin_(10), drawDebugBorders_(false) {} // Default margin of 10 pixels on all sides, debug borders off by default
+          margin_(10), drawDebugBorders_(false), darkMode_(darkMode) {} // Default margin of 10 pixels on all sides, debug borders off by default
 
     // Method to enable debug borders for line windows
     void setDrawDebugBorders(bool enable) { drawDebugBorders_ = enable; }
@@ -76,7 +77,8 @@ protected:
         
         // Initialize painters
         BackgroundPainterForRgbImage backPainter(getImage());
-        backPainter.paint(RGB_WHITE);
+        RgbColor backgroundColor = darkMode_ ? RGB_BLACK : RGB_WHITE;
+        backPainter.paint(backgroundColor);
         
         // Initialize pixel painter
         if (!pixelPainter_) {
@@ -117,9 +119,13 @@ protected:
             chart.setOffset(layout.lineWindowX, layout.lineWindowY);
             chart.setShowAxis(false);  // Disable axis to eliminate extra borders
             chart.setShowGrid(false);  // Disable grid to eliminate extra borders
-            chart.setBackColor(RGB_WHITE);
-            chart.setGridColor({200, 200, 200});
-            chart.setAxisColor({0, 0, 0});
+            chart.setBackColor(backgroundColor);
+            chart.setGridColor(darkMode_ ? RgbColor{100, 100, 100} : RgbColor{200, 200, 200});
+            chart.setAxisColor(darkMode_ ? RgbColor{200, 200, 200} : RgbColor{0, 0, 0});
+            
+            // Set color scheme configuration
+            chart.setChartIndex(i);
+            chart.setDarkMode(darkMode_);
             
             // Always disable chart's internal borders to avoid duplication
             chart.setDrawBorders(false);
@@ -410,6 +416,7 @@ private:
     std::string layout_;
     int margin_; // Default margin in pixels
     bool drawDebugBorders_; // Controls whether to draw blue debug borders around line windows
+    bool darkMode_; // Controls whether to use dark mode (black background)
     std::unique_ptr<PixelPainterForImageBase> pixelPainter_;
     std::unique_ptr<AntiAliasingFilter> aaFilter_;
 };

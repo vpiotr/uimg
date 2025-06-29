@@ -11,6 +11,7 @@ void printUsage(const char* programName) {
     std::cerr << "  -aa              Enable anti-aliasing" << std::endl;
     std::cerr << "  -borders         Enable chart borders" << std::endl;
     std::cerr << "  -debug           Enable debug borders (blue borders around line windows)" << std::endl;
+    std::cerr << "  -dark            Enable dark mode (black background)" << std::endl;
     std::cerr << "  -layout <type>   Layout type: auto, horizontal, vertical, or NxM (e.g., 2x2)" << std::endl;
     std::cerr << "  -trace           Enable chart tracing for debug output" << std::endl;
     std::cerr << "  -log <level>     Set log level (TRACE, DEBUG, INFO, WARN, ERROR)" << std::endl;
@@ -21,6 +22,7 @@ void printUsage(const char* programName) {
     std::cerr << "  " << programName << " -charts 2 -aa output.ppm" << std::endl;
     std::cerr << "  " << programName << " -charts 4 -borders -layout 2x2 output.ppm" << std::endl;
     std::cerr << "  " << programName << " -charts 4 -borders -debug output.ppm" << std::endl;
+    std::cerr << "  " << programName << " -charts 4 -dark -aa output.ppm" << std::endl;
 }
 
 int main(int argc, const char *argv[]) {
@@ -29,6 +31,7 @@ int main(int argc, const char *argv[]) {
     bool useAntiAliasing = false;
     bool drawBorders = false;
     bool drawDebugBorders = false;
+    bool darkMode = false;
     bool traceEnabled = false;
     std::string layout = "auto";
     std::string outFileName;
@@ -53,6 +56,8 @@ int main(int argc, const char *argv[]) {
             drawBorders = true;
         } else if (arg == "-debug") {
             drawDebugBorders = true;
+        } else if (arg == "-dark") {
+            darkMode = true;
         } else if (arg == "-layout" && i + 1 < argc) {
             layout = argv[++i];
         } else if (arg == "-trace") {
@@ -96,6 +101,7 @@ int main(int argc, const char *argv[]) {
     std::cerr << "  Anti-aliasing: " << (useAntiAliasing ? "Enabled" : "Disabled") << std::endl;
     std::cerr << "  Borders: " << (drawBorders ? "Enabled" : "Disabled") << std::endl;
     std::cerr << "  Debug borders: " << (drawDebugBorders ? "Enabled" : "Disabled") << std::endl;
+    std::cerr << "  Dark mode: " << (darkMode ? "Enabled" : "Disabled") << std::endl;
     std::cerr << "  Tracing: " << (traceEnabled ? "Enabled" : "Disabled") << std::endl;
     std::cerr << "  Log Level: " << dlog::Logger::levelToString(logLevel) << std::endl;
     std::cerr << std::endl;
@@ -105,7 +111,7 @@ int main(int argc, const char *argv[]) {
 
     try {
         // Create and run the multi-chart demo
-        multi_chart_3d_demo demo(outFileName, numCharts, useAntiAliasing, drawBorders, layout);
+        multi_chart_3d_demo demo(outFileName, numCharts, useAntiAliasing, drawBorders, layout, darkMode);
         
         // Enable debug borders if requested
         if (drawDebugBorders) {
