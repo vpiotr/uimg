@@ -57,7 +57,7 @@ run_demo() {
                 "./$demo_name" "chart3d.ppm"
                 ;;
             "multi_chart3d")
-                "./$demo_name" -charts 4 -borders "multi_chart3d.ppm"
+                "./$demo_name" -font ../fonts/courR12.bdf -size 1024X512 -charts 2 -layout auto -aa -dark -borders "multi_chart3d.ppm"
                 ;;
             "draw_primitives")
                 "./$demo_name" "primitives.ppm"

@@ -11,6 +11,10 @@
 #include "chart3d/chart3d_renderer.h"
 #include "chart3d/chart3d_z_fxy.h"
 #include "uimg/filters/anti_aliasing_filter.h"
+// Text rendering includes
+#include "uimg/fonts/bdf_font.h"
+#include "uimg/fonts/font_utils.h"
+#include "uimg/fonts/painter_for_bdf_font_ex.h"
 
 /**
  * @brief Multi-chart 3D demo with proper layout calculation and validation
@@ -25,14 +29,27 @@
  */
 class multi_chart_3d_demo : public demo_painter_base {
 public:
-    multi_chart_3d_demo(const std::string &fname, int numCharts, bool useAntiAliasing, bool drawBorders, const std::string &layout = "auto", bool darkMode = false) 
+    multi_chart_3d_demo(const std::string &fname, int numCharts, bool useAntiAliasing, bool drawBorders, const std::string &layout = "auto", bool darkMode = false, int imageWidth = 800, int imageHeight = 600, const std::string &fontPath = "fonts/courR12.bdf") 
         : demo_painter_base(fname), numCharts_(numCharts), useAntiAliasing_(useAntiAliasing), drawBorders_(drawBorders), layout_(layout),
-          margin_(10), drawDebugBorders_(false), darkMode_(darkMode) {} // Default margin of 10 pixels on all sides, debug borders off by default
+          margin_(10), drawDebugBorders_(false), darkMode_(darkMode), titleVerticalPositionMultiplier_(4.0f), titleFontScale_(1.0f), 
+          imageWidth_(imageWidth), imageHeight_(imageHeight), fontPath_(fontPath) {} // Default margin of 10 pixels on all sides, debug borders off by default
 
     // Method to enable debug borders for line windows
     void setDrawDebugBorders(bool enable) { drawDebugBorders_ = enable; }
+    
+    // Method to configure title vertical position (multiplier for font height margin from top border)
+    void setTitleVerticalPosition(float multiplier) { titleVerticalPositionMultiplier_ = multiplier; }
+    
+    // Method to configure title font scale (1.0 = normal size, 0.8 = smaller, 1.2 = larger)
+    void setTitleFontScale(float scale) { titleFontScale_ = scale; }
 
 protected:
+    /**
+     * @brief Override getImageSize to provide configurable size for text painter initialization
+     */
+    virtual Point getImageSize() override {
+        return {imageWidth_, imageHeight_}; // Configurable size for multi-chart demo
+    }
     /**
      * @brief Structure to hold layout dimensions and positions
      */
@@ -93,6 +110,9 @@ protected:
             pixelPainter = pixelPainter_.get();
         }
         
+        // Initialize text rendering for chart titles (after image is set up)
+        initializeTextRenderer();
+        
         // Render each chart
         Chart3DRenderer renderer(*pixelPainter);
         
@@ -134,12 +154,14 @@ protected:
                 // Draw gray border around chart window (where all chart elements must fit)
                 drawChartWindowBorder(layout, *pixelPainter);
             }
-            
-            if (drawDebugBorders_) {
+             if (drawDebugBorders_) {
                 // Draw blue border around line window (where chart lines are drawn) - debug only
                 drawLineWindowBorder(layout, *pixelPainter);
             }
             
+            // Draw chart title
+            drawChartTitle(i, layout);
+
             // Set chart range and function - optimize ranges individually for each function
             switch(i) {
                 case 0: // Ripple (concentric waves) - smaller range to show more detail and prevent cutting
@@ -310,6 +332,119 @@ private:
         std::cerr << "  Line Window: pos=(" << layout.lineWindowX << "," << layout.lineWindowY 
                   << "), size=(" << layout.lineWindowWidth << "x" << layout.lineWindowHeight << ")" << std::endl;
     }
+    
+    /**
+     * @brief Initialize text rendering for chart titles
+     */
+    void initializeTextRenderer() {
+        if (font_ && textPainter_) {
+            return; // Already initialized
+        }
+        
+        // Load font for chart titles
+        font_ = std::make_unique<uimg::BdfFont>();
+        if (!uimg::FontUtils::loadFontFromFile(*font_, fontPath_)) {
+            std::cerr << "Warning: Failed to load font from: " << fontPath_ << std::endl;
+            std::cerr << "Chart titles will not be displayed." << std::endl;
+            return;
+        }
+        
+        // Initialize text painter using the correct constructor pattern from text_demo
+        textPainter_ = std::make_unique<uimg::TextPainterForBdfFontEx>(getPainter(), getImageSize());
+        textPainter_->setFont(font_.get());
+        // Note: scale and alignment will be set in drawChartTitle() using configurable values
+    }
+    
+    /**
+     * @brief Helper function to get pixel painter for text rendering
+     */
+    PixelPainterForImageBase& getPainter() {
+        static PixelPainterForImageBase painter(getImage());
+        return painter;
+    }
+    
+    /**
+     * @brief Get chart title with mathematical formula
+     */
+    std::string getChartTitle(int chartIndex) {
+        switch(chartIndex) {
+            case 0:
+                return "Ripple: z = 0.4*sin(2r)/(0.5r+0.1) - 0.3";
+            case 1:
+                return "Mexican Hat: z = 0.6*(2-0.3r^2)*exp(-0.2r^2) - 0.4";
+            case 2:
+                return "Gaussian: z = 0.8*exp(-(x^2+y^2)) - 0.1";
+            case 3:
+                return "Peaks: z = multi-peak function";
+            case 4:
+                return "Sinc: z = sin(3r)/(3r)";
+            case 5:
+                return "Paraboloid: z = x*y";
+            case 6:
+                return "Sphere: z = sqrt(4-r^2)";
+            case 7:
+                return "Waves: z = sin(x)*sin(y) + ...";
+            case 8:
+                return "Twisted: z = 0.4*sin(x+y)*cos(x-y)";
+            case 9:
+                return "Volcano: z = piecewise function";
+            default:
+                return "Function " + std::to_string(chartIndex);
+        }
+    }
+    
+    /**
+     * @brief Calculate title position inside the chart window
+     * @param title The title text to calculate position for
+     * @param layout The chart layout information
+     * @return Point containing the calculated title position
+     */
+    Point calculateTitlePosition(const std::string& title, const ChartLayout& layout) {
+        if (!textPainter_ || !font_) {
+            return {0, 0}; // Return default if text rendering not available
+        }
+        
+        // Calculate font height and use configurable multiplier as margin from border
+        Point textSize = textPainter_->textSize(title);
+        int fontHeight = textSize.y;
+        int marginFromBorder = static_cast<int>(fontHeight * titleVerticalPositionMultiplier_);
+        
+        // Position title inside the chart window, centered horizontally
+        int titleX = layout.chartWindowX + layout.chartWindowWidth / 2;
+        int titleY = layout.chartWindowY + marginFromBorder;
+        
+        // Ensure coordinates are within chart window bounds
+        titleX = std::max(titleX, layout.chartWindowX + 10);
+        titleX = std::min(titleX, layout.chartWindowX + layout.chartWindowWidth - 10);
+        titleY = std::max(titleY, layout.chartWindowY + marginFromBorder);
+        titleY = std::min(titleY, layout.chartWindowY + layout.chartWindowHeight - fontHeight - 10);
+        
+        return {titleX, titleY};
+    }
+    
+    /**
+     * @brief Draw chart title inside the chart window
+     */
+    void drawChartTitle(int chartIndex, const ChartLayout& layout) {
+        if (!textPainter_ || !font_) {
+            return; // Text rendering not available
+        }
+        
+        std::string title = getChartTitle(chartIndex);
+        RgbColor titleColor = darkMode_ ? RgbColor{220, 220, 220} : RgbColor{40, 40, 40};
+        textPainter_->setTextColor(titleColor);
+        
+        // Use configurable font scale
+        textPainter_->setScale(titleFontScale_);
+        textPainter_->setAlignment(uimg::TextAlignment::CENTER);
+        
+        // Calculate title position using the new helper function
+        Point titlePos = calculateTitlePosition(title, layout);
+        
+        // Draw text using standard method like in text demo
+        textPainter_->drawText(titlePos, title);
+    }
+
     void determineLayout(int &rows, int &cols) {
         if (layout_ == "auto") {
             // Auto-determine layout based on number of charts
@@ -426,8 +561,17 @@ private:
     int margin_; // Default margin in pixels
     bool drawDebugBorders_; // Controls whether to draw blue debug borders around line windows
     bool darkMode_; // Controls whether to use dark mode (black background)
+    float titleVerticalPositionMultiplier_; // Multiplier for font height to determine title vertical position from top border
+    float titleFontScale_; // Scale factor for title font size (1.0 = normal size)
+    int imageWidth_; // Configurable image width
+    int imageHeight_; // Configurable image height
+    std::string fontPath_; // Path to BDF font file
     std::unique_ptr<PixelPainterForImageBase> pixelPainter_;
     std::unique_ptr<AntiAliasingFilter> aaFilter_;
+    
+    // Text rendering for chart titles
+    std::unique_ptr<uimg::BdfFont> font_;
+    std::unique_ptr<uimg::TextPainterForBdfFontEx> textPainter_;
 };
 
 #endif

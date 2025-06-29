@@ -92,7 +92,7 @@ Customizable 3D surface charts with support for multiple functions and layouts. 
 
 **Sample output (dual charts with anti-aliasing):**
  
-![3D dual chart](images/chart3d_dual_aa.png?raw=true)
+![3D dual chart](images/multi_chart3d_dark_2.png?raw=true)
 
 ## 3. Voronoi Diagram
 

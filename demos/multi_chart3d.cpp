@@ -8,6 +8,8 @@ void printUsage(const char* programName) {
     std::cerr << "Usage: " << programName << " [options] <output_file>" << std::endl;
     std::cerr << "Options:" << std::endl;
     std::cerr << "  -charts <num>    Number of charts to display (1-4, default: 4)" << std::endl;
+    std::cerr << "  -size <WxH>      Output image size in pixels (e.g., 1024x768, default: 800x600)" << std::endl;
+    std::cerr << "  -font <path>     Path to BDF font file (default: fonts/courR12.bdf)" << std::endl;
     std::cerr << "  -aa              Enable anti-aliasing" << std::endl;
     std::cerr << "  -borders         Enable chart borders" << std::endl;
     std::cerr << "  -debug           Enable debug borders (blue borders around line windows)" << std::endl;
@@ -23,11 +25,16 @@ void printUsage(const char* programName) {
     std::cerr << "  " << programName << " -charts 4 -borders -layout 2x2 output.ppm" << std::endl;
     std::cerr << "  " << programName << " -charts 4 -borders -debug output.ppm" << std::endl;
     std::cerr << "  " << programName << " -charts 4 -dark -aa output.ppm" << std::endl;
+    std::cerr << "  " << programName << " -size 1200x900 -charts 3 output.ppm" << std::endl;
+    std::cerr << "  " << programName << " -font ../fonts/courR12.bdf -charts 3 output.ppm" << std::endl;
 }
 
 int main(int argc, const char *argv[]) {
     // Default values
     int numCharts = 4;
+    int imageWidth = 800;
+    int imageHeight = 600;
+    std::string fontPath = "fonts/courR12.bdf";
     bool useAntiAliasing = false;
     bool drawBorders = false;
     bool drawDebugBorders = false;
@@ -50,6 +57,30 @@ int main(int argc, const char *argv[]) {
                 std::cerr << "Error: Number of charts must be between 1 and 4" << std::endl;
                 return 1;
             }
+        } else if (arg == "-size" && i + 1 < argc) {
+            std::string sizeStr = argv[++i];
+            size_t xPos = sizeStr.find('x');
+            if (xPos == std::string::npos) {
+                xPos = sizeStr.find('X');
+            }
+            if (xPos != std::string::npos) {
+                try {
+                    imageWidth = std::stoi(sizeStr.substr(0, xPos));
+                    imageHeight = std::stoi(sizeStr.substr(xPos + 1));
+                    if (imageWidth < 100 || imageHeight < 100 || imageWidth > 4096 || imageHeight > 4096) {
+                        std::cerr << "Error: Image size must be between 100x100 and 4096x4096 pixels" << std::endl;
+                        return 1;
+                    }
+                } catch (...) {
+                    std::cerr << "Error: Invalid size format. Use WIDTHxHEIGHT (e.g., 1024x768)" << std::endl;
+                    return 1;
+                }
+            } else {
+                std::cerr << "Error: Invalid size format. Use WIDTHxHEIGHT (e.g., 1024x768)" << std::endl;
+                return 1;
+            }
+        } else if (arg == "-font" && i + 1 < argc) {
+            fontPath = argv[++i];
         } else if (arg == "-aa") {
             useAntiAliasing = true;
         } else if (arg == "-borders") {
@@ -96,6 +127,8 @@ int main(int argc, const char *argv[]) {
     // Display configuration
     std::cerr << "Multi-Chart 3D Demo Configuration:" << std::endl;
     std::cerr << "  Output file: " << outFileName << std::endl;
+    std::cerr << "  Image size: " << imageWidth << "x" << imageHeight << std::endl;
+    std::cerr << "  Font path: " << fontPath << std::endl;
     std::cerr << "  Number of charts: " << numCharts << std::endl;
     std::cerr << "  Layout: " << layout << std::endl;
     std::cerr << "  Anti-aliasing: " << (useAntiAliasing ? "Enabled" : "Disabled") << std::endl;
@@ -111,7 +144,7 @@ int main(int argc, const char *argv[]) {
 
     try {
         // Create and run the multi-chart demo
-        multi_chart_3d_demo demo(outFileName, numCharts, useAntiAliasing, drawBorders, layout, darkMode);
+        multi_chart_3d_demo demo(outFileName, numCharts, useAntiAliasing, drawBorders, layout, darkMode, imageWidth, imageHeight, fontPath);
         
         // Enable debug borders if requested
         if (drawDebugBorders) {
