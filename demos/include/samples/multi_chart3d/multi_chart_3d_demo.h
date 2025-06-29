@@ -49,6 +49,8 @@ protected:
         // Render each chart
         Chart3DRenderer renderer(*pixelPainter);
         
+        bool boundaryViolation = false;
+        
         for (int i = 0; i < std::min(numCharts_, static_cast<int>(functions.size())); i++) {
             int row = i / cols;
             int col = i % cols;
@@ -72,12 +74,44 @@ protected:
                 chart.setBorderColor({180, 180, 180});
             }
             
-            // Set chart range and function
-            chart.setRange(-2.0f, 2.0f, -2.0f, 2.0f);
+            // Set chart range and function - optimized ranges for better sampling and detail
+            switch(i) {
+                case 0: // sin(x*y) - moderate range for good sampling with multiple periods
+                    chart.setRange(-3.0f, 3.0f, -3.0f, 3.0f);
+                    break;
+                case 1: // sin(x)*cos(y) - range that shows multiple wave periods
+                    chart.setRange(-4.0f, 4.0f, -4.0f, 4.0f);
+                    break;
+                case 2: // Gaussian bell - standard range with proper amplitude
+                    chart.setRange(-2.5f, 2.5f, -2.5f, 2.5f);
+                    break;
+                case 3: // Saddle - wider range to show multiple extremes
+                    chart.setRange(-3.0f, 3.0f, -3.0f, 3.0f);
+                    break;
+                default:
+                    chart.setRange(-2.0f, 2.0f, -2.0f, 2.0f);
+                    break;
+            }
             chart.setFunction(functions[i]);
+            
+            // Log chart boundaries for debugging
+            std::cerr << "Chart " << i << ": position=(" << x << "," << y 
+                      << "), size=(" << chartWidth << "x" << chartHeight << ")" << std::endl;
             
             // Render this chart
             renderer.render(chart);
+            
+            // Check for boundary violations (simplified check)
+            if (x < 0 || y < 0 || x + chartWidth > getImage().width() || y + chartHeight > getImage().height()) {
+                std::cerr << "ERROR: Chart " << i << " boundary violation detected!" << std::endl;
+                boundaryViolation = true;
+            }
+        }
+        
+        // Exit with error status if boundary violations detected
+        if (boundaryViolation) {
+            std::cerr << "FATAL: Boundary violations detected - exiting with error status" << std::endl;
+            std::exit(1);
         }
     }
 
@@ -128,24 +162,24 @@ private:
     std::vector<std::function<float(float, float)>> createFunctions() {
         std::vector<std::function<float(float, float)>> functions;
         
-        // Basic sin(x*y)
+        // Basic sin(x*y) - moderate amplitude to show function pattern
         functions.push_back([](float x, float y) {
-            return std::sin(x * y) * 2.0f;
+            return std::sin(x * y) * 1.0f;
         });
         
-        // Sin waves
+        // Sin waves - good amplitude for clear wave patterns
         functions.push_back([](float x, float y) {
-            return std::sin(x) * std::cos(y);
+            return std::sin(x) * std::cos(y) * 1.0f;
         });
         
-        // Gaussian bell
+        // Gaussian bell - reduce amplitude to prevent clipping, add offset
         functions.push_back([](float x, float y) {
-            return 2.0f * std::exp(-(x*x + y*y));
+            return 0.8f * std::exp(-(x*x + y*y)) - 0.1f;
         });
         
-        // Saddle
+        // Saddle - increase amplitude to show better contrast
         functions.push_back([](float x, float y) {
-            return x*x - y*y;
+            return 0.6f * (x*x - y*y);
         });
         
         // Ripple
