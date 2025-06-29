@@ -1,0 +1,1 @@
+./build/multi_chart3d -charts 3 -borders -debug -layout auto -aa ./output/multi_chart_3.ppm

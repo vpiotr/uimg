@@ -63,8 +63,8 @@ public:
             return { static_cast<int>(round(widthFactor * availableWidth)), 
                      static_cast<int>(round(heightFactor * availableHeight)) };
         } else {
-            // No borders mode - use more of the canvas with adaptive scaling
-            const double noBordersFactor = 0.85; // Consistent factor for no-borders mode
+            // No borders mode - use maximum canvas space with very aggressive scaling
+            const double noBordersFactor = 0.98; // Very aggressive factor to minimize gaps
             
             return { static_cast<int>(round(noBordersFactor * canvasSize_.x)), 
                      static_cast<int>(round(noBordersFactor * canvasSize_.y)) };
@@ -86,9 +86,9 @@ public:
             offsetX = std::max(offsetX, minMargin);
             offsetY = std::max(offsetY, minMargin);
         } else {
-            // Reduced minimum offset for better space utilization
-            const double minOffsetPercent = 0.01; // 1% of canvas size minimum
-            int minOffset = std::max(static_cast<int>(std::min(canvasSize_.x, canvasSize_.y) * minOffsetPercent), 4);
+            // Minimal offset for maximum space utilization
+            const double minOffsetPercent = 0.005; // 0.5% of canvas size minimum
+            int minOffset = std::max(static_cast<int>(std::min(canvasSize_.x, canvasSize_.y) * minOffsetPercent), 2);
             offsetX = std::max(offsetX, minOffset);
             offsetY = std::max(offsetY, minOffset);
         }
