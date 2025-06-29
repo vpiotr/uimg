@@ -117,3 +117,5 @@ fonts/*.bdf
 # Other
 /backup/
 todo.md
+run0?.sh
+

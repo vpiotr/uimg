@@ -197,10 +197,19 @@ private:
         
         // Chart window is slightly smaller than quarter to create separation
         int chartMargin = 5; // Small margin to separate charts
-        layout.chartWindowWidth = quarterWidth - 2 * chartMargin;
-        layout.chartWindowHeight = quarterHeight - 2 * chartMargin;
-        layout.chartWindowX = col * quarterWidth + chartMargin;
-        layout.chartWindowY = row * quarterHeight + chartMargin;
+        
+        // Special case: For 3 charts, make the bottom chart (row=1, col=0) span the full width
+        if (numCharts_ == 3 && row == 1 && col == 0) {
+            layout.chartWindowWidth = layout.imageWidth - 2 * chartMargin;
+            layout.chartWindowHeight = quarterHeight - 2 * chartMargin;
+            layout.chartWindowX = chartMargin;
+            layout.chartWindowY = row * quarterHeight + chartMargin;
+        } else {
+            layout.chartWindowWidth = quarterWidth - 2 * chartMargin;
+            layout.chartWindowHeight = quarterHeight - 2 * chartMargin;
+            layout.chartWindowX = col * quarterWidth + chartMargin;
+            layout.chartWindowY = row * quarterHeight + chartMargin;
+        }
         
         // 3. Calculate line window (smaller area where only chart lines are drawn)
         layout.lineWindowWidth = layout.chartWindowWidth - layout.marginLeft - layout.marginRight;
