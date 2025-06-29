@@ -67,34 +67,50 @@ Line chart with customizable options including anti-aliasing for smoother line r
 
 ![2D Line Chart](images/2d_line_chart_aa.png?raw=true)
 
-## 2. 3D Chart Demo
+## 2. 3D Single Chart Demo
 
-Customizable 3D surface charts with support for multiple functions and layouts. Features include:
-- Support for 1-4 charts displayed simultaneously on a single image
-- Optional anti-aliasing for smoother line rendering
-- Automatic layout management for multiple charts
-- Several built-in function types (Sinc, Gaussian, Ripple, Saddle)
-- Backward compatibility with single-chart mode
+Basic 3D surface chart rendering for individual mathematical functions.
 
 **Source:** [demos/chart3d.cpp](demos/chart3d.cpp)
 
 **Usage:**
 ```bash
 # Single chart with anti-aliasing
-./build/chart3d -out output.ppm -aa
-
-# Two charts with anti-aliasing
-./build/chart3d -out output.ppm -aa -charts 2
-
-# Four charts in grid layout
-./build/chart3d -out output.ppm -aa -charts 4
+./build/chart3d chart3d.ppm
 ```
 
-**Sample output (dual charts with anti-aliasing):**
- 
+**Sample output:**
+
+![3D single chart](images/chart3d.png?raw=true)
+
+## 3. 3D Multi-Chart Demo
+
+Advanced 3D surface chart demo with support for multiple functions, layouts, and comprehensive customization. Features include:
+- Support for 1-4 charts displayed simultaneously on a single image
+- Configurable image size and font paths
+- Optional anti-aliasing for smoother line rendering
+- Automatic layout management with special 3-chart layout (bottom chart spans full width)
+- Mathematical formula titles for each chart
+- Dark/light mode themes with borders
+- Several built-in function types (Ripple, Mexican Hat, Gaussian, Peaks, etc.)
+
+**Source:** [demos/multi_chart3d.cpp](demos/multi_chart3d.cpp)
+
+**Usage:**
+```bash
+# Multi-chart demo with all features (as used in run_demos.sh from build directory)
+./build/multi_chart3d -font fonts/courR12.bdf -size 1024X512 -charts 2 -layout auto -aa -dark -borders multi_chart3d.ppm
+
+# Customizable examples
+./build/multi_chart3d -charts 3 -size 1200x900 output.ppm
+./build/multi_chart3d -charts 4 -layout 2x2 -borders output.ppm
+```
+
+**Sample output (dual charts with dark theme and borders):**
+
 ![3D dual chart](images/multi_chart3d_dark_2.png?raw=true)
 
-## 3. Voronoi Diagram
+## 4. Voronoi Diagram
 
 Pixel map depicting Voronoi diagram generation.
 
@@ -104,7 +120,7 @@ Pixel map depicting Voronoi diagram generation.
 
 ![Voronoi diagram](images/voronoi.png?raw=true)
 
-## 4. Mandelbrot Set
+## 5. Mandelbrot Set
 
 Pixel map image for selected window of the Mandelbrot set.
 
@@ -114,7 +130,7 @@ Pixel map image for selected window of the Mandelbrot set.
 
 ![Mandelbrot](images/mandelbrot.png?raw=true)
 
-## 5. Drawing Primitives Demo
+## 6. Drawing Primitives Demo
 
 Demonstration of included primitive shape support including lines, circles, rectangles, ellipses, and other geometric shapes.
 
@@ -124,7 +140,7 @@ Demonstration of included primitive shape support including lines, circles, rect
 
 ![Primitives](images/primitives.png?raw=true)
 
-## 6. Text Rendering Demo
+## 7. Text Rendering Demo
 
 Demonstration of BDF font rendering capabilities with multi-color text support.
 
@@ -139,7 +155,7 @@ Demonstration of BDF font rendering capabilities with multi-color text support.
 
 ![Text Demo](images/text_demo_output.png?raw=true)
 
-## 7. Filter Demo
+## 8. Filter Demo
 
 Demonstration of various pixel filters including transformations, transparency, zoom, and gradients.
 
@@ -149,19 +165,19 @@ Demonstration of various pixel filters including transformations, transparency, 
 
 ![Filter Demo](images/filter_demo_output.png?raw=true)
 
-## 8. Logging Demo
+## 9. Logging Demo
 
 Basic demonstration of the integrated logging system.
 
 **Source:** [demos/basic_logging_demo.cpp](demos/basic_logging_demo.cpp)
 
-## 9. Type Casting Demos
+## 10. Type Casting Demos
 
 Demonstrations of safe type casting utilities:
 - **Cast Demo**: [demos/cast_demo.cpp](demos/cast_demo.cpp) - Basic casting operations
 - **Cast Validation Disabled**: [demos/cast_validation_disabled_demo.cpp](demos/cast_validation_disabled_demo.cpp) - Performance-oriented casting
 
-## 10. Observer Pattern Demo
+## 11. Observer Pattern Demo
 
 Demonstration of the observer pattern implementation for event handling.
 
