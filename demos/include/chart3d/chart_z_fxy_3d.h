@@ -183,7 +183,10 @@ public:
         RectInclusive allowedArea = getAllowedDrawingArea();
         std::unique_ptr<LinePainter> lnPainter;
 
-        drawAllowedArea(allowedArea, getAllowedBorderColor(), pixelPainter);
+        // Only draw the allowed area border if borders are enabled
+        if (shouldDrawBorders()) {
+            drawAllowedArea(allowedArea, getAllowedBorderColor(), pixelPainter);
+        }
         
         lnPainter = createLinePainter(pixelPainter, allowedArea);
 
