@@ -8,6 +8,8 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/text/text_painter.h"
 #include "uimg/painters/painter_base.h"
+#include "uimg/utils/cast.h"
+#include "uimg/utils/cast.h"
 
 namespace uimg {
 
@@ -62,9 +64,9 @@ public:
     void drawText(unsigned int x, unsigned int y, const std::string &text, const RgbColor &color) override {
         assert(font_ != nullptr);
         unsigned int idx = 0;
-        unsigned int sx = canvasRect_.x2;
+        unsigned int sx = UNSIGNED_CAST(unsigned int, canvasRect_.x2);
         while ((x <= sx) && (idx < text.length())) {
-            x += drawGlyphInt(x, y, text[idx], color);
+            x += UNSIGNED_CAST(unsigned int, drawGlyphInt(x, y, static_cast<text_char_code_t>(UNSIGNED_CAST(unsigned char, text[idx])), color));
             ++idx;
         }
     }
@@ -89,9 +91,9 @@ public:
      */
     void drawText(unsigned int x, unsigned int y, TextSource &src, const RgbColor &color) override {
         assert(font_ != nullptr);
-        unsigned int sx = canvasRect_.x2;
+        unsigned int sx = UNSIGNED_CAST(unsigned int, canvasRect_.x2);
         while ((x <= sx) && (src.hasNext())) {
-            x += drawGlyphInt(x, y, src.getNext(), color);
+            x += UNSIGNED_CAST(unsigned int, drawGlyphInt(x, y, src.getNext(), color));
         }
     }
 
@@ -105,7 +107,7 @@ public:
         unsigned int width = 0;
 
         while (idx < text.length()) {
-            width += glyphWidth(text[idx]);
+            width += glyphWidth(static_cast<text_char_code_t>(UNSIGNED_CAST(unsigned char, text[idx])));
             ++idx;
         }
 
@@ -140,7 +142,7 @@ public:
         Point p;
 
         while (idx < len) {
-            p = glyphSize(text[idx]);
+            p = glyphSize(static_cast<text_char_code_t>(UNSIGNED_CAST(unsigned char, text[idx])));
             width += p.x;
             height = std::max(height, p.y);
             ++idx;
@@ -161,11 +163,11 @@ public:
 
         while (src.hasNext()) {
             p = glyphSize(src.getNext());
-            width += p.x;
+            width += UNSIGNED_CAST(unsigned int, p.x);
             height = std::max(height, p.y);
         }
 
-        return {width, height};
+        return {static_cast<int>(width), height};
     }
 
     /**
@@ -199,8 +201,8 @@ public:
         const BdfGlyph *g = get_glyph(charCode);
         assert(g != nullptr);
         Point p;
-        p.x = glyphWidth(g);
-        p.y = glyphHeight(g);
+        p.x = static_cast<int>(glyphWidth(g));
+        p.y = static_cast<int>(glyphHeight(g));
         return p;
     }
 
@@ -220,8 +222,8 @@ protected:
      */
     [[nodiscard]] unsigned int glyphWidth(const BdfGlyph *glyph) {
         assert(glyph != nullptr);
-        unsigned int w = glyph->bbxSize().x + glyph->bbxOffset().x;
-        return std::max(glyph->deviceWidth().x, static_cast<int>(w));
+        unsigned int w = UNSIGNED_CAST(unsigned int, glyph->bbxSize().x + glyph->bbxOffset().x);
+        return UNSIGNED_CAST(unsigned int, std::max(glyph->deviceWidth().x, static_cast<int>(w)));
     }
 
     /**
@@ -231,8 +233,8 @@ protected:
      */
     [[nodiscard]] unsigned int glyphHeight(const BdfGlyph *glyph) {
         assert(glyph != nullptr);
-        unsigned int h = glyph->bbxSize().y + glyph->bbxOffset().y;
-        return std::max(glyph->deviceWidth().y, static_cast<int>(h));
+        unsigned int h = UNSIGNED_CAST(unsigned int, glyph->bbxSize().y + glyph->bbxOffset().y);
+        return UNSIGNED_CAST(unsigned int, std::max(glyph->deviceWidth().y, static_cast<int>(h)));
     }
 
 private:
@@ -251,7 +253,7 @@ private:
 
         int h = g->bbxSize().y;
         int w = g->bbxSize().x + g->bbxOffset().x;
-        int y0 = y - h - g->bbxOffset().y;
+        int y0 = static_cast<int>(y) - h - g->bbxOffset().y;
 
         for (int yi = 0; yi < h; ++yi) {
             const BdfGlyph::pixel_line_t row = g->pixelData()[yi];
@@ -259,7 +261,11 @@ private:
 
             for (int xi = 0; xi < w; ++xi, pixelMask >>= 1) {
                 if (row & pixelMask) {
-                    painter->putPixel(x + xi, y0 + yi, color);
+                    int pixel_x = static_cast<int>(x) + xi;
+                    int pixel_y = y0 + yi;
+                    if (pixel_x >= 0 && pixel_y >= 0) {
+                        painter->putPixel(UNSIGNED_CAST(unsigned int, pixel_x), UNSIGNED_CAST(unsigned int, pixel_y), color);
+                    }
                 }
             }
         }

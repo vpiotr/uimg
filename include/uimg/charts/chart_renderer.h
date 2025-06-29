@@ -8,6 +8,7 @@
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"
 #include "uimg/images/ppm_image.h"
+#include "uimg/utils/cast.h"
 
 #include <vector>
 #include <string>
@@ -29,7 +30,7 @@ public:
           thickLinePainter_(pixelPainter_, thickness) {}
     
     void drawLine(int x1, int y1, int x2, int y2, const RgbColor& color) {
-        thickLinePainter_.drawLine(x1, y1, x2, y2, color);
+        thickLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, x1), UNSIGNED_CAST(unsigned int, y1), UNSIGNED_CAST(unsigned int, x2), UNSIGNED_CAST(unsigned int, y2), color);
     }
     
 private:
@@ -49,7 +50,7 @@ public:
           antiAliasedThickLinePainter_(pixelPainter_, thickness) {}
     
     void drawLine(int x1, int y1, int x2, int y2, const RgbColor& color) {
-        antiAliasedThickLinePainter_.drawLine(x1, y1, x2, y2, color);
+        antiAliasedThickLinePainter_.drawLine(UNSIGNED_CAST(unsigned int, x1), UNSIGNED_CAST(unsigned int, y1), UNSIGNED_CAST(unsigned int, x2), UNSIGNED_CAST(unsigned int, y2), color);
     }
     
 private:
@@ -100,7 +101,7 @@ public:
      * @param useAntiAliasing Enable anti-aliased line rendering
      */
     ChartRenderer(int width, int height, const std::string& fontPath, bool useAntiAliasing = false) 
-        : image_(width, height),
+        : image_(UNSIGNED_CAST(unsigned int, width), UNSIGNED_CAST(unsigned int, height)),
           pixelPainter_(image_),
           linePainter_(image_),
           rectPainter_(image_),
@@ -121,7 +122,7 @@ public:
         textPainter_.setFont(&font_);
         
         // Initialize image with white background
-        rectPainter_.drawFull(0, 0, imageWidth_ - 1, imageHeight_ - 1, RgbColor{255, 255, 255});
+        rectPainter_.drawFull(0, 0, UNSIGNED_CAST(unsigned int, imageWidth_ - 1), UNSIGNED_CAST(unsigned int, imageHeight_ - 1), RgbColor{255, 255, 255});
     }
     
     /**
@@ -161,7 +162,7 @@ public:
      * @brief Set the background color for the entire image
      */
     void setBackgroundColor(const RgbColor& color) {
-        rectPainter_.drawFull(0, 0, imageWidth_ - 1, imageHeight_ - 1, color);
+        rectPainter_.drawFull(0, 0, UNSIGNED_CAST(unsigned int, imageWidth_ - 1), UNSIGNED_CAST(unsigned int, imageHeight_ - 1), color);
     }
     
     /**
@@ -245,14 +246,14 @@ private:
             return {static_cast<float>(plotArea.x1), static_cast<float>(plotArea.y1)};
         }
 
-        float screenX = plotArea.x1 + (x - xMin) / (xMax - xMin) * plotArea.width();
-        float screenY = plotArea.y2 - (y - yMin) / (yMax - yMin) * plotArea.height();
+        float screenX = static_cast<float>(plotArea.x1) + (x - xMin) / (xMax - xMin) * static_cast<float>(plotArea.width());
+        float screenY = static_cast<float>(plotArea.y2) - (y - yMin) / (yMax - yMin) * static_cast<float>(plotArea.height());
 
         return {screenX, screenY};
     }
     
     // Draw the chart legend
-    void drawLegend(const Chart& chart, const Rect& chartRect, const Rect& legendArea) {
+    void drawLegend(const Chart& chart, [[maybe_unused]] const Rect& chartRect, const Rect& legendArea) {
         const ChartStyle& style = chart.getStyle();
         const std::vector<Series>& seriesSet = chart.getSeries();
         
@@ -265,18 +266,18 @@ private:
         
         for (size_t i = 0; i < seriesSet.size(); ++i) {
             const auto& series = seriesSet[i];
-            int currentY = legendArea.y1 + i * itemHeight;
+            int currentY = legendArea.y1 + static_cast<int>(i) * itemHeight;
             
             // Calculate vertical positions for perfect alignment
             int colorBoxY = currentY + (itemHeight - colorBoxSize) / 2;
             int textY = colorBoxY + (colorBoxSize / 2) - (fontHeight / 2) + fontBaseline;
             
             // Draw color box
-            rectPainter_.drawFull(legendArea.x1, colorBoxY,
-                                legendArea.x1 + colorBoxSize, colorBoxY + colorBoxSize,
+            rectPainter_.drawFull(UNSIGNED_CAST(unsigned int, legendArea.x1), UNSIGNED_CAST(unsigned int, colorBoxY),
+                                UNSIGNED_CAST(unsigned int, legendArea.x1 + colorBoxSize), UNSIGNED_CAST(unsigned int, colorBoxY + colorBoxSize),
                                 series.getStyle().color);
             // Draw series name
-            textPainter_.drawText(legendArea.x1 + colorBoxSize + textPadding, textY,
+            textPainter_.drawText(UNSIGNED_CAST(unsigned int, legendArea.x1 + colorBoxSize + textPadding), UNSIGNED_CAST(unsigned int, textY),
                                 series.getStyle().name, style.textColor);
         }
     }
@@ -293,20 +294,20 @@ private:
         float yMax = yAxis.max;
         
         // Draw axes lines
-        linePainter_.drawLine(plotArea.x1, plotArea.y2, plotArea.x2, plotArea.y2, style.axisColor); // X-axis
-        linePainter_.drawLine(plotArea.x1, plotArea.y1, plotArea.x1, plotArea.y2, style.axisColor); // Y-axis
+        linePainter_.drawLine(UNSIGNED_CAST(unsigned int, plotArea.x1), UNSIGNED_CAST(unsigned int, plotArea.y2), UNSIGNED_CAST(unsigned int, plotArea.x2), UNSIGNED_CAST(unsigned int, plotArea.y2), style.axisColor); // X-axis
+        linePainter_.drawLine(UNSIGNED_CAST(unsigned int, plotArea.x1), UNSIGNED_CAST(unsigned int, plotArea.y1), UNSIGNED_CAST(unsigned int, plotArea.x1), UNSIGNED_CAST(unsigned int, plotArea.y2), style.axisColor); // Y-axis
 
         // Draw X-axis ticks and grid
         for (int i = 0; i <= style.numXTicks; ++i) {
-            float value = xMin + (xMax - xMin) * i / style.numXTicks;
-            float xPos = plotArea.x1 + plotArea.width() * i / style.numXTicks;
+            float value = xMin + (xMax - xMin) * static_cast<float>(i) / static_cast<float>(style.numXTicks);
+            float xPos = static_cast<float>(plotArea.x1) + static_cast<float>(plotArea.width()) * static_cast<float>(i) / static_cast<float>(style.numXTicks);
             
             // Draw tick
-            linePainter_.drawLine(xPos, plotArea.y2, xPos, plotArea.y2 + 5, style.axisColor);
+            linePainter_.drawLine(UNSIGNED_CAST(unsigned int, xPos), UNSIGNED_CAST(unsigned int, plotArea.y2), UNSIGNED_CAST(unsigned int, xPos), UNSIGNED_CAST(unsigned int, plotArea.y2 + 5), style.axisColor);
             
             // Draw grid line
             if (style.showGrid) {
-                linePainter_.drawLine(xPos, plotArea.y1, xPos, plotArea.y2, style.gridColor);
+                linePainter_.drawLine(UNSIGNED_CAST(unsigned int, xPos), UNSIGNED_CAST(unsigned int, plotArea.y1), UNSIGNED_CAST(unsigned int, xPos), UNSIGNED_CAST(unsigned int, plotArea.y2), style.gridColor);
             }
             
             // Draw tick label
@@ -315,20 +316,20 @@ private:
             std::string label = buffer;
             
             unsigned int labelWidth = textPainter_.textWidth(label);
-            textPainter_.drawText(xPos - labelWidth / 2, plotArea.y2 + 15, label, style.textColor);
+            textPainter_.drawText(UNSIGNED_CAST(unsigned int, xPos) - labelWidth / 2, UNSIGNED_CAST(unsigned int, plotArea.y2 + 15), label, style.textColor);
         }
 
         // Draw Y-axis ticks and grid
         for (int i = 0; i <= style.numYTicks; ++i) {
-            float value = yMin + (yMax - yMin) * (style.numYTicks - i) / style.numYTicks;
-            float yPos = plotArea.y1 + plotArea.height() * i / style.numYTicks;
+            float value = yMin + (yMax - yMin) * static_cast<float>(style.numYTicks - i) / static_cast<float>(style.numYTicks);
+            float yPos = static_cast<float>(plotArea.y1) + static_cast<float>(plotArea.height()) * static_cast<float>(i) / static_cast<float>(style.numYTicks);
             
             // Draw tick
-            linePainter_.drawLine(plotArea.x1 - 5, yPos, plotArea.x1, yPos, style.axisColor);
+            linePainter_.drawLine(UNSIGNED_CAST(unsigned int, plotArea.x1 - 5), UNSIGNED_CAST(unsigned int, yPos), UNSIGNED_CAST(unsigned int, plotArea.x1), UNSIGNED_CAST(unsigned int, yPos), style.axisColor);
             
             // Draw grid line
             if (style.showGrid) {
-                linePainter_.drawLine(plotArea.x1, yPos, plotArea.x2, yPos, style.gridColor);
+                linePainter_.drawLine(UNSIGNED_CAST(unsigned int, plotArea.x1), UNSIGNED_CAST(unsigned int, yPos), UNSIGNED_CAST(unsigned int, plotArea.x2), UNSIGNED_CAST(unsigned int, yPos), style.gridColor);
             }
             
             // Draw tick label
@@ -337,7 +338,7 @@ private:
             std::string label = buffer;
             
             unsigned int labelWidth = textPainter_.textWidth(label);
-            textPainter_.drawText(plotArea.x1 - labelWidth - 25, yPos, label, style.textColor);
+            textPainter_.drawText(UNSIGNED_CAST(unsigned int, plotArea.x1) - labelWidth - 25, UNSIGNED_CAST(unsigned int, yPos), label, style.textColor);
         }
     }
     
@@ -371,8 +372,8 @@ private:
                         PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
                         PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
                         
-                        antiAliasedPainter.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
-                                                    static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), 
+                        antiAliasedPainter.drawLine(UNSIGNED_CAST(unsigned int, p1_screen.x), UNSIGNED_CAST(unsigned int, p1_screen.y),
+                                                    UNSIGNED_CAST(unsigned int, p2_screen.x), UNSIGNED_CAST(unsigned int, p2_screen.y), 
                                                     series.getStyle().color);
                     }
                 } else {
@@ -384,8 +385,8 @@ private:
                         PointF p1_screen = worldToScreen(p1.x, p1.y, plotArea, xMin, xMax, yMin, yMax);
                         PointF p2_screen = worldToScreen(p2.x, p2.y, plotArea, xMin, xMax, yMin, yMax);
                         
-                        linePainter_.drawLine(static_cast<int>(p1_screen.x), static_cast<int>(p1_screen.y),
-                                            static_cast<int>(p2_screen.x), static_cast<int>(p2_screen.y), 
+                        linePainter_.drawLine(UNSIGNED_CAST(unsigned int, p1_screen.x), UNSIGNED_CAST(unsigned int, p1_screen.y),
+                                            UNSIGNED_CAST(unsigned int, p2_screen.x), UNSIGNED_CAST(unsigned int, p2_screen.y), 
                                             series.getStyle().color);
                     }
                 }
@@ -431,7 +432,7 @@ private:
         const ChartStyle& style = chart.getStyle();
         
         // Apply chart background color
-        rectPainter_.drawFull(chartRect.x1, chartRect.y1, chartRect.x2, chartRect.y2, style.backgroundColor);
+        rectPainter_.drawFull(UNSIGNED_CAST(unsigned int, chartRect.x1), UNSIGNED_CAST(unsigned int, chartRect.y1), UNSIGNED_CAST(unsigned int, chartRect.x2), UNSIGNED_CAST(unsigned int, chartRect.y2), style.backgroundColor);
         
         // Calculate plot area
         Rect plotArea = Rect::make_rect(
@@ -443,9 +444,9 @@ private:
         
         // Draw chart title
         unsigned int titleWidth = textPainter_.textWidth(chart.getTitle());
-        int titleX = chartRect.x1 + (chartRect.width() - titleWidth) / 2;
+        int titleX = chartRect.x1 + static_cast<int>((UNSIGNED_CAST(unsigned int, chartRect.width()) - titleWidth) / 2);
         int titleY = chartRect.y1 + 20;
-        textPainter_.drawText(titleX, titleY, chart.getTitle(), style.textColor);
+        textPainter_.drawText(UNSIGNED_CAST(unsigned int, titleX), UNSIGNED_CAST(unsigned int, titleY), chart.getTitle(), style.textColor);
         
         // Draw axes
         drawAxes(chart, plotArea);
@@ -455,22 +456,21 @@ private:
         
         // Draw X-axis label
         unsigned int xLabelWidth = textPainter_.textWidth(chart.getXAxis().label);
-        int xLabelX = plotArea.x1 + (plotArea.width() - xLabelWidth) / 2;
+        int xLabelX = plotArea.x1 + static_cast<int>((UNSIGNED_CAST(unsigned int, plotArea.width()) - xLabelWidth) / 2);
         int xLabelY = plotArea.y2 + 30;
-        textPainter_.drawText(xLabelX, xLabelY, chart.getXAxis().label, style.textColor);
+        textPainter_.drawText(UNSIGNED_CAST(unsigned int, xLabelX), UNSIGNED_CAST(unsigned int, xLabelY), chart.getXAxis().label, style.textColor);
         
         // Draw Y-axis label
         const std::string& yLabel = chart.getYAxis().label;
-        int fontHeight = 12;
         int yLabelX = chartRect.x1 + 15;
         
         // Calculate position to center the label vertically on the y-axis
-        int totalYLabelHeight = yLabel.length() * 12; // 12 pixels per character
+        int totalYLabelHeight = static_cast<int>(yLabel.length()) * 12; // 12 pixels per character
         int yLabelY = plotArea.y1 + (plotArea.height() - totalYLabelHeight) / 2;
         
         // Draw Y-axis label vertically
         for (size_t i = 0; i < yLabel.length(); ++i) {
-            textPainter_.drawText(yLabelX, yLabelY + i * 12, std::string(1, yLabel[i]), style.textColor);
+            textPainter_.drawText(UNSIGNED_CAST(unsigned int, yLabelX), UNSIGNED_CAST(unsigned int, yLabelY + static_cast<int>(i) * 12), std::string(1, yLabel[i]), style.textColor);
         }
         
         // Draw legend
@@ -478,7 +478,7 @@ private:
             plotArea.x2 - style.legendWidth,
             plotArea.y1,
             plotArea.x2,
-            plotArea.y1 + chart.getSeries().size() * 25
+            plotArea.y1 + static_cast<int>(chart.getSeries().size()) * 25
         );
         drawLegend(chart, chartRect, legendArea);
     }

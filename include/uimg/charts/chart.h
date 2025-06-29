@@ -23,7 +23,7 @@ struct DataPoint {
     float x;
     float y;
     
-    DataPoint(float x, float y) : x(x), y(y) {}
+    DataPoint(float x_val, float y_val) : x(x_val), y(y_val) {}
 };
 
 /**

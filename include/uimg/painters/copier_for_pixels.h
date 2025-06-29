@@ -8,6 +8,7 @@
 #include "uimg/pixels/pixel_painter.h"
 #include "uimg/pixels/pixel_source.h"
 #include "uimg/pixels/pixel_copier.h"
+#include "uimg/utils/cast.h"
 
 // copier using pixel by pixel operations
 class ImageCopierByPixels : public PixelCopier {
@@ -24,7 +25,7 @@ public:
         int offsety = targetPos.y;
         for (int y = 0, eposy = src.getSize().y; y < eposy; ++y) {
             for (int x = 0, eposx = src.getSize().x; x < eposx; ++x) {
-                painter->putPixel(offsetx + x, offsety + y, src.getPixel(Point(x, y)));
+                painter->putPixel(UNSIGNED_CAST(unsigned int, offsetx + x), UNSIGNED_CAST(unsigned int, offsety + y), src.getPixel(Point(x, y)));
             }
         }
     }
@@ -35,7 +36,7 @@ public:
         int offsety = targetPos.y;
         for (int y = std::max(0, srcPart.y1), eposy = std::min(srcPart.y2 + 1, src.getSize().y); y < eposy; ++y) {
             for (int x = std::max(0, srcPart.x1), eposx = std::min(srcPart.x2 + 1, src.getSize().x); x < eposx; ++x) {
-                painter->putPixel(offsetx + x, offsety + y, src.getPixel(Point(x, y)));
+                painter->putPixel(UNSIGNED_CAST(unsigned int, offsetx + x), UNSIGNED_CAST(unsigned int, offsety + y), src.getPixel(Point(x, y)));
             }
         }
     }
@@ -75,7 +76,7 @@ public:
             for (int y = 0; y < targetSize.y; y++) {
 
                 if (!calcSourcePos(xf, yf, x, y, srcPart)) {
-                    putBackgroundPixel(targetPos.x + x, targetPos.y + y);
+                    putBackgroundPixel(UNSIGNED_CAST(unsigned int, targetPos.x + x), UNSIGNED_CAST(unsigned int, targetPos.y + y));
                     continue;
                 }
 
@@ -100,7 +101,7 @@ public:
                 addScaledColor(color, color01, (1.0f - dx) * dy);
                 addScaledColor(color, color11, dx * dy);
 
-                putPixel(targetPos.x + x, targetPos.y + y, color);
+                putPixel(UNSIGNED_CAST(unsigned int, targetPos.x + x), UNSIGNED_CAST(unsigned int, targetPos.y + y), color);
             }
         }
     }
@@ -116,12 +117,12 @@ protected:
     virtual void putBackgroundPixel(unsigned int x, unsigned int y) = 0;
 
     void addScaledColor(RgbColor &color, const RgbColor &newColor, double ratio) {
-        color.red = std::min(255, static_cast<int>(round(
-                static_cast<double>(color.red) + ratio * static_cast<double>(newColor.red))));
-        color.green = std::min(255, static_cast<int>(round(
-                static_cast<double>(color.green) + ratio * static_cast<double>(newColor.green))));
-        color.blue = std::min(255, static_cast<int>(round(
-                static_cast<double>(color.blue) + ratio * static_cast<double>(newColor.blue))));
+        color.red = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(
+                static_cast<double>(color.red) + ratio * static_cast<double>(newColor.red)))));
+        color.green = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(
+                static_cast<double>(color.green) + ratio * static_cast<double>(newColor.green)))));
+        color.blue = UNSIGNED_CAST(unsigned char, std::min(255, static_cast<int>(round(
+                static_cast<double>(color.blue) + ratio * static_cast<double>(newColor.blue)))));
     }
 };
 
@@ -140,7 +141,7 @@ public:
     }
 
 protected:
-    virtual void putBackgroundPixel(unsigned int x, unsigned int y) {}
+    virtual void putBackgroundPixel(unsigned int /*x*/, unsigned int /*y*/) {}
 
     virtual void getScalingRatios(double &rx, double &ry) = 0;
 
@@ -223,15 +224,15 @@ private:
 class RotationCopierBase : public BilinearSamplingCopier {
     using inherited = BilinearSamplingCopier;
 public:
-    RotationCopierBase(double angle, const Point &srcOffset) : initialized_(false), angle_(angle), ratioX_(1.0),
-                                                               ratioY_(1.0), srcOffset_(srcOffset) {}
+    RotationCopierBase(double angle, const Point &srcOffset) : initialized_(false), angle_(angle), srcOffset_(srcOffset), ratioX_(1.0),
+                                                               ratioY_(1.0) {}
 
     RotationCopierBase(double angle, double ratioX, double ratioY, const Point &srcOffset) :
             initialized_(false),
             angle_(angle),
+            srcOffset_(srcOffset),
             ratioX_(ratioX),
-            ratioY_(ratioY),
-            srcOffset_(srcOffset) {}
+            ratioY_(ratioY) {}
 
     virtual void copyFrom(const PixelSource &src, const Point &targetPos) {
         inherited::copyFrom(src, targetPos);
@@ -317,7 +318,7 @@ public:
             pixelPainter_(pixelPainter) {}
 
 protected:
-    virtual void putBackgroundPixel(unsigned int x, unsigned int y) {}
+    virtual void putBackgroundPixel(unsigned int /*x*/, unsigned int /*y*/) {}
 
     virtual void putPixel(unsigned int x, unsigned int y, const RgbColor &color) {
         pixelPainter_.putPixel(x, y, color);

@@ -3,26 +3,52 @@ project(uimg)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(apps/include)
-include_directories(apps/include/samples)
-include_directories(apps/include/samples/voronoi)
-include_directories(apps/include/samples/mandelbrot)
-include_directories(apps/include/samples/chart3d)
-include_directories(apps/include/samples/draw_primitives)
-include_directories(apps/include/samples/text_demo)
-include_directories(apps/include/samples/filter_demo)
+# Enable comprehensive warning flags to match Windows behavior
+if(MSVC)
+    # Windows (MSVC) - Enable most warnings including conversion warnings
+    add_compile_options(/W4 /WX- /wd4996)
+else()
+    # Linux/GCC or Clang - Enable comprehensive warnings including conversion warnings
+    add_compile_options(
+        -Wall                    # Enable most warnings
+        -Wextra                  # Enable extra warnings
+        -Wconversion             # Warn about type conversions that may alter values
+        -Wsign-conversion        # Warn about sign conversions
+        -Wfloat-conversion       # Warn about float conversions
+        -Wcast-qual              # Warn about casts that remove qualifiers
+        -Wcast-align             # Warn about casts that increase alignment requirements
+        -Wshadow                 # Warn about variable shadowing
+        -Wpedantic               # Warn about non-standard C++
+        -Wunused                 # Warn about unused variables/functions
+        -Wuninitialized          # Warn about uninitialized variables
+    )
+endif()
+
+# Enable testing for CTest integration
+enable_testing()
+
+include_directories(demos/include)
+include_directories(demos/include/samples)
+include_directories(demos/include/samples/voronoi)
+include_directories(demos/include/samples/mandelbrot)
+include_directories(demos/include/samples/chart3d)
+include_directories(demos/include/samples/multi_chart3d)
+include_directories(demos/include/samples/draw_primitives)
+include_directories(demos/include/samples/text_demo)
+include_directories(demos/include/samples/filter_demo)
 include_directories(include)
 include_directories(include/uimg)
 include_directories(include/uimg/painters)
 include_directories(include/uimg/utils)
+include_directories(include/ulog)
 
 add_executable(voronoi
         LICENSE
         README.md
-        apps/include/samples/voronoi/test_voronoi.h
-        apps/include/samples/voronoi/voronoi.h
-        apps/include/samples/test_painter_base.h
-        apps/voronoi.cpp
+        demos/include/samples/voronoi/voronoi_demo.h
+        demos/include/samples/voronoi/voronoi.h
+        demos/include/samples/demo_painter_base.h
+        demos/voronoi.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -38,10 +64,10 @@ add_executable(voronoi
 add_executable(mandelbrot
         LICENSE
         README.md
-        apps/include/samples/mandelbrot/test_mandelbrot.h
-        apps/include/samples/mandelbrot/mandelbrot.h
-        apps/include/samples/test_painter_base.h
-        apps/mandelbrot.cpp
+        demos/include/samples/mandelbrot/mandelbrot_demo.h
+        demos/include/samples/mandelbrot/mandelbrot.h
+        demos/include/samples/demo_painter_base.h
+        demos/mandelbrot.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -57,10 +83,10 @@ add_executable(mandelbrot
 add_executable(chart3d
         LICENSE
         README.md
-        apps/include/samples/chart3d/test_chart_z_fxy_3d_c.h
-        apps/include/samples/chart3d/chart_z_fxy_3d.h
-        apps/include/samples/test_painter_base.h
-        apps/chart3d.cpp
+        demos/include/chart3d/chart_z_fxy_3d.h
+        demos/include/samples/chart3d/chart3d_demo.h
+        demos/include/samples/chart3d/chart_z_fxy_3d_sqrt.h
+        demos/chart3d.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -78,13 +104,44 @@ add_executable(chart3d
         include/uimg/pixels/pixel_source.h
         include/uimg/base/structs.h
         include/uimg/images/pixel_image.h)
+
+add_executable(multi_chart3d
+        LICENSE
+        README.md
+        demos/include/samples/multi_chart3d/multi_chart_3d_demo.h
+        demos/include/samples/multi_chart3d/multi_chart_3d.h
+        demos/include/chart3d/chart3d_renderer.h
+        demos/include/chart3d/chart3d_z_fxy.h
+        demos/include/chart3d/chart_z_fxy_3d.h
+        demos/include/chart3d/chart3d_tracer.h
+        demos/include/samples/demo_painter_base.h
+        demos/multi_chart3d.cpp
+        include/uimg/painters/copier_for_pixels.h
+        include/uimg/painters/painter_base.h
+        include/uimg/painters/painter_for_pixels.h
+        include/uimg/painters/painter_for_rgb_image.h
+        include/uimg/painters/rect_painter.h
+        include/uimg/painters/antialiased_painter_for_pixels.h
+        include/uimg/images/ppm_image.h
+        include/uimg/images/rgb_image.h
+        include/uimg/utils/algorithm.h
+        include/uimg/utils/color_utils.h
+        include/uimg/utils/cubic_spline_utils.h
+        include/uimg/utils/math_utils.h
+        include/uimg/utils/point_utils.h
+        include/uimg/pixels/pixel_painter.h
+        include/uimg/pixels/pixel_source.h
+        include/uimg/base/structs.h
+        include/uimg/images/pixel_image.h
+        include/uimg/filters/anti_aliasing_filter.h
+        include/dlog/dlog.h)
         
 add_executable(draw_primitives
         LICENSE
         README.md
-        apps/include/samples/draw_primitives/test_draw_primitives.h
-        apps/include/samples/test_painter_base.h
-        apps/draw_primitives.cpp
+        demos/include/samples/draw_primitives/draw_primitives_demo.h
+        demos/include/samples/demo_painter_base.h
+        demos/draw_primitives.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -100,9 +157,10 @@ add_executable(draw_primitives
 add_executable(filter_demo
         LICENSE
         README.md
-        apps/include/samples/filter_demo/test_filter_demo.h
-        apps/include/samples/test_painter_base.h
-        apps/filter_demo.cpp
+        demos/include/samples/filter_demo/filter_demo.h
+        demos/include/samples/filter_demo/filter_demo_args.h
+        demos/include/samples/demo_painter_base.h
+        demos/filter_demo.cpp
         include/uimg/painters/copier_for_pixels.h
         include/uimg/painters/painter_base.h
         include/uimg/painters/painter_for_pixels.h
@@ -112,11 +170,10 @@ add_executable(filter_demo
 add_executable(2d_line_chart_demo
         LICENSE
         README.md
-        apps/2d_line_chart_demo.cpp
+        demos/2d_line_chart_demo.cpp
         include/uimg/charts/chart.h
         include/uimg/charts/chart_styles.h
         include/uimg/charts/chart_renderer.h
-        apps/include/samples/test_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
         include/uimg/images/ppm_image.h
@@ -135,9 +192,10 @@ add_executable(2d_line_chart_demo
 add_executable(text_demo
         LICENSE
         README.md
-        apps/text_demo.cpp
-        apps/include/samples/text_demo/test_text_demo.h
-        apps/include/samples/test_painter_base.h
+        demos/text_demo.cpp
+        demos/include/samples/text_demo/text_demo.h
+        demos/include/samples/text_demo/text_demo_args.h
+        demos/include/samples/demo_painter_base.h
         include/uimg/base/structs.h
         include/uimg/images/rgb_image.h
         include/uimg/images/ppm_image.h
@@ -152,4 +210,29 @@ add_executable(text_demo
         include/uimg/utils/math_utils.h
         include/uimg/utils/point_utils.h)
 
+add_executable(observers_demo
+        LICENSE
+        README.md
+        demos/observers_demo.cpp
+        include/dlog/dlog.h)
+
+add_executable(basic_logging_demo
+        LICENSE
+        README.md
+        demos/basic_logging_demo.cpp
+        include/dlog/dlog.h)
+
+add_executable(cast_demo
+        LICENSE
+        README.md
+        demos/cast_demo.cpp
+        include/dlog/dlog.h
+        include/uimg/utils/cast.h)
+
+add_executable(cast_validation_disabled_demo
+        LICENSE
+        README.md
+        demos/cast_validation_disabled_demo.cpp
+        include/dlog/dlog.h
+        include/uimg/utils/cast.h)
 

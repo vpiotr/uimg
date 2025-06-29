@@ -11,6 +11,7 @@
 
 #include "uimg/base/structs.h"
 #include "uimg/text/text_base.h"
+#include "uimg/utils/cast.h"
 
 namespace uimg {
 
@@ -179,7 +180,7 @@ public:
      * @param glyph Glyph to add
      */
     void addGlyph(const BdfGlyph &glyph) {
-        unsigned int newPos = static_cast<unsigned int>(glyphs_.size());
+        unsigned int newPos = UNSIGNED_CAST(unsigned int, glyphs_.size());
         glyphs_.push_back(glyph);
         codeMap_.emplace(glyph.encoding(), newPos);
         nameMap_.emplace(glyph.name(), newPos);
@@ -350,10 +351,14 @@ public:
                 Point bbxOffset = { i3, i4 };
                 newGlyph.setBbxSize(bbxSize);
                 newGlyph.setBbxOffset(bbxOffset);
-                pixelShift = 8 * (sizeof(BdfGlyph::pixel_line_t) - ((bbxSize.x + 7) / 8)) - bbxOffset.x;
+                auto shiftA = 8 * (sizeof(BdfGlyph::pixel_line_t) - UNSIGNED_CAST(size_t, (bbxSize.x + 7) / 8));
+                int shiftB = bbxOffset.x;
+                long shiftC = (long)shiftA - (long)shiftB;
+
+                pixelShift = shiftC < 0 ? 0 : UNSIGNED_CAST(unsigned int, shiftC);
                 glyphLineNo = -1;
                 pixelLines.clear();
-                pixelLines.reserve(bbxSize.y);
+                pixelLines.reserve(UNSIGNED_CAST(size_t, bbxSize.y));
             }
             else if (strncmp(s.c_str(), "BITMAP", strlen("BITMAP")) == 0) {
                 glyphLineNo = 0;
