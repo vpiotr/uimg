@@ -118,4 +118,4 @@ fonts/*.bdf
 /backup/
 todo.md
 run0?.sh
-
+doc_internal/
