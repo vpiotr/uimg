@@ -72,6 +72,11 @@ if [ $BUILD_RESULT -ne 0 ]; then
     exit 1
 fi
 
+# Build demos separately
+echo "Building demos..."
+cd "$PROJECT_ROOT"
+./build_all_demos.sh
+
 # Build tests separately
 echo "Building tests..."
 cd "$PROJECT_ROOT/tests"

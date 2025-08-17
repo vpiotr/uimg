@@ -18,14 +18,15 @@ A minimal, independent C++ library for basic scientific diagram generation and i
 To build the project from scratch:
 
 ```bash
-./rebuild.sh    # Build everything (demos and tests)
-./run_demos.sh  # Run all demo applications
-./run_tests.sh  # Run all tests
-./clean.sh      # Clean all build artifacts
+./rebuild.sh         # Build everything (demos and tests)
+./build_all_demos.sh # Build all demo applications individually  
+./run_demos.sh       # Run all demo applications
+./run_tests.sh       # Run all tests
+./clean.sh           # Clean all build artifacts
 ```
 
 All binaries are placed in the `build/` directory:
-- Demo executables: `build/`
+- Demo executables: `build/demos/`
 - Test executables: `build/tests/`
 
 ## Project Structure
@@ -42,7 +43,21 @@ uimg/
 │   ├── pixels/           # Pixel-level API
 │   ├── text/             # Text rendering
 │   └── utils/            # Utility functions
-├── demos/                # Example applications
+├── demos/                # Example applications (organized by subdirectory)
+│   ├── 2d_line_chart/    # 2D line chart demo
+│   ├── basic_logging/    # Logging system demo
+│   ├── cast/             # Type casting demo
+│   ├── cast_validation_disabled/ # Cast validation demo
+│   ├── chart3d/          # 3D single chart demo
+│   ├── draw_primitives/  # Drawing primitives showcase
+│   ├── filters/          # Image filters demo (renamed from filter_demo)
+│   ├── mandelbrot/       # Mandelbrot set visualization
+│   ├── multi_chart3d/    # 3D multi-chart demo
+│   ├── observers/        # Observer pattern demo
+│   ├── text/             # Text rendering demo (renamed from text_demo)
+│   ├── voronoi/          # Voronoi diagram generation
+│   └── common/           # Shared demo code and headers
+│       └── include/      # Common headers for demos
 ├── tests/                # Unit tests
 ├── fonts/                # Sample BDF fonts
 └── images/               # Sample outputs
@@ -56,11 +71,11 @@ The library includes several demonstration applications showcasing different cap
 
 Line chart with customizable options including anti-aliasing for smoother line rendering.
 
-**Source:** [demos/2d_line_chart_demo.cpp](demos/2d_line_chart_demo.cpp)
+**Source:** [demos/2d_line_chart/main.cpp](demos/2d_line_chart/main.cpp)
 
 **Usage:**
 ```bash
-./build/2d_line_chart_demo -font fonts/courR12.bdf -charts 2 -out output.ppm -aa
+./build/demos/2d_line_chart_demo -font fonts/courR12.bdf -charts 2 -out output.ppm -aa
 ```
 
 **Sample output (anti-aliased):**
@@ -71,12 +86,11 @@ Line chart with customizable options including anti-aliasing for smoother line r
 
 Basic 3D surface chart rendering for individual mathematical functions.
 
-**Source:** [demos/chart3d.cpp](demos/chart3d.cpp)
+**Source:** [demos/chart3d/main.cpp](demos/chart3d/main.cpp)
 
 **Usage:**
 ```bash
-# Single chart with anti-aliasing
-./build/chart3d chart3d.ppm
+./build/demos/chart3d_demo chart3d.ppm
 ```
 
 **Sample output:**
@@ -94,16 +108,16 @@ Advanced 3D surface chart demo with support for multiple functions, layouts, and
 - Dark/light mode themes with borders
 - Several built-in function types (Ripple, Mexican Hat, Gaussian, Peaks, etc.)
 
-**Source:** [demos/multi_chart3d.cpp](demos/multi_chart3d.cpp)
+**Source:** [demos/multi_chart3d/main.cpp](demos/multi_chart3d/main.cpp)
 
 **Usage:**
 ```bash
 # Multi-chart demo with all features (as used in run_demos.sh from build directory)
-./build/multi_chart3d -font fonts/courR12.bdf -size 1024X512 -charts 2 -layout auto -aa -dark -borders multi_chart3d.ppm
+./build/demos/multi_chart3d_demo -font fonts/courR12.bdf -size 1024x512 -charts 2 -layout auto -aa -dark -borders multi_chart3d.ppm
 
 # Customizable examples
-./build/multi_chart3d -charts 3 -size 1200x900 output.ppm
-./build/multi_chart3d -charts 4 -layout 2x2 -borders output.ppm
+./build/demos/multi_chart3d_demo -charts 3 -size 1200x900 output.ppm
+./build/demos/multi_chart3d_demo -charts 4 -layout 2x2 -borders output.ppm
 ```
 
 **Sample output (dual charts with dark theme and borders):**
@@ -114,7 +128,7 @@ Advanced 3D surface chart demo with support for multiple functions, layouts, and
 
 Pixel map depicting Voronoi diagram generation.
 
-**Source:** [demos/voronoi.cpp](demos/voronoi.cpp)
+**Source:** [demos/voronoi/main.cpp](demos/voronoi/main.cpp)
 
 **Sample output:**
 
@@ -124,7 +138,7 @@ Pixel map depicting Voronoi diagram generation.
 
 Pixel map image for selected window of the Mandelbrot set.
 
-**Source:** [demos/mandelbrot.cpp](demos/mandelbrot.cpp)
+**Source:** [demos/mandelbrot/main.cpp](demos/mandelbrot/main.cpp)
 
 **Sample output:**
 
@@ -134,7 +148,7 @@ Pixel map image for selected window of the Mandelbrot set.
 
 Demonstration of included primitive shape support including lines, circles, rectangles, ellipses, and other geometric shapes.
 
-**Source:** [demos/draw_primitives.cpp](demos/draw_primitives.cpp)
+**Source:** [demos/draw_primitives/main.cpp](demos/draw_primitives/main.cpp)
 
 **Sample output:**
 
@@ -144,22 +158,22 @@ Demonstration of included primitive shape support including lines, circles, rect
 
 Demonstration of BDF font rendering capabilities with multi-color text support.
 
-**Source:** [demos/text_demo.cpp](demos/text_demo.cpp)
+**Source:** [demos/text/main.cpp](demos/text/main.cpp)
 
 **Usage:**
 ```bash
-./build/text_demo -font fonts/courR12.bdf -out text_output.ppm
+./build/demos/text_demo -font fonts/courR12.bdf -out text_output.ppm
 ```
 
 **Sample output:**
 
 ![Text Demo](images/text_demo_output.png?raw=true)
 
-## 8. Filter Demo
+## 8. Filters Demo
 
 Demonstration of various pixel filters including transformations, transparency, zoom, and gradients.
 
-**Source:** [demos/filter_demo.cpp](demos/filter_demo.cpp)
+**Source:** [demos/filters/main.cpp](demos/filters/main.cpp)
 
 **Sample output:**
 
@@ -169,19 +183,19 @@ Demonstration of various pixel filters including transformations, transparency, 
 
 Basic demonstration of the integrated logging system.
 
-**Source:** [demos/basic_logging_demo.cpp](demos/basic_logging_demo.cpp)
+**Source:** [demos/basic_logging/main.cpp](demos/basic_logging/main.cpp)
 
 ## 10. Type Casting Demos
 
 Demonstrations of safe type casting utilities:
-- **Cast Demo**: [demos/cast_demo.cpp](demos/cast_demo.cpp) - Basic casting operations
-- **Cast Validation Disabled**: [demos/cast_validation_disabled_demo.cpp](demos/cast_validation_disabled_demo.cpp) - Performance-oriented casting
+- **Cast Demo**: [demos/cast/main.cpp](demos/cast/main.cpp) - Basic casting operations
+- **Cast Validation Disabled**: [demos/cast_validation_disabled/main.cpp](demos/cast_validation_disabled/main.cpp) - Performance-oriented casting
 
 ## 11. Observer Pattern Demo
 
 Demonstration of the observer pattern implementation for event handling.
 
-**Source:** [demos/observers_demo.cpp](demos/observers_demo.cpp) 
+**Source:** [demos/observers/main.cpp](demos/observers/main.cpp) 
 
 # Manual Build Process
 
@@ -209,7 +223,7 @@ make
 ## 4. Run a demo
 
 ```bash
-./voronoi
+./voronoi_demo
 ```
 
 # API Reference
@@ -347,7 +361,7 @@ Sample fonts are included in the `fonts/` directory.
 ### Text Demo Usage
 
 ```bash
-./build/text_demo -font fonts/courR12.bdf -out text_output.ppm
+./build/demos/text_demo -font fonts/courR12.bdf -out text_output.ppm
 ```
 
 ## Getting Started Example

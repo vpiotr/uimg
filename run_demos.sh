@@ -6,27 +6,31 @@ echo "Running all demos..."
 
 # Get the script directory (project root)
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUILD_DIR="$PROJECT_ROOT/build"
+BUILD_DIR="$PROJECT_ROOT/build/demos"
 
 echo "Project root: $PROJECT_ROOT"
 
+# Ensure demos are built first
+echo "Building demos first..."
+"$PROJECT_ROOT/build_all_demos.sh"
+
 # Check if build directory exists
 if [ ! -d "$BUILD_DIR" ]; then
-    echo "ERROR: Build directory not found. Please run rebuild.sh first."
+    echo "ERROR: Demos build directory not found."
     exit 1
 fi
 
-# Change to build directory
+# Change to demos build directory
 cd "$BUILD_DIR"
 
-# List of demo executables (based on CMakeLists.txt)
+# List of demo executables (with _demo suffix)
 DEMOS=(
-    "voronoi"
-    "mandelbrot" 
-    "chart3d"
-    "multi_chart3d"
-    "draw_primitives"
-    "filter_demo"
+    "voronoi_demo"
+    "mandelbrot_demo" 
+    "chart3d_demo"
+    "multi_chart3d_demo"
+    "draw_primitives_demo"
+    "filters_demo"
     "2d_line_chart_demo"
     "text_demo"
     "observers_demo"
@@ -48,24 +52,24 @@ run_demo() {
         # Handle demos that require specific arguments
         case "$demo_name" in
             "2d_line_chart_demo")
-                "./$demo_name" -font ../fonts/courR12.bdf
+                "./$demo_name" -font ../../fonts/courR12.bdf
                 ;;
             "text_demo")
-                "./$demo_name" -font ../fonts/courR12.bdf
+                "./$demo_name" -font ../../fonts/courR12.bdf
                 ;;
-            "chart3d")
+            "chart3d_demo")
                 "./$demo_name" "chart3d.ppm"
                 ;;
-            "multi_chart3d")
-                "./$demo_name" -font ../fonts/courR12.bdf -size 1024X512 -charts 2 -layout auto -aa -dark -borders "multi_chart3d.ppm"
+            "multi_chart3d_demo")
+                "./$demo_name" -font ../../fonts/courR12.bdf -size 1024x512 -charts 2 -layout auto -aa -dark -borders "multi_chart3d.ppm"
                 ;;
-            "draw_primitives")
+            "draw_primitives_demo")
                 "./$demo_name" "primitives.ppm"
                 ;;
-            "voronoi")
+            "voronoi_demo")
                 "./$demo_name" "voronoi.ppm"
                 ;;
-            "mandelbrot")
+            "mandelbrot_demo")
                 "./$demo_name" "mandelbrot.ppm"
                 ;;
             *)
