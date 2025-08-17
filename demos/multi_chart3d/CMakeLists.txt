@@ -32,5 +32,4 @@ include_directories(../../include/dlog)
 add_executable(multi_chart3d_demo
     main.cpp
     include/multi_chart_3d.h
-    include/multi_chart_3d_demo.h
 )

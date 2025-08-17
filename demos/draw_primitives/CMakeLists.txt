@@ -30,5 +30,4 @@ include_directories(../../include/dlog)
 
 add_executable(draw_primitives_demo
     main.cpp
-    include/draw_primitives_demo.h
 )

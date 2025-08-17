@@ -26,8 +26,8 @@ echo "Running Chart3D Demo..."
 # Multi Chart3D Demo
 echo "Running Multi Chart3D Demo..."
 ./build/demos/multi_chart3d_demo -font fonts/courR12.bdf -size 1024x512 -charts 2 -layout auto -aa -dark -borders output/multi_chart3d_dark.ppm
-./build/demos/multi_chart3d_demo -charts 4 -layout grid -out output/multi_chart3d_grid.ppm
-./build/demos/multi_chart3d_demo -charts 3 -layout horizontal -out output/multi_chart3d_horizontal.ppm
+./build/demos/multi_chart3d_demo -charts 4 -layout grid output/multi_chart3d_grid.ppm
+./build/demos/multi_chart3d_demo -charts 3 -layout horizontal output/multi_chart3d_horizontal.ppm
 
 # Text Demo
 echo "Running Text Demo..."

@@ -31,5 +31,4 @@ include_directories(../../include/dlog)
 add_executable(voronoi_demo
     main.cpp
     include/voronoi.h
-    include/voronoi_demo.h
 )

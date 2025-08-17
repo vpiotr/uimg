@@ -20,7 +20,6 @@ endif()
 include_directories(include)
 include_directories(../common/include)
 include_directories(../common/include/chart3d)
-include_directories(../multi_chart3d/include)
 include_directories(../../include)
 include_directories(../../include/uimg)
 include_directories(../../include/uimg/painters)
@@ -29,7 +28,6 @@ include_directories(../../include/dlog)
 
 add_executable(chart3d_demo
     main.cpp
-    include/chart3d_demo.h
     include/chart_z_fxy_3d_sqrt.h
 )
 

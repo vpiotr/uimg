@@ -1,7 +1,6 @@
 #ifndef __UIMG_CHART3D_RENDERER_H__
 #define __UIMG_CHART3D_RENDERER_H__
 
-#include "multi_chart_3d.h"
 #include "chart3d_layout.h"
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/fonts/painter_for_bdf_font.h"

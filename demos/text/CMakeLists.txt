@@ -32,6 +32,4 @@ include_directories(../../include/dlog)
 
 add_executable(text_demo
     main.cpp
-    include/text_demo.h
-    include/text_demo_args.h
 )

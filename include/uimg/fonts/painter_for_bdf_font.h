@@ -7,7 +7,7 @@
 #include "uimg/base/structs.h"
 #include "uimg/fonts/bdf_font.h"
 #include "uimg/text/text_painter.h"
-#include "uimg/painters/painter_base.h"
+#include "uimg/pixels/pixel_painter.h"
 #include "uimg/utils/cast.h"
 #include "uimg/utils/cast.h"
 

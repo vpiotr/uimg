@@ -30,5 +30,4 @@ include_directories(../../include/dlog)
 add_executable(mandelbrot_demo
     main.cpp
     include/mandelbrot.h
-    include/mandelbrot_demo.h
 )

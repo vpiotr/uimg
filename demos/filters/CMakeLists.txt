@@ -30,6 +30,4 @@ include_directories(../../include/dlog)
 
 add_executable(filters_demo
     main.cpp
-    include/filter_demo.h
-    include/filter_demo_args.h
 )
